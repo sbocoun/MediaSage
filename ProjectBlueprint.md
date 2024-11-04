@@ -1,120 +1,103 @@
-# Project Specification for Group # 74 - Project MediaSage
-
+# Project Specification for Group \# 74
 
 ## Team Name: Team Watch-a-holics
 
-
 ## Project Domain:
 
-*[Establish what the domain is and what the broad purpose of your proposed software will be — this can be quite brief]*
-
-Primarily movie (and eventually general media) recommendations
-
+Primarily movie (and hopefully general media) recommendations.
 
 ## Software Specification:
 
-*[In plain English, **what** should the program be able to do (not **how** it should do it)]*
-
-*[think in terms of nouns and verbs, which will map onto variables and methods in the program]*
-
-Users can store movies they’ve watched in the program, rate their previously-watched movies, view their list of previously-watched movies, and ask the program for a movie recommendation. Each recommendation generates multiple options, and each option has the title of the movie along with additional information such as a description, the runtime, and an external rating. The program should be extendable to accommodate different media types such as TV shows, music, and books.
-
+Users can store and rate previously watched movies, ask the program for movie recommendations, and add interesting movies to a plan-to-watch list. Each recommendation generates multiple options, each of which has the movie's title and additional information such as a description, the runtime, and an external rating. Users can choose to generate recommendations based on their previously watched movies. Users can also search for movies by keywords and/or specifying criteria such as cast members or ratings. The program should be extendable to accommodate different media types, such as TV shows, music, and books.
 
 ## User Stories: 
 
-*[statements of interactions between the user and the system]*
-
-*[aim for at least one user story per group member + 1 extra; in the table below, each group member must be assigned to one user story + mark one user story as being a team user story — this one should be the one that is most central to the basic functionality of your system. That is, the one you would probably want to implement first.]*
-
 Team User Story:
 
-
-
-* Beatrice wants to get a recommendation similar to a movie she watched. She inputs the movie name to the program, picks the correct one from a list of movies, and then asks the program to give her a similar movie. She then saves both the new and old movies to her “watched” list, and later gives both of them a rating.
+- Beatrice wants to get a recommendation similar to a movie she watched. Her “watched movies” list already has that movie, so she navigates to the list tab and clicks the recommend button. The program recommends a list of movies based on her list of watched movies. Beatrice chooses a recommendation and adds it to her plan-to-watch list.  
+  - Use case: movie recommendation feature
 
 Simon’s User Story:
 
+- Trinity wants to find a new movie to watch. She opens the search tab, chooses the movie category, then chooses from multiple criteria (e.g. the Science Fiction genre, the kaiju and mecha keywords), hits search, and browses a list of relevant movies that she’s able to save to her watchlist.  
+  - Use case: search by criteria
 
+Sophie’s User Story:
 
-* Trinity wants to find a new movie to watch. She knows she wants it to be Science Fiction, and thinks it would be cool if it included both mechs and kaiju. She opens the movie recommendation program and inputs the Science Fiction genre. She then inputs the kaiju and mech keywords, hits search, and chooses from a list of movies that include those keywords in their description. She decides to order the list by ratings before choosing Pacific Rim and saving it to her watchlist.
+- Neo is feeling down and wants to re-watch a comfort movie, but he can’t remember any good ones. He logs in to his account and goes to his list of watched movies. He filters the genre in his list to “animated” and chooses “Castle in the Sky.”  
+  - Use case: filter list by criteria
 
-___ User Story:
+ Judy’s User Story:
 
-
-
-* Neo remembers watching a historical drama that he loved, but can’t remember what it was called. He remembers that it featured Liam Neeson and Ralf Fiennes and that it was directed by Steven Spielberg. He opens the movie recommendation program and adds these criteria to a movie search. The number one result is Schindler’s List, which Neo realizes was what he watched. He marks the film as watched and gives it a rating out of five.
-
-___ User Story:
-
-
-
-* Casey is looking for something to watch, so she logs onto the movie recommendation program. She realizes she wants to watch a Nicholas Cage movie, so she adds him as a cast member. First, she orders the search results by her ratings (of previously watched movies featuring Nicholas Cage), then by external ratings. She decides she wants to see one of Cage’s worst-rated movies, so she reverses the sorting order and chooses The Wicker Man, adding it to her “watched” list.
+- Casey just finished watching a movie on her plan-to-watch list, so she navigates to her plan-to-watch list in the program, selects the movie she just watched, and moves it to her list of viewed movies.   
+  - Use case: Move media to another list.
 
 Sera’s User Story:
 
-
-
-* Sakura has an extensive list of 
-
+- Sakura has an extensive list of previously watched movies and wants to check and update her ratings for those movies. She navigates to the movie list, selecting movies she wants to update one at a time, and updates each of their ratings.   
+  - Use case: Change movie user rating in the user list.
 
 ## Proposed Entities for the Domain:
 
-*[based on your specification, indicate a few potential entities for your domain — including their names and instance variables]*
+*\[based on your specification, indicate a few potential entities for your domain — including their names and instance variables\]*
 
-
-
-* Rating (abstract class)
-    * int rating
-* UserRating
-    * int rating
-* ExternalRating
-    * int rating
-* Media (abstract class)
-    * String name
-    * List&lt;Genre> genres
-    * Bool viewed
-    * UserRating userRating
-    * ExternalRating othersRating
-* Movie (extends Media)
-    * String name
-    * String description
-    * List[String] cast
-    * int minuteRuntime
-* Show (extends Media)
-    * String name
-    * String description
-    * List[String] cast
-    * int episodeCount
-* User
-    * String username
-    * String password
-    * List&lt;MediaCollection> viewedMedia
-* MediaCollection (abstract class)
-    * List&lt;Media>
-* MovieCollection (extends MediaCollection)
-    * List&lt;Movie>
-
+* UserRating (implements Rating interface)  
+  * int rating  
+* ExternalRating (implements Rating interface)  
+  * int rating  
+* Media (abstract class)  
+  * String name  
+  * List\<String\> genres  
+  * UserRating userRating  
+  * ExternalRating othersRating  
+* Movie (extends Media)  
+  * String name  
+  * String description  
+  * List\[String\] cast  
+  * int minuteRuntime  
+* Show (extends Media)  
+  * String name  
+  * String description  
+  * List\[String\] cast  
+  * int seasonCount  
+  * int episodeCount  
+* User  
+  * String username  
+  * String password  
+  * List\<MediaCollection\> mediaCollections  
+* MediaCollection (abstract class)  
+  * String name  
+  * Enum collectionType  
+  * List\<Media\>  
+* MovieCollection (extends MediaCollection)  
+  * List\<Movie\>
 
 ## Proposed APIs for the project:
 
-*[links to one or more APIs your team plans to make use of; include brief notes about what services the API provides and whether you have successfully tried calling the API]*
+* the TMDB API; [https://developer.themoviedb.org/docs/faq](https://developer.themoviedb.org/docs/faq)   
+  * Provides an implementation for pretty much all the possible use cases related to movies, including a simple recommendation feature. Also, has two Java wrapper implementations.   
+    * [api-themoviedb](https://github.com/Omertron/api-themoviedb/) by Omertron  
+    * [themoviedbapi](https://github.com/holgerbrandl/themoviedbapi/) by holgerbrandl  
+  * Token obtained and database successfully called. *Has a guest access interface.*  
+* The Grade API; [CSC207-Grade-APIs-Demo | Postman API Network](https://www.postman.com/cloudy-astronaut-813156/csc207-grade-apis-demo/overview)  
+  * For verifying/differentiating users and storing user-specific data (viewed media, watchlisted media, ratings) in a JSON format.  
+  * Lab 5 API (successfully called)  
+* the Google Books API; [Google Books APIs  |  Google for Developers](https://developers.google.com/books)  
+  * Provides a description, author, and genre, as well as page count and rating (0 to 5\) if available.   
+  * Obtained an API key and successfully called.  
+* Spotify Web API; [Web API | Spotify for Developers](https://developer.spotify.com/documentation/web-api)  
+  * Provides song name, length, contributors, and popularity (on a scale of 100).  
+  * Obtained an API key and successfully called.  
+* TasteDive API; [API | TasteDive](https://tastedive.com/read/api)  
+  * Provides 1-20 media recommendations based on any number of media inputs. *Allows mixed media inputs spanning music, movies, shows, podcasts, books, games etc.*  
+  * Obtained an API key and successfully called.  
+* AniList API: [Introduction | AniList API Docs](https://docs.anilist.co/guide/introduction)  
+  * A database for Japanese anime/manga/light novels.  
+  * It could be more difficult to implement since it requires GraphQL queries, but has powerful search capabilities, such as search by season/genre/tags/staff.  
+  * Have not executed any API calls yet.
 
+## Scheduled Meeting Times \+ Mode of Communication:
 
-
-* the TMDB API; [https://developer.themoviedb.org/docs/faq](https://developer.themoviedb.org/docs/faq) 
-    * Provides a rating, a description, as well as genres (as IDs) and probably cast info too (for both movies and TV shows).
-* The Grade API; [CSC207-Grade-APIs-Demo | Postman API Network](https://www.postman.com/cloudy-astronaut-813156/csc207-grade-apis-demo/overview)
-    * For verifying/differentiating users and storing user-specific information (viewed media, ratings).
-* the Google Books API; [Google Books APIs  |  Google for Developers](https://developers.google.com/books)
-    * Provides a description, author, and genre, as well as page count and rating (0 to 5) if available.
-* Spotify Web API; [Web API | Spotify for Developers](https://developer.spotify.com/documentation/web-api)
-    * Provides song name, length, contributors, and popularity (on a scale of 100).
-
-
-## Scheduled Meeting Times + Mode of Communication:
-
-*[when will your team meet each week — you MUST meet during the weekly tutorial timeslot and we strongly recommend scheduling one more regular meeting time]*
-
-**Meeting time outside of lab:** Each Friday at 
+**Meeting time outside of the lab:** Each Friday at 2 pm.
 
 **Mode of Communication:** Via a project Discord server and video/voice call
