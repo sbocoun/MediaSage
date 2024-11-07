@@ -7,18 +7,18 @@ import java.util.List;
  */
 public class Movie extends AbstractMedia {
     private String description;
-    private List<String> casts;
+    private List<String> castMembers;
     private int minuteRuntime;
 
     public Movie(String name,
                  List<String> genres,
                  Rating externalRating,
                  String description,
-                 List<String> casts,
+                 List<String> castMembers,
                  int minuteRuntime) {
         super(name, genres, externalRating);
         this.description = description;
-        this.casts = casts;
+        this.castMembers = castMembers;
         this.minuteRuntime = minuteRuntime;
     }
 
@@ -30,12 +30,12 @@ public class Movie extends AbstractMedia {
         this.description = description;
     }
 
-    public List<String> getCasts() {
-        return casts;
+    public List<String> getCastMembers() {
+        return castMembers;
     }
 
-    public void setCasts(List<String> casts) {
-        this.casts = casts;
+    public void setCastMembers(List<String> castMembers) {
+        this.castMembers = castMembers;
     }
 
     public int getMinuteRuntime() {

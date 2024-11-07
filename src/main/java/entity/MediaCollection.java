@@ -3,25 +3,25 @@ package entity;
 import java.util.List;
 
 /**
- * The representation of a list of Media.
+ * The representation of a list of media.
  *
- * @param <T> the representation of Media
+ * @param <T> the type of media stored in the collection.
  */
-public abstract class AbstractMediaCollection<T> {
+public class MediaCollection<T> {
     private String name;
     private final String collectionType;
-    private final List<T> mediaCollection;
+    private final List<T> mediaList;
 
     /**
      * Constructs a list of Media.
      * @param name the name of the list, provided by the user
      * @param collectionType the watch status type of the collection
-     * @param mediaCollection the list of media contained in the collection
+     * @param mediaList the list of media contained in the collection
      */
-    AbstractMediaCollection(String name, String collectionType, List<T> mediaCollection) {
+    MediaCollection(String name, String collectionType, List<T> mediaList) {
         this.name = name;
         this.collectionType = collectionType;
-        this.mediaCollection = mediaCollection;
+        this.mediaList = mediaList;
     }
 
     public String getName() {
@@ -36,7 +36,11 @@ public abstract class AbstractMediaCollection<T> {
         return collectionType;
     }
 
-    public List<T> getMediaCollection() {
-        return mediaCollection;
+    /**
+     * Return a (mutable) list of media.
+     * @return a list of media
+     */
+    public List<T> getMediaList() {
+        return mediaList;
     }
 }

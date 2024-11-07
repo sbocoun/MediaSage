@@ -9,12 +9,11 @@ public class User {
 
     private final String name;
     private final String password;
-    // private List<MediaCollection> mediaCollections;
+    private List<MediaCollection<AbstractMedia>> mediaCollections;
 
     public User(String name, String password) {
         this.name = name;
         this.password = password;
-        // this.mediaCollections = mediaCollections;
     }
 
     public String getName() {
@@ -25,11 +24,11 @@ public class User {
         return password;
     }
 
-    public List<AbstractMediaCollection> getMediaCollections() {
+    public List<MediaCollection<AbstractMedia>> getMediaCollections() {
         return mediaCollections;
     }
 
-    public void setMediaCollections(List<AbstractMediaCollection> mediaCollections) {
+    public void setMediaCollections(List<MediaCollection<AbstractMedia>> mediaCollections) {
         this.mediaCollections = mediaCollections;
     }
 
