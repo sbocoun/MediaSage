@@ -2,7 +2,7 @@ package entity;
 
 import java.util.List;
 
-public class Movie extends Media {
+public class Movie extends AbstractMedia {
     String description;
     List<String> cast;
     int minuteRuntime;

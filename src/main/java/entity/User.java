@@ -25,11 +25,11 @@ public class User {
         return password;
     }
 
-    public List<MediaCollection> getMediaCollections() {
+    public List<AbstractMediaCollection> getMediaCollections() {
         return mediaCollections;
     }
 
-    public void setMediaCollections(List<MediaCollection> mediaCollections) {
+    public void setMediaCollections(List<AbstractMediaCollection> mediaCollections) {
         this.mediaCollections = mediaCollections;
     }
 
