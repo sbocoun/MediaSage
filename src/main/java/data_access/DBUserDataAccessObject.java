@@ -26,6 +26,7 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
     private static final String MESSAGE = "message";
+    private String currUsername = null;
 
     @Override
     public User get(String username) {
@@ -58,7 +59,7 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
 
     @Override
     public void setCurrentUsername(String name) {
-        // this isn't implemented for the lab
+        this.currUsername = name;
     }
 
     @Override
@@ -149,6 +150,6 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
 
     @Override
     public String getCurrentUsername() {
-        return null;
+        return currUsername;
     }
 }
