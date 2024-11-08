@@ -81,7 +81,6 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
                 evt -> {
                     if (evt.getSource().equals(changePassword)) {
                         final LoggedInState currentState = loggedInViewModel.getState();
-
                         this.changePasswordController.execute(
                                 currentState.getUsername(),
                                 currentState.getPassword()
@@ -117,12 +116,12 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
         if (evt.getPropertyName().equals("state")) {
             final LoggedInState state = (LoggedInState) evt.getNewValue();
             username.setText(state.getUsername());
+            passwordErrorField.setText(state.getPasswordError());
         }
         else if (evt.getPropertyName().equals("password")) {
             final LoggedInState state = (LoggedInState) evt.getNewValue();
             JOptionPane.showMessageDialog(null, "password updated for " + state.getUsername());
         }
-
     }
 
     public String getViewName() {
