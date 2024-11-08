@@ -22,6 +22,7 @@ import interface_adapter.note.NoteViewModel;
  */
 public class NoteView extends JPanel implements ActionListener, PropertyChangeListener {
 
+    private final String viewName = "note";
     private final NoteViewModel noteViewModel;
 
     private final JLabel noteName = new JLabel("note for jonathan_calver2");
@@ -86,6 +87,10 @@ public class NoteView extends JPanel implements ActionListener, PropertyChangeLi
 
     private void setFields(NoteState state) {
         noteInputField.setText(state.getNote());
+    }
+
+    public String getViewName() {
+        return viewName;
     }
 
     public void setNoteController(NoteController controller) {
