@@ -26,7 +26,7 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
     private static final String MESSAGE = "message";
-    private String currUsername = null;
+    private String currUsername;
 
     @Override
     public User get(String username) {
