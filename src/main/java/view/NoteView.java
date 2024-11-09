@@ -25,7 +25,7 @@ public class NoteView extends JPanel implements ActionListener, PropertyChangeLi
     private final String viewName = "note";
     private final NoteViewModel noteViewModel;
 
-    private final JLabel noteName = new JLabel("note for jonathan_calver2");
+    private final JLabel noteName = new JLabel("note for");
     private final JTextArea noteInputField = new JTextArea();
 
     private final JButton saveButton = new JButton("Save");
@@ -86,6 +86,7 @@ public class NoteView extends JPanel implements ActionListener, PropertyChangeLi
     }
 
     private void setFields(NoteState state) {
+        noteName.setText("note for " + state.getUsername());
         noteInputField.setText(state.getNote());
     }
 

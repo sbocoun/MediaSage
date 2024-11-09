@@ -35,6 +35,7 @@ public class LoginPresenter implements LoginOutputBoundary {
     public void prepareSuccessView(LoginOutputData response) {
         // On success, switch to the notes view.
         this.noteViewModel.getState().setNote(response.getNotes());
+        this.noteViewModel.getState().setUsername(response.getUsername());
         this.noteViewModel.getState().setError(null);
         this.noteViewModel.firePropertyChanged();
 
