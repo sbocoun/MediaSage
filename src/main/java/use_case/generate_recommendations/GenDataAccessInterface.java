@@ -1,4 +1,4 @@
-package use_case.recommendation;
+package use_case.generate_recommendations;
 
 import org.json.JSONArray;
 
@@ -10,7 +10,7 @@ import java.util.List;
  * Interface for the recommendation API object. It consists of methods for
  * getting a recommendation, and setting/loading an api key.
  */
-public interface RecommendationApiInterface {
+public interface GenDataAccessInterface {
     /**
      * Get a recommendation with a list of media names.
      *

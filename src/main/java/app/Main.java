@@ -1,5 +1,10 @@
 package app;
 
+import data_access.DBUserDataAccessObject;
+import data_access.TasteDiveRecommendation;
+import use_case.generate_recommendations.GenDataAccessInterface;
+import use_case.note.NoteDataAccessInterface;
+
 /**
  * An application where we can view and add to a note stored by a user.
  *
@@ -46,12 +51,19 @@ public class Main {
      */
     public static void main(String[] args) {
 
+        final NoteDataAccessInterface noteDataAccess = new DBUserDataAccessObject();
+        final GenDataAccessInterface genDataAccessInterface = new TasteDiveRecommendation();
+        genDataAccessInterface.loadApiKeyFromFile();
+
         final AppBuilder builder = new AppBuilder();
-        builder.addNoteView()
+        builder.addNoteDAO(noteDataAccess)
+                .addGenDAO(genDataAccessInterface)
+                .addNoteView()
                 .addLoginView()
                 .addSignupView()
                 .addLoggedInView()
                 .addNoteUseCase()
+                .addGenUseCase()
                 .addSignupUseCase()
                 .addLoginUseCase()
                 .addChangePasswordUseCase()

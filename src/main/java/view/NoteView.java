@@ -16,6 +16,7 @@ import javax.swing.JTextArea;
 import interface_adapter.note.NoteController;
 import interface_adapter.note.NoteState;
 import interface_adapter.note.NoteViewModel;
+import interface_adapter.generate_recommendations.GenController;
 
 /**
  * The View for when the user is viewing a note in the program.
@@ -31,6 +32,8 @@ public class NoteView extends JPanel implements ActionListener, PropertyChangeLi
     private final JButton saveButton = new JButton("Save");
     private final JButton refreshButton = new JButton("Refresh");
     private NoteController noteController;
+    private final JButton generateButton = new JButton("Generate Recommendations");
+    private GenController genController;
 
     public NoteView(NoteViewModel noteViewModel) {
 
@@ -41,6 +44,7 @@ public class NoteView extends JPanel implements ActionListener, PropertyChangeLi
         final JPanel buttons = new JPanel();
         buttons.add(saveButton);
         buttons.add(refreshButton);
+        buttons.add(generateButton);
 
         saveButton.addActionListener(
                 evt -> {
@@ -56,6 +60,14 @@ public class NoteView extends JPanel implements ActionListener, PropertyChangeLi
                     if (evt.getSource().equals(refreshButton)) {
                         noteController.execute(null);
 
+                    }
+                }
+        );
+
+        generateButton.addActionListener(
+                evt -> {
+                    if (evt.getSource().equals(generateButton)) {
+                        genController.execute(noteInputField.getText());
                     }
                 }
         );
@@ -96,6 +108,10 @@ public class NoteView extends JPanel implements ActionListener, PropertyChangeLi
 
     public void setNoteController(NoteController controller) {
         this.noteController = controller;
+    }
+
+    public void setGenController(GenController genController) {
+        this.genController = genController;
     }
 }
 
