@@ -1,8 +1,5 @@
 package app;
 
-import data_access.DBNoteDataAccessObject;
-import use_case.note.NoteDataAccessInterface;
-
 /**
  * An application where we can view and add to a note stored by a user.
  *
@@ -49,12 +46,8 @@ public class Main {
      */
     public static void main(String[] args) {
 
-        // create the data access and inject it into our builder!
-        final NoteDataAccessInterface noteDataAccess = new DBNoteDataAccessObject();
-
         final AppBuilder builder = new AppBuilder();
-        builder.addNoteDAO(noteDataAccess)
-                .addNoteView()
+        builder.addNoteView()
                 .addLoginView()
                 .addSignupView()
                 .addLoggedInView()

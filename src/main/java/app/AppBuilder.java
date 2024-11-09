@@ -1,8 +1,10 @@
 package app;
 
-import java.awt.*;
+import java.awt.CardLayout;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import data_access.DBUserDataAccessObject;
 import interface_adapter.ViewManagerModel;
@@ -35,7 +37,11 @@ import use_case.note.NoteOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
-import view.*;
+import view.LoggedInView;
+import view.LoginView;
+import view.NoteView;
+import view.SignupView;
+import view.ViewManager;
 
 /**
  * Builder for the Note Application.
@@ -43,8 +49,7 @@ import view.*;
 public class AppBuilder {
     public static final int HEIGHT = 300;
     public static final int WIDTH = 400;
-    private NoteDataAccessInterface noteDAO;
-    private NoteViewModel noteViewModel = new NoteViewModel();
+    private NoteViewModel noteViewModel;
     private NoteView noteView;
     private NoteInteractor noteInteractor;
     private final JPanel cardPanel = new JPanel();
@@ -52,7 +57,8 @@ public class AppBuilder {
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
     private final ViewManager viewManager = new ViewManager(cardPanel, cardLayout, viewManagerModel);
     // thought question: is the hard dependency below a problem?
-    private final DBUserDataAccessObject userDataAccessObject = new DBUserDataAccessObject();
+    private DBUserDataAccessObject userDataAccessObject = new DBUserDataAccessObject();
+    private NoteDataAccessInterface noteDataAccessInterface;
 
     private SignupView signupView;
     private SignupViewModel signupViewModel;
@@ -69,12 +75,23 @@ public class AppBuilder {
     }
 
     /**
-     * Sets the NoteDAO to be used in this application.
-     * @param noteDataAccess the DAO to use
+     * Adds the data access object for user information.
+     *
      * @return this builder
      */
-    public AppBuilder addNoteDAO(NoteDataAccessInterface noteDataAccess) {
-        noteDAO = noteDataAccess;
+    public AppBuilder addUserDAO() {
+        this.userDataAccessObject = new DBUserDataAccessObject();
+        return this;
+    }
+
+    /**
+     * Adds the note data access object for user notes.
+     *
+     * @param noteDAO the note data access interface to use
+     * @return this builder
+     */
+    public AppBuilder addNoteDAO(NoteDataAccessInterface noteDAO) {
+        this.noteDataAccessInterface = noteDAO;
         return this;
     }
 
@@ -88,8 +105,7 @@ public class AppBuilder {
      */
     public AppBuilder addNoteUseCase() {
         final NoteOutputBoundary noteOutputBoundary = new NotePresenter(noteViewModel);
-        noteInteractor = new NoteInteractor(
-                noteDAO, noteOutputBoundary);
+        noteInteractor = new NoteInteractor(noteDataAccessInterface, noteOutputBoundary);
 
         final NoteController controller = new NoteController(noteInteractor);
         if (noteView == null) {
@@ -164,7 +180,7 @@ public class AppBuilder {
      */
     public AppBuilder addLoginUseCase() {
         final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(viewManagerModel,
-                loggedInViewModel, signupViewModel, loginViewModel);
+                loggedInViewModel, signupViewModel, noteViewModel, loginViewModel);
         final LoginInputBoundary loginInteractor = new LoginInteractor(
                 userDataAccessObject, loginOutputBoundary);
 

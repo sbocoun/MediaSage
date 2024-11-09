@@ -1,18 +1,25 @@
 package view;
 
-import interface_adapter.login.LoginController;
-import interface_adapter.login.LoginState;
-import interface_adapter.login.LoginViewModel;
-import interface_adapter.signup.SignupController;
-
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.*;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import interface_adapter.login.LoginController;
+import interface_adapter.login.LoginState;
+import interface_adapter.login.LoginViewModel;
+import interface_adapter.note.NoteController;
+import interface_adapter.signup.SignupController;
 
 /**
  * The View for when the user is logging into the program.
@@ -32,6 +39,7 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
     private final JButton signup;
     private LoginController loginController;
     private SignupController signupController;
+    private NoteController noteController;
 
     public LoginView(LoginViewModel loginViewModel) {
 
@@ -57,10 +65,7 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
                     public void actionPerformed(ActionEvent evt) {
                         if (evt.getSource().equals(logIn)) {
                             final LoginState currentState = loginViewModel.getState();
-                            loginController.execute(
-                                    currentState.getUsername(),
-                                    currentState.getPassword()
-                            );
+                            loginController.execute(currentState.getUsername(), currentState.getPassword());
                             usernameInputField.setText("");
                             passwordInputField.setText("");
                         }
@@ -163,5 +168,9 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
 
     public void setLoginController(LoginController loginController) {
         this.loginController = loginController;
+    }
+
+    public void setNoteController(NoteController noteController) {
+        this.noteController = noteController;
     }
 }

@@ -1,7 +1,5 @@
 package use_case.note;
 
-import entity.User;
-
 /**
  * The "Use Case Interactor" for our two note-related use cases of refreshing
  * the contents of the note and saving the contents of the note. Since they
@@ -16,7 +14,6 @@ public class NoteInteractor implements NoteInputBoundary {
     // you might allow a user of the program to create a new note, which you
     // could store as a "user" through the API OR you might maintain all notes
     // in a JSON object stored in one common "user" stored through the API.
-    private final User user = new User("jonathan_calver2", "abc123");
 
     public NoteInteractor(NoteDataAccessInterface noteDataAccessInterface,
                           NoteOutputBoundary noteOutputBoundary) {
@@ -31,8 +28,7 @@ public class NoteInteractor implements NoteInputBoundary {
     @Override
     public void executeRefresh() {
         try {
-
-            final String note = noteDataAccessInterface.loadNote(user);
+            final String note = noteDataAccessInterface.loadNote();
             noteOutputBoundary.prepareSuccessView(note);
         }
         catch (DataAccessException ex) {
@@ -49,7 +45,7 @@ public class NoteInteractor implements NoteInputBoundary {
     public void executeSave(String note) {
         try {
 
-            final String updatedNote = noteDataAccessInterface.saveNote(user, note);
+            final String updatedNote = noteDataAccessInterface.saveNote(note);
             noteOutputBoundary.prepareSuccessView(updatedNote);
         }
         catch (DataAccessException ex) {
