@@ -58,6 +58,7 @@ public class Main {
         final AppBuilder builder = new AppBuilder();
         builder.addNoteDAO(noteDataAccess)
                 .addGenDAO(genDataAccessInterface)
+                .addBlankView()
                 .addNoteView()
                 .addLoginView()
                 .addSignupView()
