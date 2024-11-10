@@ -1,10 +1,10 @@
 package use_case.generate_recommendations;
 
+import java.util.List;
+
 import org.json.JSONArray;
 
 import use_case.note.DataAccessException;
-
-import java.util.List;
 
 /**
  * Interface for the recommendation API object. It consists of methods for
