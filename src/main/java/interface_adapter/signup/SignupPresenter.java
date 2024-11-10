@@ -13,12 +13,12 @@ public class SignupPresenter implements SignupOutputBoundary {
 
     private final SignupViewModel signupViewModel;
     private final LoginViewModel loginViewModel;
-    private final ViewManagerModel viewManagerModel;
+    private final ViewManagerModel userViewManagerModel;
 
-    public SignupPresenter(ViewManagerModel viewManagerModel,
+    public SignupPresenter(ViewManagerModel userViewManagerModel,
                            SignupViewModel signupViewModel,
                            LoginViewModel loginViewModel) {
-        this.viewManagerModel = viewManagerModel;
+        this.userViewManagerModel = userViewManagerModel;
         this.signupViewModel = signupViewModel;
         this.loginViewModel = loginViewModel;
     }
@@ -31,8 +31,8 @@ public class SignupPresenter implements SignupOutputBoundary {
         this.loginViewModel.setState(loginState);
         loginViewModel.firePropertyChanged();
 
-        viewManagerModel.setState(loginViewModel.getViewName());
-        viewManagerModel.firePropertyChanged();
+        userViewManagerModel.setState(loginViewModel.getViewName());
+        userViewManagerModel.firePropertyChanged();
     }
 
     @Override
@@ -44,7 +44,7 @@ public class SignupPresenter implements SignupOutputBoundary {
 
     @Override
     public void switchToLoginView() {
-        viewManagerModel.setState(loginViewModel.getViewName());
-        viewManagerModel.firePropertyChanged();
+        userViewManagerModel.setState(loginViewModel.getViewName());
+        userViewManagerModel.firePropertyChanged();
     }
 }

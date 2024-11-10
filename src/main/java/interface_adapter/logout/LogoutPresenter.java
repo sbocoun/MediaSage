@@ -5,6 +5,7 @@ import interface_adapter.change_password.LoggedInState;
 import interface_adapter.change_password.LoggedInViewModel;
 import interface_adapter.login.LoginState;
 import interface_adapter.login.LoginViewModel;
+import interface_adapter.note.BlankViewModel;
 import use_case.logout.LogoutOutputBoundary;
 import use_case.logout.LogoutOutputData;
 
@@ -13,15 +14,21 @@ import use_case.logout.LogoutOutputData;
  */
 public class LogoutPresenter implements LogoutOutputBoundary {
 
+    private final ViewManagerModel userViewManagerModel;
+    private final ViewManagerModel mediaViewManagerModel;
     private final LoggedInViewModel loggedInViewModel;
-    private final ViewManagerModel viewManagerModel;
+    private final BlankViewModel blankViewModel;
     private final LoginViewModel loginViewModel;
 
-    public LogoutPresenter(ViewManagerModel viewManagerModel,
+    public LogoutPresenter(ViewManagerModel userViewManagerModel,
+                          ViewManagerModel mediaViewManagerModel,
+                          BlankViewModel blankViewModel,
                           LoggedInViewModel loggedInViewModel,
                            LoginViewModel loginViewModel) {
+        this.userViewManagerModel = userViewManagerModel;
+        this.mediaViewManagerModel = mediaViewManagerModel;
+        this.blankViewModel = blankViewModel;
         this.loggedInViewModel = loggedInViewModel;
-        this.viewManagerModel = viewManagerModel;
         this.loginViewModel = loginViewModel;
     }
 
@@ -41,7 +48,7 @@ public class LogoutPresenter implements LogoutOutputBoundary {
         final LoggedInState loggedInState = loggedInViewModel.getState();
         loggedInState.setUsername("");
         loggedInViewModel.setState(loggedInState);
-        this.viewManagerModel.firePropertyChanged();
+        this.userViewManagerModel.firePropertyChanged();
 
         // Have prepareSuccessView update the LoginState
         // 5. get the LoginState out of the appropriate View Model,
@@ -52,11 +59,13 @@ public class LogoutPresenter implements LogoutOutputBoundary {
         loginState.setUsername("");
         loginState.setPassword("");
         loginViewModel.setState(loginState);
-        this.viewManagerModel.firePropertyChanged();
+        this.userViewManagerModel.firePropertyChanged();
+        this.mediaViewManagerModel.setState(blankViewModel.getViewName());
+        this.mediaViewManagerModel.firePropertyChanged();
 
         // This code tells the View Manager to switch to the LoginView.
-        this.viewManagerModel.setState(loginViewModel.getViewName());
-        this.viewManagerModel.firePropertyChanged();
+        this.userViewManagerModel.setState(loginViewModel.getViewName());
+        this.userViewManagerModel.firePropertyChanged();
     }
 
     @Override
