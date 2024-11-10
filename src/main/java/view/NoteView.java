@@ -13,10 +13,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import interface_adapter.generate_recommendations.GenController;
 import interface_adapter.note.NoteController;
 import interface_adapter.note.NoteState;
 import interface_adapter.note.NoteViewModel;
-import interface_adapter.generate_recommendations.GenController;
 
 /**
  * The View for when the user is viewing a note in the program.

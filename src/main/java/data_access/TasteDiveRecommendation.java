@@ -13,8 +13,8 @@ import org.json.JSONObject;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import use_case.note.DataAccessException;
 import use_case.generate_recommendations.GenDataAccessInterface;
+import use_case.note.DataAccessException;
 
 /**
  * The DAO for getting recommendations from TasteDive.
