@@ -23,6 +23,7 @@ import interface_adapter.note.BlankViewModel;
 import interface_adapter.note.NoteController;
 import interface_adapter.note.NotePresenter;
 import interface_adapter.note.NoteViewModel;
+import interface_adapter.search.SearchViewModel;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
@@ -44,12 +45,7 @@ import use_case.note.NoteOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
-import view.BlankView;
-import view.LoggedInView;
-import view.LoginView;
-import view.NoteView;
-import view.SignupView;
-import view.ViewManager;
+import view.*;
 
 /**
  * Builder for the Note Application.
@@ -63,11 +59,14 @@ public class AppBuilder {
     private final JPanel cardPanel = new JPanel();
     private final JPanel userPanel = new JPanel();
     private final JPanel mediaPanel = new JPanel();
+    private final JPanel searchPanel = new JPanel();
     private final CardLayout cardLayout = new CardLayout();
     private final ViewManagerModel userViewManagerModel = new ViewManagerModel();
     private final ViewManagerModel mediaViewManagerModel = new ViewManagerModel();
+    private final ViewManagerModel searchViewManagerModel = new ViewManagerModel();
     private final ViewManager userViewManager = new ViewManager(userPanel, cardLayout, userViewManagerModel);
     private final ViewManager mediaViewManager = new ViewManager(mediaPanel, cardLayout, mediaViewManagerModel);
+    private final ViewManager searchViewManager = new ViewManager(searchPanel, cardLayout, searchViewManagerModel);
     // thought question: is the hard dependency below a problem?
     private DBUserDataAccessObject userDataAccessObject = new DBUserDataAccessObject();
     private NoteDataAccessInterface noteDataAccessInterface;
@@ -77,6 +76,8 @@ public class AppBuilder {
     private NoteViewModel noteViewModel;
     private BlankView blankView;
     private BlankViewModel blankViewModel;
+    private SearchView searchView;
+    private SearchViewModel searchViewModel;
     private SignupView signupView;
     private SignupViewModel signupViewModel;
     private LoginViewModel loginViewModel;
@@ -92,6 +93,7 @@ public class AppBuilder {
         mediaPanel.setLayout(cardLayout);
         userPanel.setLayout(cardLayout);
         tabPanel.addTab("Media", mediaPanel);
+        tabPanel.addTab("Search", searchPanel);
         tabPanel.addTab("User", userPanel);
     }
 
