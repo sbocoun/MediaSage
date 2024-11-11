@@ -6,8 +6,8 @@ import interface_adapter.note.NoteState;
 /**
  * The ViewModel for the NoteView.
  */
-public class NoteViewModel extends ViewModel<NoteState> {
-    public NoteViewModel() {
+public class SearchViewModel extends ViewModel<NoteState> {
+    public SearchViewModel() {
         super("note");
         setState(new NoteState());
     }
