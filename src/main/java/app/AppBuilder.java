@@ -190,6 +190,13 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addSearchView() {
+        searchViewModel = new SearchViewModel();
+        searchView = new SearchView(searchViewModel);
+        searchPanel.add(searchView, searchView.getViewName());
+        return this;
+    }
+
     /**
      * Adds the Signup View to the user panel.
      * @return this builder

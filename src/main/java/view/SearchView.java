@@ -4,6 +4,7 @@ import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginState;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.note.NoteController;
+import interface_adapter.search.SearchViewModel;
 import interface_adapter.signup.SignupController;
 
 import javax.swing.*;
@@ -20,8 +21,8 @@ import java.beans.PropertyChangeListener;
  */
 public class SearchView extends JPanel implements ActionListener, PropertyChangeListener {
 
-    private final String viewName = "log in";
-    private final LoginViewModel loginViewModel;
+    private final String viewName = "search";
+    private final SearchViewModel searchViewModel;
 
     private final JTextField usernameInputField = new JTextField(15);
     private final JLabel usernameErrorField = new JLabel();
@@ -35,10 +36,10 @@ public class SearchView extends JPanel implements ActionListener, PropertyChange
     private SignupController signupController;
     private NoteController noteController;
 
-    public SearchView(LoginViewModel loginViewModel) {
+    public SearchView(SearchViewModel searchViewModel) {
 
-        this.loginViewModel = loginViewModel;
-        this.loginViewModel.addPropertyChangeListener(this);
+        this.searchViewModel = searchViewModel;
+        this.searchViewModel.addPropertyChangeListener(this);
 
         final JLabel title = new JLabel("Login Screen");
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -53,88 +54,8 @@ public class SearchView extends JPanel implements ActionListener, PropertyChange
         buttons.add(logIn);
         signup = new JButton("sign up");
         buttons.add(signup);
-
-        logIn.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        if (evt.getSource().equals(logIn)) {
-                            final LoginState currentState = loginViewModel.getState();
-                            loginController.execute(currentState.getUsername(), currentState.getPassword());
-                            usernameInputField.setText("");
-                            passwordInputField.setText("");
-                        }
-                    }
-                }
-        );
-
-        signup.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        if (evt.getSource().equals(signup)) {
-                            usernameInputField.setText("");
-                            passwordInputField.setText("");
-                            loginController.switchToSignupView();
-                        }
-                    }
-                }
-        );
-
-        usernameInputField.getDocument().addDocumentListener(new DocumentListener() {
-
-            private void documentListenerHelper() {
-                final LoginState currentState = loginViewModel.getState();
-                currentState.setUsername(usernameInputField.getText());
-                loginViewModel.setState(currentState);
-            }
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                documentListenerHelper();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                documentListenerHelper();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                documentListenerHelper();
-            }
-        });
-
-        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-        passwordInputField.getDocument().addDocumentListener(new DocumentListener() {
-
-            private void documentListenerHelper() {
-                final LoginState currentState = loginViewModel.getState();
-                currentState.setPassword(new String(passwordInputField.getPassword()));
-                loginViewModel.setState(currentState);
-            }
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                documentListenerHelper();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                documentListenerHelper();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                documentListenerHelper();
-            }
-        });
-
-        this.add(title);
-        this.add(usernameInfo);
-        this.add(usernameErrorField);
-        this.add(passwordInfo);
-        this.add(buttons);
     }
+
 
     /**
      * React to a button click that results in evt.
