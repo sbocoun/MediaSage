@@ -68,8 +68,7 @@ public class AppBuilder {
     private final ViewManager mediaViewManager = new ViewManager(mediaPanel, cardLayout, mediaViewManagerModel);
     private final ViewManager searchViewManager = new ViewManager(searchPanel, cardLayout, searchViewManagerModel);
     // thought question: is the hard dependency below a problem?
-    private DBUserDataAccessObject userDataAccessObject = new DBUserDataAccessObject();
-    private NoteDataAccessInterface noteDataAccessInterface;
+    private DBUserDataAccessObject userDataAccessObject;
     private GenDataAccessInterface genDataAccessInterface;
 
     private NoteView noteView;
@@ -100,21 +99,11 @@ public class AppBuilder {
     /**
      * Adds the data access object for user information.
      *
+     * @param userDAO the data access object for user information
      * @return this builder
      */
-    public AppBuilder addUserDAO() {
-        this.userDataAccessObject = new DBUserDataAccessObject();
-        return this;
-    }
-
-    /**
-     * Adds the note data access object for user notes.
-     *
-     * @param noteDAO the note data access interface to use
-     * @return this builder
-     */
-    public AppBuilder addNoteDAO(NoteDataAccessInterface noteDAO) {
-        this.noteDataAccessInterface = noteDAO;
+    public AppBuilder addUserDAO(DBUserDataAccessObject userDAO) {
+        this.userDataAccessObject = userDAO;
         return this;
     }
 
@@ -139,7 +128,7 @@ public class AppBuilder {
      */
     public AppBuilder addNoteUseCase() {
         final NoteOutputBoundary noteOutputBoundary = new NotePresenter(noteViewModel, mediaViewManagerModel);
-        noteInteractor = new NoteInteractor(noteDataAccessInterface, noteOutputBoundary);
+        noteInteractor = new NoteInteractor(userDataAccessObject, noteOutputBoundary);
         final NoteController controller = new NoteController(noteInteractor);
         if (noteView == null) {
             throw new RuntimeException("addNoteView must be called before addNoteUseCase");
