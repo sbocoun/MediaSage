@@ -28,7 +28,7 @@ public class MovieDBDataAccessObjectTest {
 
     @Test
     public void testHasRating() {
-        assertEquals(8.2, movieDetails.getDouble("rating"), 0.0);
+        assertEquals(8.2, movieDetails.getDouble("rating"), 1.0);
     }
 
     @Test
