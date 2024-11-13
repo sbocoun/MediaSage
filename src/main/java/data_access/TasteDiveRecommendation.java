@@ -14,14 +14,14 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import use_case.note.DataAccessException;
-import use_case.recommendation.RecommendationApiInterface;
+import use_case.generate_recommendations.GenDataAccessInterface;
 
 /**
  * The DAO for getting recommendations from TasteDive.
  * See
  * <a href="https://tastedive.com/read/api">API | TasteDive</a> for details on the API.
  */
-public class TasteDiveRecommendation implements RecommendationApiInterface {
+public class TasteDiveRecommendation implements GenDataAccessInterface {
     private static final int SUCCESS_CODE = 200;
     private static final String BASE_URL = "https://tastedive.com/api/similar";
     private static final String CONTENT_TYPE_LABEL = "Content-Type";
@@ -33,8 +33,8 @@ public class TasteDiveRecommendation implements RecommendationApiInterface {
      * Get a recommendation from TasteDive with a list of media names.
      *
      * @param query list of media names
-     * @param sourceType the type of media to base recommendations from
-     * @param returnType the type of media to recommend
+     * @param sourceType the type of media to base recommendations from (lowercase)
+     * @param returnType the type of media to recommend (lowercase)
      * @param verbose if the response should contain extra information about the movie
      * @return the list of media recommendations returned by TasteDive API
      * @throws DataAccessException error accessing the API
@@ -97,6 +97,7 @@ public class TasteDiveRecommendation implements RecommendationApiInterface {
 
     /**
      * Load the api key from the resources/apikey.
+     * @throws RuntimeException if there's an error reading the apikey file.
      */
     public void loadApiKeyFromFile() {
         try {

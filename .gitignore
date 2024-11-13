@@ -1,2 +1,2 @@
 target/*
-resources/apikey
+src/main/resources/apikey

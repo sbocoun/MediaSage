@@ -1,9 +1,8 @@
 package data_access;
 
-import org.json.JSONArray;
 import org.junit.Test;
 import use_case.note.DataAccessException;
-import use_case.recommendation.RecommendationApiInterface;
+import use_case.generate_recommendations.GenDataAccessInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,7 @@ public class TasteDiveApiAccessObjectTest {
 
     @Test
     public void testApi() {
-        RecommendationApiInterface api = new TasteDiveRecommendation();
+        GenDataAccessInterface api = new TasteDiveRecommendation();
         api.loadApiKeyFromFile();
         List<String> base = new ArrayList<>();
         base.add("Alien Romulus");

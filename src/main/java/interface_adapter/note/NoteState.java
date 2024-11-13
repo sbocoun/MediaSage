@@ -2,9 +2,10 @@ package interface_adapter.note;
 
 /**
  * The State for a note.
- * <p>For this example, a note is simplay a string.</p>
+ * <p>For this example, a note is simply a string.</p>
  */
 public class NoteState {
+    private String username;
     private String note = "";
     private String error;
 
@@ -22,5 +23,13 @@ public class NoteState {
 
     public String getError() {
         return error;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
