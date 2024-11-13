@@ -17,14 +17,17 @@ public class LoginPresenter implements LoginOutputBoundary {
     private final LoggedInViewModel loggedInViewModel;
     private final SignupViewModel signupViewModel;
     private final NoteViewModel noteViewModel;
-    private final ViewManagerModel viewManagerModel;
+    private final ViewManagerModel userViewManagerModel;
+    private final ViewManagerModel mediaViewManagerModel;
 
-    public LoginPresenter(ViewManagerModel viewManagerModel,
+    public LoginPresenter(ViewManagerModel userViewManagerModel,
+                          ViewManagerModel mediaViewManagerModel,
                           LoggedInViewModel loggedInViewModel,
                           SignupViewModel signupViewModel,
                           NoteViewModel noteViewModel,
                           LoginViewModel loginViewModel) {
-        this.viewManagerModel = viewManagerModel;
+        this.userViewManagerModel = userViewManagerModel;
+        this.mediaViewManagerModel = mediaViewManagerModel;
         this.loggedInViewModel = loggedInViewModel;
         this.signupViewModel = signupViewModel;
         this.noteViewModel = noteViewModel;
@@ -39,13 +42,15 @@ public class LoginPresenter implements LoginOutputBoundary {
         this.noteViewModel.getState().setError(null);
         this.noteViewModel.firePropertyChanged();
 
-        // final LoggedInState loggedInState = loggedInViewModel.getState();
-        // loggedInState.setUser(response.getUser());
-        // this.loggedInViewModel.setState(loggedInState);
-        // this.loggedInViewModel.firePropertyChanged();
+        final LoggedInState loggedInState = loggedInViewModel.getState();
+        loggedInState.setUsername(response.getUsername());
+        this.loggedInViewModel.setState(loggedInState);
+        this.loggedInViewModel.firePropertyChanged();
 
-        this.viewManagerModel.setState(noteViewModel.getViewName());
-        this.viewManagerModel.firePropertyChanged();
+        this.userViewManagerModel.setState(loggedInViewModel.getViewName());
+        this.userViewManagerModel.firePropertyChanged();
+        this.mediaViewManagerModel.setState(noteViewModel.getViewName());
+        this.mediaViewManagerModel.firePropertyChanged();
     }
 
     @Override
@@ -57,7 +62,7 @@ public class LoginPresenter implements LoginOutputBoundary {
 
     @Override
     public void switchToSignupView() {
-        viewManagerModel.setState(signupViewModel.getViewName());
-        viewManagerModel.firePropertyChanged();
+        userViewManagerModel.setState(signupViewModel.getViewName());
+        userViewManagerModel.firePropertyChanged();
     }
 }

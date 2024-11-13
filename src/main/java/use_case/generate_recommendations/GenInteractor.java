@@ -1,11 +1,12 @@
 package use_case.generate_recommendations;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import use_case.note.DataAccessException;
-
 import java.util.Arrays;
 import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import use_case.note.DataAccessException;
 
 /**
  * The "Use Case Interactor" for the "generate movie recommendations" use case.

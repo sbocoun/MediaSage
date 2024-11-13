@@ -1,5 +1,6 @@
 package interface_adapter.note;
 
+import interface_adapter.ViewManagerModel;
 import use_case.note.NoteOutputBoundary;
 
 /**
@@ -8,9 +9,11 @@ import use_case.note.NoteOutputBoundary;
 public class NotePresenter implements NoteOutputBoundary {
 
     private final NoteViewModel noteViewModel;
+    private final ViewManagerModel userViewManagerModel;
 
-    public NotePresenter(NoteViewModel noteViewModel) {
+    public NotePresenter(NoteViewModel noteViewModel, ViewManagerModel userViewManagerModel) {
         this.noteViewModel = noteViewModel;
+        this.userViewManagerModel = userViewManagerModel;
     }
 
     /**
@@ -23,6 +26,9 @@ public class NotePresenter implements NoteOutputBoundary {
         noteViewModel.getState().setNote(note);
         noteViewModel.getState().setError(null);
         noteViewModel.firePropertyChanged();
+
+        userViewManagerModel.setState(noteViewModel.getViewName());
+        userViewManagerModel.firePropertyChanged();
     }
 
     /**

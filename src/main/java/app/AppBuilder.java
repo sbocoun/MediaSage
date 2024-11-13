@@ -4,6 +4,7 @@ import java.awt.CardLayout;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
 import data_access.DBUserDataAccessObject;
@@ -11,12 +12,14 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.ChangePasswordPresenter;
 import interface_adapter.change_password.LoggedInViewModel;
+import interface_adapter.generate_recommendations.GenController;
 import interface_adapter.generate_recommendations.GenPresenter;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.logout.LogoutController;
 import interface_adapter.logout.LogoutPresenter;
+import interface_adapter.note.BlankViewModel;
 import interface_adapter.note.NoteController;
 import interface_adapter.note.NotePresenter;
 import interface_adapter.note.NoteViewModel;
@@ -26,7 +29,6 @@ import interface_adapter.signup.SignupViewModel;
 import use_case.change_password.ChangePasswordInputBoundary;
 import use_case.change_password.ChangePasswordInteractor;
 import use_case.change_password.ChangePasswordOutputBoundary;
-import interface_adapter.generate_recommendations.GenController;
 import use_case.generate_recommendations.GenDataAccessInterface;
 import use_case.generate_recommendations.GenInteractor;
 import use_case.generate_recommendations.GenOutputBoundary;
@@ -42,6 +44,7 @@ import use_case.note.NoteOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
+import view.BlankView;
 import view.LoggedInView;
 import view.LoginView;
 import view.NoteView;
@@ -54,19 +57,26 @@ import view.ViewManager;
 public class AppBuilder {
     public static final int HEIGHT = 450;
     public static final int WIDTH = 400;
-    private NoteViewModel noteViewModel;
-    private NoteView noteView;
     private NoteInteractor noteInteractor;
     private GenInteractor genInteractor;
+    private final JTabbedPane tabPanel = new JTabbedPane();
     private final JPanel cardPanel = new JPanel();
+    private final JPanel userPanel = new JPanel();
+    private final JPanel mediaPanel = new JPanel();
     private final CardLayout cardLayout = new CardLayout();
-    private final ViewManagerModel viewManagerModel = new ViewManagerModel();
-    private final ViewManager viewManager = new ViewManager(cardPanel, cardLayout, viewManagerModel);
+    private final ViewManagerModel userViewManagerModel = new ViewManagerModel();
+    private final ViewManagerModel mediaViewManagerModel = new ViewManagerModel();
+    private final ViewManager userViewManager = new ViewManager(userPanel, cardLayout, userViewManagerModel);
+    private final ViewManager mediaViewManager = new ViewManager(mediaPanel, cardLayout, mediaViewManagerModel);
     // thought question: is the hard dependency below a problem?
     private DBUserDataAccessObject userDataAccessObject = new DBUserDataAccessObject();
     private NoteDataAccessInterface noteDataAccessInterface;
     private GenDataAccessInterface genDataAccessInterface;
 
+    private NoteView noteView;
+    private NoteViewModel noteViewModel;
+    private BlankView blankView;
+    private BlankViewModel blankViewModel;
     private SignupView signupView;
     private SignupViewModel signupViewModel;
     private LoginViewModel loginViewModel;
@@ -75,10 +85,14 @@ public class AppBuilder {
     private LoginView loginView;
 
     /**
-     * Ensures the views to be added will adhere to the card format.
+     * Adds the initial tabs and card layout views.
      */
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
+        mediaPanel.setLayout(cardLayout);
+        userPanel.setLayout(cardLayout);
+        tabPanel.addTab("Media", mediaPanel);
+        tabPanel.addTab("User", userPanel);
     }
 
     /**
@@ -122,7 +136,7 @@ public class AppBuilder {
      * @throws RuntimeException if this method is called before addNoteView
      */
     public AppBuilder addNoteUseCase() {
-        final NoteOutputBoundary noteOutputBoundary = new NotePresenter(noteViewModel);
+        final NoteOutputBoundary noteOutputBoundary = new NotePresenter(noteViewModel, mediaViewManagerModel);
         noteInteractor = new NoteInteractor(noteDataAccessInterface, noteOutputBoundary);
         final NoteController controller = new NoteController(noteInteractor);
         if (noteView == null) {
@@ -152,24 +166,36 @@ public class AppBuilder {
     }
 
     /**
+     * Creates the blank view for logged-out users.
+     *
+     * @return this builder
+     */
+    public AppBuilder addBlankView() {
+        blankViewModel = new BlankViewModel();
+        blankView = new BlankView(blankViewModel);
+        mediaPanel.add(blankView, blankView.getViewName());
+        return this;
+    }
+
+    /**
      * Creates the NoteView and underlying NoteViewModel.
      * @return this builder
      */
     public AppBuilder addNoteView() {
         noteViewModel = new NoteViewModel();
         noteView = new NoteView(noteViewModel);
-        cardPanel.add(noteView, noteView.getViewName());
+        mediaPanel.add(noteView, noteView.getViewName());
         return this;
     }
 
     /**
-     * Adds the Signup View to the application.
+     * Adds the Signup View to the user panel.
      * @return this builder
      */
     public AppBuilder addSignupView() {
         signupViewModel = new SignupViewModel();
         signupView = new SignupView(signupViewModel);
-        cardPanel.add(signupView, signupView.getViewName());
+        userPanel.add(signupView, signupView.getViewName());
         return this;
     }
 
@@ -180,7 +206,7 @@ public class AppBuilder {
     public AppBuilder addLoginView() {
         loginViewModel = new LoginViewModel();
         loginView = new LoginView(loginViewModel);
-        cardPanel.add(loginView, loginView.getViewName());
+        userPanel.add(loginView, loginView.getViewName());
         return this;
     }
 
@@ -191,7 +217,7 @@ public class AppBuilder {
     public AppBuilder addLoggedInView() {
         loggedInViewModel = new LoggedInViewModel();
         loggedInView = new LoggedInView(loggedInViewModel);
-        cardPanel.add(loggedInView, loggedInView.getViewName());
+        userPanel.add(loggedInView, loggedInView.getViewName());
         return this;
     }
 
@@ -200,7 +226,7 @@ public class AppBuilder {
      * @return this builder
      */
     public AppBuilder addSignupUseCase() {
-        final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,
+        final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(userViewManagerModel,
                 signupViewModel, loginViewModel);
         final SignupInputBoundary userSignupInteractor = new SignupInteractor(
                 userDataAccessObject, signupOutputBoundary);
@@ -215,8 +241,8 @@ public class AppBuilder {
      * @return this builder
      */
     public AppBuilder addLoginUseCase() {
-        final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(viewManagerModel,
-                loggedInViewModel, signupViewModel, noteViewModel, loginViewModel);
+        final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(userViewManagerModel,
+                mediaViewManagerModel, loggedInViewModel, signupViewModel, noteViewModel, loginViewModel);
         final LoginInputBoundary loginInteractor = new LoginInteractor(
                 userDataAccessObject, loginOutputBoundary);
 
@@ -247,8 +273,8 @@ public class AppBuilder {
      * @return this builder
      */
     public AppBuilder addLogoutUseCase() {
-        final LogoutOutputBoundary logoutOutputBoundary = new LogoutPresenter(viewManagerModel,
-                loggedInViewModel, loginViewModel);
+        final LogoutOutputBoundary logoutOutputBoundary = new LogoutPresenter(userViewManagerModel,
+                mediaViewManagerModel, blankViewModel, loggedInViewModel, loginViewModel);
 
         final LogoutInputBoundary logoutInteractor =
                 new LogoutInteractor(userDataAccessObject, logoutOutputBoundary);
@@ -268,10 +294,10 @@ public class AppBuilder {
         application.setTitle("MediaSage");
         application.setSize(WIDTH, HEIGHT);
 
-        application.add(cardPanel);
+        application.add(tabPanel);
 
-        viewManagerModel.setState(loginView.getViewName());
-        viewManagerModel.firePropertyChanged();
+        userViewManagerModel.setState(loginView.getViewName());
+        userViewManagerModel.firePropertyChanged();
 
         return application;
 
