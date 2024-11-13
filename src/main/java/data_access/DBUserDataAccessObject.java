@@ -57,7 +57,13 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
                 final String name = userJSONObject.getString(USERNAME);
                 final String password = userJSONObject.getString(PASSWORD);
                 final JSONObject data = userJSONObject.getJSONObject(INFO);
-                final String notes = data.getString(NOTE);
+                final String notes;
+                if (!data.has(NOTE)) {
+                    notes = "";
+                }
+                else {
+                    notes = data.getString(NOTE);
+                }
 
                 return new User(name, password, notes);
             }
@@ -228,7 +234,12 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
             if (responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE) {
                 final JSONObject userJSONObject = responseBody.getJSONObject("user");
                 final JSONObject data = userJSONObject.getJSONObject(INFO);
-                return data.getString(NOTE);
+                if (!data.has(NOTE)) {
+                    return "";
+                }
+                else {
+                    return data.getString(NOTE);
+                }
             }
             else {
                 throw new DataAccessException(responseBody.getString(MESSAGE));

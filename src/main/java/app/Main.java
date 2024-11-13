@@ -51,12 +51,12 @@ public class Main {
      */
     public static void main(String[] args) {
 
-        final NoteDataAccessInterface noteDataAccess = new DBUserDataAccessObject();
+        final DBUserDataAccessObject userDataAccessObject = new DBUserDataAccessObject();
         final GenDataAccessInterface genDataAccessInterface = new TasteDiveRecommendation();
         genDataAccessInterface.loadApiKeyFromFile();
 
         final AppBuilder builder = new AppBuilder();
-        builder.addNoteDAO(noteDataAccess)
+        builder.addUserDAO(userDataAccessObject)
                 .addGenDAO(genDataAccessInterface)
                 .addBlankView()
                 .addNoteView()
