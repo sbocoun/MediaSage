@@ -2,13 +2,6 @@ package data_access;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
-import use_case.generate_recommendations.MovieDBDataAccessInterface;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -16,6 +9,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import use_case.generate_recommendations.MovieDBDataAccessInterface;
 
 /**
  * The DAO for the TMDB, responsible for getting information about movies and shows.
