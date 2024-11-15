@@ -1,9 +1,6 @@
 package data_access;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -167,16 +164,11 @@ public class MovieDBDataAccessObject implements MovieDBDataAccessInterface {
     }
 
     /**
-     * Load the api key from the resources/apikey.
-     * @throws RuntimeException if there's an error reading the apikey file.
+     * Load the api key to be used for api calls.
+     *
+     * @param apikey the TMDB API key to be used
      */
-    public void loadApiKeyFromFile() {
-        try {
-            this.apiKey = Files.readString(Paths.get(getClass().getClassLoader()
-                    .getResource("TMDB_apikey").toURI()));
-        }
-        catch (IOException | URISyntaxException ex) {
-            throw new RuntimeException(ex);
-        }
+    public void setApiKey(String apikey) {
+        this.apiKey = apikey;
     }
 }
