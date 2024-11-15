@@ -1,8 +1,7 @@
 package use_case.generate_recommendations;
 
-import org.json.JSONObject;
-
 import data_access.MovieDBDataAccessException;
+import entity.Movie;
 
 /**
  * Interface for the TMDB. Includes methods for setting the API key and getting movie information.
@@ -10,12 +9,13 @@ import data_access.MovieDBDataAccessException;
 public interface MovieDBDataAccessInterface {
 
     /**
-     * Get the complete details of a movie from the TMDB.
+     * Get a Movie entity, containing the complete details of a movie from TMDB.
+     *
      * @param movieName The name of the movie to be looked up.
      * @return a JSONObject containing the movie genres, cast, runtime, rating, and description.
      * @throws MovieDBDataAccessException if the TMDB API is unsuccessfully called.
      */
-    JSONObject getCompleteMovieData(String movieName) throws MovieDBDataAccessException;
+    Movie getMovie(String movieName) throws MovieDBDataAccessException;
 
     /**
      * Sets the TMDB API key apikey.
