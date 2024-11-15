@@ -18,8 +18,10 @@ public interface MovieDBDataAccessInterface {
     JSONObject getCompleteMovieData(String movieName) throws MovieDBDataAccessException;
 
     /**
-     * Loads the TMDB API key from the TMDB_apikey file in resources.
+     * Sets the TMDB API key apikey.
+     *
+     * @param apikey the TMDB API key used for api calls
      */
-    void loadApiKeyFromFile();
+    void setApiKey(String apikey);
 
 }

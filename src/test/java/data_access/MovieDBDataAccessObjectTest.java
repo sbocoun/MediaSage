@@ -1,5 +1,6 @@
 package data_access;
 
+import app.Configurator;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.BeforeClass;
@@ -16,7 +17,8 @@ public class MovieDBDataAccessObjectTest {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         MovieDBDataAccessInterface api = new MovieDBDataAccessObject();
-        api.loadApiKeyFromFile();
+        Configurator configurator = new Configurator();
+        api.setApiKey(configurator.getTmdbApiKey());
         // Filename should be TMDB_apikey
         movieDetails = api.getCompleteMovieData(MOVIE_NAME);
     }

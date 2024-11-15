@@ -29,9 +29,4 @@ public interface GenDataAccessInterface {
      * @param apiKey the api key
      */
     void setApiKey(String apiKey);
-
-    /**
-     * Load the api key from resources/apikey.
-     */
-    void loadApiKeyFromFile();
 }

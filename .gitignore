@@ -1,3 +1,4 @@
 target/*
 src/main/resources/apikey
 src/main/resources/TMDB_apikey
+src/main/resources/apikeys.yaml
