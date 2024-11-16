@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
-import data_access.DBUserDataAccessObject;
+import data_access.UserRepository;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.ChangePasswordPresenter;
@@ -39,13 +39,18 @@ import use_case.login.LoginOutputBoundary;
 import use_case.logout.LogoutInputBoundary;
 import use_case.logout.LogoutInteractor;
 import use_case.logout.LogoutOutputBoundary;
-import use_case.note.NoteDataAccessInterface;
 import use_case.note.NoteInteractor;
 import use_case.note.NoteOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
-import view.*;
+import view.BlankView;
+import view.LoggedInView;
+import view.LoginView;
+import view.NoteView;
+import view.SearchView;
+import view.SignupView;
+import view.ViewManager;
 
 /**
  * Builder for the Note Application.
@@ -69,7 +74,7 @@ public class AppBuilder {
     private final ViewManager mediaViewManager = new ViewManager(mediaPanel, cardLayout, mediaViewManagerModel);
     private final ViewManager searchViewManager = new ViewManager(searchPanel, cardLayout, searchViewManagerModel);
     // thought question: is the hard dependency below a problem?
-    private DBUserDataAccessObject userDataAccessObject;
+    private UserRepository userDataAccessObject;
     private GenDataAccessInterface genDataAccessInterface;
 
     private NoteView noteView;
@@ -104,7 +109,7 @@ public class AppBuilder {
      * @param userDAO the data access object for user information
      * @return this builder
      */
-    public AppBuilder addUserDAO(DBUserDataAccessObject userDAO) {
+    public AppBuilder addUserDAO(UserRepository userDAO) {
         this.userDataAccessObject = userDAO;
         return this;
     }

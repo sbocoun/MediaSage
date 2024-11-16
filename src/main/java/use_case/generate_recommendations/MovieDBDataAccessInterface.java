@@ -23,5 +23,4 @@ public interface MovieDBDataAccessInterface {
      * @param apikey the TMDB API key used for api calls
      */
     void setApiKey(String apikey);
-
 }
