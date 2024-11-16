@@ -4,7 +4,8 @@ CSC207 Fall 2024, Group # 74.
 A mixed-media tool for finding, rating, and saving different pieces of media.
 
 ### Configuration
-Navigate to `src/main/resources/input_apikeys.yaml`, input the respective API keys, then rename the file as `apikeys.yaml`.
+Navigate to `src/main/resources/input_apikeys.yaml`, make a copy of the file as `apikeys.yaml`, 
+then input the respective API keys.
 
 ### Group Members + GitHub Usernames
 - Sophie Miki Erenberg ([sophie-erenberg](https://github.com/sophie-erenberg/))
