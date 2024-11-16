@@ -1,9 +1,8 @@
 package app;
 
-import data_access.DBUserDataAccessObject;
 import data_access.TasteDiveRecommendation;
+import data_access.grade_api.DBUserDataAccessObject;
 import use_case.generate_recommendations.GenDataAccessInterface;
-import use_case.note.NoteDataAccessInterface;
 
 /**
  * An application where we can view and add to a note stored by a user.
