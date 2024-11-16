@@ -87,9 +87,7 @@ public class MovieDBDataAccessObject implements MovieDBDataAccessInterface {
                 .get()
                 .build();
 
-        try {
-            final Response response = client.newCall(request).execute();
-
+        try (Response response = client.newCall(request).execute()) {
             final JSONObject responseBody = new JSONObject(response.body().string());
 
             if (response.isSuccessful()) {
@@ -123,9 +121,7 @@ public class MovieDBDataAccessObject implements MovieDBDataAccessInterface {
                 .addHeader(AUTHORIZATION, BEARER + apiKey)
                 .build();
 
-        try {
-            final Response response = client.newCall(request).execute();
-
+        try (Response response = client.newCall(request).execute()) {
             final JSONObject responseBody = new JSONObject(response.body().string());
 
             if (response.isSuccessful()) {
@@ -158,9 +154,7 @@ public class MovieDBDataAccessObject implements MovieDBDataAccessInterface {
                 .addHeader(AUTHORIZATION, BEARER + apiKey)
                 .build();
 
-        try {
-            final Response response = client.newCall(request).execute();
-
+        try (Response response = client.newCall(request).execute()) {
             final JSONObject responseBody = new JSONObject(response.body().string());
 
             if (response.isSuccessful()) {
