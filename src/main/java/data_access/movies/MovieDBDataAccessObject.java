@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONException;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import entity.Movie;
@@ -71,82 +70,45 @@ public class MovieDBDataAccessObject implements MovieDBDataAccessInterface {
     }
 
     /**
-     * Get the ID of a movie from the TMDB.
+     * Get the ID of a movie from TMDB.
      * @param movieName The name of the movie to be looked up.
-     * @return the TMDB ID of the corresponding movie.
-     * @throws MovieDBDataAccessException if the TMDB API is unsuccessfully called.
-     * @throws RuntimeException if there's an error formatting the JSON output.
+     * @return TMDB ID of the corresponding movie.
+     * @throws MovieDBDataAccessException if TMDB API is unsuccessfully called.
      */
     private int getMovieID(String movieName) throws MovieDBDataAccessException {
-
-        final OkHttpClient client = new OkHttpClient();
-
         final Request request = new Request.Builder()
                 .url("https://api.themoviedb.org/3/search/movie?query=" + movieName
                         + "&include_adult=true&language=en-US&page=1&api_key=" + apiKey)
                 .get()
                 .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            final JSONObject responseBody = new JSONObject(response.body().string());
-
-            if (response.isSuccessful()) {
-                return responseBody.getJSONArray("results").getJSONObject(0).getInt("id");
-            }
-            else {
-                throw new MovieDBDataAccessException(responseBody.getString(MESSAGE));
-            }
-        }
-        catch (IOException | JSONException ex) {
-            throw new RuntimeException(ex);
-        }
+        final JSONObject responseBody = getExternalData(request);
+        return responseBody.getJSONArray("results").getJSONObject(0).getInt("id");
     }
 
     /**
-     * Get the details of a movie from the TMDB.
+     * Get the details of a movie from TMDB.
      * @param movieID The ID of the movie to be looked up.
      * @return a JSONObject containing the movie's genres (in a JSONArray),
      *      its runtime (in minutes), a description, a rating (out of 10.0).
-     * @throws MovieDBDataAccessException if the TMDB API is unsuccessfully called.
-     * @throws RuntimeException if there's an error formatting the JSON output.
+     * @throws MovieDBDataAccessException if TMDB API is unsuccessfully called.
      */
     private JSONObject getMovieDetails(int movieID) throws MovieDBDataAccessException {
-
-        final OkHttpClient client = new OkHttpClient();
-
         final Request request = new Request.Builder()
                 .url("https://api.themoviedb.org/3/movie/" + movieID + "?language=en-US&api_key=" + apiKey)
                 .get()
                 .addHeader(ACCEPT, CONTENT_TYPE)
                 .addHeader(AUTHORIZATION, BEARER + apiKey)
                 .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            final JSONObject responseBody = new JSONObject(response.body().string());
-
-            if (response.isSuccessful()) {
-                return responseBody;
-            }
-            else {
-                throw new MovieDBDataAccessException(responseBody.getString(MESSAGE));
-            }
-        }
-        catch (IOException | JSONException ex) {
-            throw new RuntimeException(ex);
-        }
+        return getExternalData(request);
     }
 
     /**
-     * Get the cast of a movie from the TMDB.
+     * Get the cast of a movie from TMDB.
      * @param movieID The ID of the movie to be looked up.
-     * @return a JSONArray containing names of {@value #CAST_LIMIT} of the movie's cast members.
-     * @throws MovieDBDataAccessException if the TMDB API is unsuccessfully called.
-     * @throws RuntimeException if there's an error formatting the JSON output.
+     * @return the JSON response as returned by The Movie Database.
+     * @throws MovieDBDataAccessException if TMDB API is unsuccessfully called.
      */
-    private List<String> getMovieCast(int movieID) throws MovieDBDataAccessException {
-
-        final OkHttpClient client = new OkHttpClient();
-
+    private JSONObject getMovieCast(int movieID) throws MovieDBDataAccessException {
         final Request request = new Request.Builder()
                 .url("https://api.themoviedb.org/3/movie/" + movieID + "/credits?language=en-US&api_key=" + apiKey)
                 .get()
@@ -154,32 +116,44 @@ public class MovieDBDataAccessObject implements MovieDBDataAccessInterface {
                 .addHeader(AUTHORIZATION, BEARER + apiKey)
                 .build();
 
-        try (Response response = client.newCall(request).execute()) {
-            final JSONObject responseBody = new JSONObject(response.body().string());
+        return getExternalData(request);
+    }
 
+    /**
+     * A call to TMDB API.
+     *
+     * @param request the request for TMDB
+     * @return the JSON response from TMDB
+     * @throws MovieDBDataAccessException the error provided by the API
+     */
+    @NotNull
+    private JSONObject getExternalData(Request request) throws MovieDBDataAccessException {
+        final OkHttpClient client = new OkHttpClient();
+
+        try (Response response = client.newCall(request).execute()) {
+            final Request sanitizedRequest = new Request.Builder(request).removeHeader(AUTHORIZATION).build();
+            if (response.body() == null) {
+                final String error = "Got a null response while calling TMDB API. "
+                        + "Request without authorization: " + sanitizedRequest;
+                throw new MovieDBDataAccessException(error);
+            }
+            final JSONObject responseBody = new JSONObject(response.body().string());
             if (response.isSuccessful()) {
-                final JSONArray cast = responseBody.getJSONArray("cast");
-                final List<String> parsedCast = new ArrayList<>();
-                for (int i = 0; i < cast.length() && parsedCast.size() < CAST_LIMIT; i++) {
-                    if (cast.getJSONObject(i).getString("known_for_department").equals("Acting")) {
-                        parsedCast.add(cast.getJSONObject(i).getString("name"));
-                    }
-                }
-                return parsedCast;
+                return responseBody;
             }
             else {
                 throw new MovieDBDataAccessException(responseBody.getString(MESSAGE));
             }
         }
-        catch (IOException | JSONException ex) {
-            throw new RuntimeException(ex);
+        catch (IOException ex) {
+            throw new MovieDBDataAccessException("IOException occurred while calling TMDB API: " + ex.getMessage());
         }
     }
 
     /**
      * Load the api key to be used for api calls.
      *
-     * @param apikey the TMDB API key to be used
+     * @param apikey TMDB API key to be used
      */
     public void setApiKey(String apikey) {
         this.apiKey = apikey;
