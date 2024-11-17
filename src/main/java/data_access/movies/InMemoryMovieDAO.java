@@ -49,21 +49,24 @@ public class InMemoryMovieDAO implements MovieDBDataAccessInterface {
 
     /**
      * Load the sample movie response from resources to the in-memory database.
+     *
+     * @param movieDetailFilename file name for the json file containing a TMDB movie detail response
+     * @param castDetailFilename file name for the json file containing a TMDB cast detail response
      */
-    public void loadMovieFromFile() {
+    public void loadMovieFromFiles(String movieDetailFilename, String castDetailFilename) {
         try {
             final JSONObject rawMovieDetails = new JSONObject(Files.readString(Paths.get(
                     Objects.requireNonNull(getClass().getClassLoader()
-                            .getResource("tmdb-sample-response.json")).toURI())));
+                            .getResource(movieDetailFilename)).toURI())));
             final JSONObject rawMovieCast = new JSONObject(Files.readString(Paths.get(
                     Objects.requireNonNull(getClass().getClassLoader()
-                            .getResource("tmdb-sample-cast-response.json")).toURI())));
+                            .getResource(castDetailFilename)).toURI())));
             addMovie(MovieJSONFormat.parseMovie(rawMovieDetails, rawMovieCast));
         }
         catch (IOException | URISyntaxException ex) {
             System.out.println("Reading movie DB sample response failed. Check if "
-                    + "both src/main/resources/tmdb-sample-response.json "
-                    + "and src/main/resources/tmdb-sample-cast-response.json exist.");
+                    + "both src/main/resources/" + movieDetailFilename
+                    + "and src/main/resources/" + castDetailFilename + " exist.");
         }
     }
 }
