@@ -1,2 +1,3 @@
 target/*
-resources/apikey
+src/main/resources/apikey
+src/main/resources/TMDB_apikey
