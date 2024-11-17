@@ -1,21 +1,18 @@
 package data_access.movies;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import entity.Movie;
-import entity.Rating;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import use_case.generate_recommendations.MovieDBDataAccessInterface;
 
 /**
- * The DAO for the TMDB, responsible for getting information about movies and shows.
+ * The DAO for TMDB, responsible for getting information about movies and shows.
  * See
  *  * <a href= "https://developer.themoviedb.org/docs/getting-started">
  *  the documentation</a>
@@ -24,9 +21,6 @@ import use_case.generate_recommendations.MovieDBDataAccessInterface;
 public class MovieDBDataAccessObject implements MovieDBDataAccessInterface {
 
     private static final String MESSAGE = "message";
-    private static final String GENRES = "genres";
-    private static final String RUNTIME = "runtime";
-    private static final int CAST_LIMIT = 5;
     private static final String ACCEPT = "accept";
     private static final String CONTENT_TYPE = "application/json";
     private static final String AUTHORIZATION = "Authorization";
@@ -34,39 +28,18 @@ public class MovieDBDataAccessObject implements MovieDBDataAccessInterface {
     private String apiKey;
 
     /**
-     * Get the complete details of a movie from the TMDB.
+     * Get the complete details of a movie from TMDB.
      *
      * @param movieName The name of the movie to be looked up.
      * @return a JSONObject containing the movie genres, cast, runtime, rating, and description.
-     * @throws MovieDBDataAccessException if the TMDB API is unsuccessfully called.
+     * @throws MovieDBDataAccessException if TMDB API is unsuccessfully called.
      */
     public Movie getMovie(String movieName) throws MovieDBDataAccessException {
         final int movieID = getMovieID(movieName);
-        final JSONObject completeMovieData = getMovieDetails(movieID);
-        final double ratingNormalized = completeMovieData.getDouble("vote_average") * 10;
+        final JSONObject movieDetails = getMovieDetails(movieID);
+        final JSONObject castDetails = getMovieCast(movieID);
 
-        final String name = completeMovieData.getString("title");
-        final List<String> genres = getGenres(completeMovieData);
-        final Rating rating = new Rating((int) ratingNormalized);
-        final String description = completeMovieData.getString("overview");
-        final List<String> castMembers = getMovieCast(movieID);
-        final int minuteRunTime = completeMovieData.getInt(RUNTIME);
-        return new Movie(name, genres, rating, description, castMembers, minuteRunTime);
-    }
-
-    /**
-     * Get the genres of a movie in the given JSON data.
-     * @param movieData JSON information from which to retrieve the genres
-     * @return list of genres
-     * @throws JSONException if the JSON information doesn't contain the correct information/format
-     */
-    private List<String> getGenres(JSONObject movieData) throws JSONException {
-        final List<String> result = new ArrayList<>();
-        final JSONArray genres = movieData.getJSONArray(GENRES);
-        for (int i = 0; i < genres.length(); i++) {
-            result.add(genres.getJSONObject(i).getString("name"));
-        }
-        return result;
+        return MovieJSONFormat.parseMovie(movieDetails, castDetails);
     }
 
     /**

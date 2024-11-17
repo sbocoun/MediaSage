@@ -1,6 +1,6 @@
 package use_case.generate_recommendations;
 
-import data_access.MovieDBDataAccessException;
+import data_access.movies.MovieDBDataAccessException;
 import entity.Movie;
 
 /**
