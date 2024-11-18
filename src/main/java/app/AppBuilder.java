@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
-import data_access.DBUserDataAccessObject;
+import data_access.grade_api.DBUserDataAccessObject;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.ChangePasswordPresenter;
@@ -39,7 +39,6 @@ import use_case.login.LoginOutputBoundary;
 import use_case.logout.LogoutInputBoundary;
 import use_case.logout.LogoutInteractor;
 import use_case.logout.LogoutOutputBoundary;
-import use_case.note.NoteDataAccessInterface;
 import use_case.note.NoteInteractor;
 import use_case.note.NoteOutputBoundary;
 import use_case.signup.SignupInputBoundary;
@@ -64,12 +63,12 @@ public class AppBuilder {
     private final ViewManagerModel userViewManagerModel = new ViewManagerModel();
     private final ViewManagerModel mediaViewManagerModel = new ViewManagerModel();
     private final ViewManagerModel searchViewManagerModel = new ViewManagerModel();
+    // observers that listen for when the view should change
     private final ViewManager userViewManager = new ViewManager(userPanel, cardLayout, userViewManagerModel);
     private final ViewManager mediaViewManager = new ViewManager(mediaPanel, cardLayout, mediaViewManagerModel);
     private final ViewManager searchViewManager = new ViewManager(searchPanel, cardLayout, searchViewManagerModel);
     // thought question: is the hard dependency below a problem?
-    private DBUserDataAccessObject userDataAccessObject = new DBUserDataAccessObject();
-    private NoteDataAccessInterface noteDataAccessInterface;
+    private DBUserDataAccessObject userDataAccessObject;
     private GenDataAccessInterface genDataAccessInterface;
 
     private NoteView noteView;
@@ -84,6 +83,7 @@ public class AppBuilder {
     private LoggedInViewModel loggedInViewModel;
     private LoggedInView loggedInView;
     private LoginView loginView;
+    private ListView listView;
 
     /**
      * Adds the initial tabs and card layout views.
@@ -100,21 +100,11 @@ public class AppBuilder {
     /**
      * Adds the data access object for user information.
      *
+     * @param userDAO the data access object for user information
      * @return this builder
      */
-    public AppBuilder addUserDAO() {
-        this.userDataAccessObject = new DBUserDataAccessObject();
-        return this;
-    }
-
-    /**
-     * Adds the note data access object for user notes.
-     *
-     * @param noteDAO the note data access interface to use
-     * @return this builder
-     */
-    public AppBuilder addNoteDAO(NoteDataAccessInterface noteDAO) {
-        this.noteDataAccessInterface = noteDAO;
+    public AppBuilder addUserDAO(DBUserDataAccessObject userDAO) {
+        this.userDataAccessObject = userDAO;
         return this;
     }
 
@@ -139,7 +129,7 @@ public class AppBuilder {
      */
     public AppBuilder addNoteUseCase() {
         final NoteOutputBoundary noteOutputBoundary = new NotePresenter(noteViewModel, mediaViewManagerModel);
-        noteInteractor = new NoteInteractor(noteDataAccessInterface, noteOutputBoundary);
+        noteInteractor = new NoteInteractor(userDataAccessObject, noteOutputBoundary);
         final NoteController controller = new NoteController(noteInteractor);
         if (noteView == null) {
             throw new RuntimeException("addNoteView must be called before addNoteUseCase");
@@ -187,19 +177,6 @@ public class AppBuilder {
         noteViewModel = new NoteViewModel();
         noteView = new NoteView(noteViewModel);
         mediaPanel.add(noteView, noteView.getViewName());
-        return this;
-    }
-
-    /**
-     * Adds the SearchView to the application as a new tab.
-     * @return this builder
-     */
-    public AppBuilder addSearchView() {
-        searchViewModel = new SearchViewModel();
-
-        searchView = new SearchView(searchViewModel);
-        searchPanel.add(searchView, searchView.getViewName());
-
         return this;
     }
 
@@ -316,5 +293,28 @@ public class AppBuilder {
 
         return application;
 
+    }
+
+    /**
+     * Adds the SearchView to the application as a new tab.
+     * @return this builder
+     */
+    public AppBuilder addSearchView() {
+        searchViewModel = new SearchViewModel();
+
+        searchView = new SearchView(searchViewModel);
+        searchPanel.add(searchView, searchView.getViewName());
+
+        return this;
+    }
+
+    /**
+     * Adds the ListView to the application as a new tab.
+     * @return this builder
+     */
+    public AppBuilder addListView() {
+        listView = new ListView();
+        tabPanel.addTab("List", listView);
+        return this;
     }
 }
