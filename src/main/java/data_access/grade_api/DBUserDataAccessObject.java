@@ -1,4 +1,4 @@
-package data_access;
+package data_access.grade_api;
 
 import java.io.IOException;
 
@@ -47,19 +47,13 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
                 .url(String.format("http://vm003.teach.cs.toronto.edu:20112/user?username=%s", username))
                 .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
                 .build();
-        try {
-            final Response response = client.newCall(request).execute();
-
+        try (Response response = client.newCall(request).execute()) {
             final JSONObject responseBody = new JSONObject(response.body().string());
 
             if (responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE) {
                 final JSONObject userJSONObject = responseBody.getJSONObject("user");
-                final String name = userJSONObject.getString(USERNAME);
-                final String password = userJSONObject.getString(PASSWORD);
-                final JSONObject data = userJSONObject.getJSONObject(INFO);
-                final String notes = data.getString(NOTE);
-
-                return new User(name, password, notes);
+                final UserBuilder userBuilder = new UserBuilder();
+                return userBuilder.createUser(userJSONObject);
             }
             else {
                 throw new RuntimeException(responseBody.getString(MESSAGE));
@@ -98,11 +92,8 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
                 .url(String.format("http://vm003.teach.cs.toronto.edu:20112/checkIfUserExists?username=%s", username))
                 .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
                 .build();
-        try {
-            final Response response = client.newCall(request).execute();
-
+        try (Response response = client.newCall(request).execute()) {
             final JSONObject responseBody = new JSONObject(response.body().string());
-
             return responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE;
         }
         catch (IOException | JSONException ex) {
@@ -126,15 +117,10 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
                 .method("POST", body)
                 .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
                 .build();
-        try {
-            final Response response = client.newCall(request).execute();
-
+        try (Response response = client.newCall(request).execute()) {
             final JSONObject responseBody = new JSONObject(response.body().string());
 
-            if (responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE) {
-                // success!
-            }
-            else {
+            if (responseBody.getInt(STATUS_CODE_LABEL) != SUCCESS_CODE) {
                 throw new RuntimeException(responseBody.getString(MESSAGE));
             }
         }
@@ -159,9 +145,7 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
                 .method("PUT", body)
                 .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
                 .build();
-        try {
-            final Response response = client.newCall(request).execute();
-
+        try (Response response = client.newCall(request).execute()) {
             final JSONObject responseBody = new JSONObject(response.body().string());
 
             if (responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE) {
@@ -201,9 +185,7 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
                 .method("PUT", body)
                 .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
                 .build();
-        try {
-            final Response response = client.newCall(request).execute();
-
+        try (Response response = client.newCall(request).execute()) {
             final JSONObject responseBody = new JSONObject(response.body().string());
 
             if (responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE) {
@@ -230,15 +212,17 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
                 .url(String.format("http://vm003.teach.cs.toronto.edu:20112/user?username=%s", username))
                 .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
                 .build();
-        try {
-            final Response response = client.newCall(request).execute();
-
+        try (Response response = client.newCall(request).execute()) {
             final JSONObject responseBody = new JSONObject(response.body().string());
 
             if (responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE) {
                 final JSONObject userJSONObject = responseBody.getJSONObject("user");
                 final JSONObject data = userJSONObject.getJSONObject(INFO);
-                return data.getString(NOTE);
+                String result = "";
+                if (data.has(NOTE)) {
+                    result = data.getString(NOTE);
+                }
+                return result;
             }
             else {
                 throw new DataAccessException(responseBody.getString(MESSAGE));
@@ -248,5 +232,4 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
             throw new RuntimeException(ex);
         }
     }
-
 }

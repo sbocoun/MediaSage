@@ -1,9 +1,6 @@
 package data_access;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -95,16 +92,4 @@ public class TasteDiveRecommendation implements GenDataAccessInterface {
         this.apiKey = apiKey;
     }
 
-    /**
-     * Load the api key from the resources/apikey.
-     * @throws RuntimeException if there's an error reading the apikey file.
-     */
-    public void loadApiKeyFromFile() {
-        try {
-            this.apiKey = Files.readString(Paths.get(getClass().getClassLoader().getResource("apikey").toURI()));
-        }
-        catch (IOException | URISyntaxException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
 }

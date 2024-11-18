@@ -1,5 +1,6 @@
 package data_access;
 
+import app.Configurator;
 import org.junit.Test;
 import use_case.note.DataAccessException;
 import use_case.generate_recommendations.GenDataAccessInterface;
@@ -13,8 +14,9 @@ public class TasteDiveApiAccessObjectTest {
 
     @Test
     public void testApi() {
+        Configurator configurator = new Configurator();
         GenDataAccessInterface api = new TasteDiveRecommendation();
-        api.loadApiKeyFromFile();
+        api.setApiKey(configurator.getTasteDiveApiKey());
         List<String> base = new ArrayList<>();
         base.add("Alien Romulus");
         base.add("late night with the devil");
