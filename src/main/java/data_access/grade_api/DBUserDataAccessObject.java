@@ -2,6 +2,7 @@ package data_access.grade_api;
 
 import java.io.IOException;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import entity.User;
@@ -24,7 +25,6 @@ public class DBUserDataAccessObject implements UserRepository {
     private static final String PASSWORD = "password";
     private static final String MESSAGE = "message";
     private static final String INFO = "info";
-    private static final String NOTE = "note";
     private String currUsername;
     private String currPassword;
 
@@ -123,9 +123,8 @@ public class DBUserDataAccessObject implements UserRepository {
         final JSONObject requestBody = new JSONObject();
         requestBody.put(USERNAME, getCurrentUsername());
         requestBody.put(PASSWORD, this.currPassword);
-        final JSONObject extra = new JSONObject();
-        extra.put("note", note);
-        requestBody.put(INFO, extra);
+        final JSONArray mediaListArray = new JSONArray(note);
+        requestBody.put(INFO, mediaListArray);
         final MediaType mediaType = MediaType.parse(CONTENT_TYPE_JSON);
         final RequestBody body = RequestBody.create(requestBody.toString(), mediaType);
         final Request request = new Request.Builder()
@@ -153,12 +152,11 @@ public class DBUserDataAccessObject implements UserRepository {
                 .build();
         final JSONObject responseBody = getGradeApiData(request);
         final JSONObject userJSONObject = responseBody.getJSONObject("user");
-        final JSONObject data = userJSONObject.getJSONObject(INFO);
-        String note = "";
-        if (data.has(NOTE)) {
-            note = data.getString(NOTE);
+        JSONArray mediaCollectionArray = new JSONArray();
+        if (userJSONObject.get(INFO) instanceof JSONArray) {
+            mediaCollectionArray = userJSONObject.getJSONArray(INFO);
         }
-        return note;
+        return mediaCollectionArray.toString();
     }
 
     /**
