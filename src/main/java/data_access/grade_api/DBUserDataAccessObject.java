@@ -1,7 +1,13 @@
 package data_access.grade_api;
 
 import java.io.IOException;
+import java.util.List;
 
+import data_access.grade_api.incoming_data_formatting.UserBuilder;
+import data_access.grade_api.outgoing_data_formatting.CollectionJSONBuilder;
+import entity.AbstractMedia;
+import entity.MediaCollection;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -169,24 +175,31 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
     }
 
     @Override
-    public String saveNote(String note) throws DataAccessException {
+    public String saveMediaCollections(List<MediaCollection<? extends AbstractMedia>
+            > mediaCollectionsList) throws DataAccessException {
         final OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
 
         // POST METHOD
         final MediaType mediaType = MediaType.parse(CONTENT_TYPE_JSON);
         final JSONObject requestBody = new JSONObject();
+
         requestBody.put(USERNAME, getCurrentUsername());
         requestBody.put(PASSWORD, this.currPassword);
-        final JSONObject extra = new JSONObject();
-        extra.put("note", note);
-        requestBody.put(INFO, extra);
+
+        final CollectionJSONBuilder collectionsBuilder = new CollectionJSONBuilder();
+        final JSONArray mediaCollections =
+                collectionsBuilder.buildMediaCollections(mediaCollectionsList);
+
+        requestBody.put(INFO, mediaCollections);
         final RequestBody body = RequestBody.create(requestBody.toString(), mediaType);
+
         final Request request = new Request.Builder()
                 .url("http://vm003.teach.cs.toronto.edu:20112/modifyUserInfo")
                 .method("PUT", body)
                 .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
                 .build();
+
         try {
             final Response response = client.newCall(request).execute();
 

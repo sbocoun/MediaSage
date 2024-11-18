@@ -14,7 +14,7 @@ public interface NoteDataAccessInterface {
      * @return the contents of the note
      * @throws DataAccessException if the user's note can not be saved for any reason
      */
-    String saveNote(String note) throws DataAccessException;
+    String saveMediaCollections(String note) throws DataAccessException;
 
     /**
      * Returns the note associated with the user. The password

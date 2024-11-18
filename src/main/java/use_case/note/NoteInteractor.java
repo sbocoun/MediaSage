@@ -45,7 +45,7 @@ public class NoteInteractor implements NoteInputBoundary {
     public void executeSave(String note) {
         try {
 
-            final String updatedNote = noteDataAccessInterface.saveNote(note);
+            final String updatedNote = noteDataAccessInterface.saveMediaCollections(note);
             noteOutputBoundary.prepareSuccessView(updatedNote);
         }
         catch (DataAccessException ex) {
