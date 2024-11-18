@@ -6,10 +6,10 @@ import java.util.List;
  * The representation of a list of media.
  * @param <T> the type of media stored in the collection
  */
-public class MediaCollection<T> {
+public class MediaCollection<T extends AbstractMedia> {
     private String name;
     private final String collectionType;
-    private final Class<T> mediaType;
+    private final Class<? extends T> mediaType;
     private final List<T> mediaList;
 
     /**
@@ -20,7 +20,7 @@ public class MediaCollection<T> {
      * @param mediaType the type of media stored in the collection
      * @param mediaList the list of media contained in the collection
      */
-    public MediaCollection(String name, String collectionType, Class<T> mediaType, List<T> mediaList) {
+    public MediaCollection(String name, String collectionType, Class<? extends T> mediaType, List<T> mediaList) {
         this.name = name;
         this.collectionType = collectionType;
         this.mediaType = mediaType;
@@ -67,7 +67,7 @@ public class MediaCollection<T> {
      * Return the type of media stored in the collection.
      * @return the type of media stored in the collection
      */
-    public Class<T> getMediaType() {
+    public Class<? extends T> getMediaType() {
         return mediaType;
     }
 }
