@@ -83,6 +83,7 @@ public class AppBuilder {
     private LoggedInViewModel loggedInViewModel;
     private LoggedInView loggedInView;
     private LoginView loginView;
+    private ListView listView;
 
     /**
      * Adds the initial tabs and card layout views.
@@ -292,5 +293,15 @@ public class AppBuilder {
 
         return application;
 
+    }
+
+    /**
+     * Adds the ListView to the application as a new tab.
+     * @return this builder
+     */
+    public AppBuilder addListView() {
+        listView = new ListView();
+        tabPanel.addTab("List", listView);
+        return this;
     }
 }
