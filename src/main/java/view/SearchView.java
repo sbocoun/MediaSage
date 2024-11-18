@@ -1,91 +1,183 @@
 package view;
 
-import interface_adapter.login.LoginController;
-import interface_adapter.login.LoginState;
-import interface_adapter.login.LoginViewModel;
-import interface_adapter.note.NoteController;
 import interface_adapter.search.SearchViewModel;
-import interface_adapter.signup.SignupController;
 
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * The View for when the user is logging into the program.
+ * View for searching media with various filters.
  */
-public class SearchView extends JPanel implements ActionListener, PropertyChangeListener {
-
+public class SearchView extends JPanel implements PropertyChangeListener {
+    private static final int MARGIN_SIZE = 5;
     private final String viewName = "search";
     private final SearchViewModel searchViewModel;
 
-    private final JTextField usernameInputField = new JTextField(15);
-    private final JLabel usernameErrorField = new JLabel();
+    private final JComboBox<String> categoryDropdown;
+    private final JTextField keywordField = new JTextField(20);
+    private final JTextField genreField = new JTextField(20);
+    private final JTextField castField = new JTextField(20);
+    private final JButton keywordSearchButton = new JButton("Search by Keyword");
+    private final JButton genreAddButton = new JButton("Add Genre");
+    private final JButton castAddButton = new JButton("Add Cast");
+    private final JButton mainSearchButton = new JButton("Search");
 
-    private final JPasswordField passwordInputField = new JPasswordField(15);
-    private final JLabel passwordErrorField = new JLabel();
+    private final JTextArea resultsArea = new JTextArea(10, 30);
+    private final JLabel errorLabel = new JLabel("");
 
-    private final JButton logIn;
-    private final JButton signup;
-    private LoginController loginController;
-    private SignupController signupController;
-    private NoteController noteController;
+    // Panel to display current query
+    private final JPanel queryPanel = new JPanel();
+    // List to store query filters
+    private final List<String> queryFilters = new ArrayList<>();
 
     public SearchView(SearchViewModel searchViewModel) {
-
         this.searchViewModel = searchViewModel;
         this.searchViewModel.addPropertyChangeListener(this);
 
-        final JLabel title = new JLabel("Login Screen");
-        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        final LabelTextPanel usernameInfo = new LabelTextPanel(
-                new JLabel("Username"), usernameInputField);
-        final LabelTextPanel passwordInfo = new LabelTextPanel(
-                new JLabel("Password"), passwordInputField);
+        // Category selection panel
+        final JPanel categoryPanel = new JPanel(new FlowLayout());
+        categoryPanel.add(new JLabel("Category:"));
+        categoryDropdown = new JComboBox<>(new String[]{"Movie", "TV Show", "Documentary"});
+        categoryPanel.add(categoryDropdown);
+        add(categoryPanel);
 
-        final JPanel buttons = new JPanel();
-        logIn = new JButton("log in");
-        buttons.add(logIn);
-        signup = new JButton("sign up");
-        buttons.add(signup);
+        // Keyword search panel
+        final JPanel keywordPanel = new JPanel(new FlowLayout());
+        keywordPanel.add(new JLabel("Keyword:"));
+        keywordPanel.add(keywordField);
+        keywordPanel.add(keywordSearchButton);
+        add(keywordPanel);
+
+        // Genre filter panel
+        final JPanel genrePanel = new JPanel(new FlowLayout());
+        genrePanel.add(new JLabel("Genre:"));
+        genrePanel.add(genreField);
+        genrePanel.add(genreAddButton);
+        add(genrePanel);
+
+        // Cast filter panel
+        final JPanel castPanel = new JPanel(new FlowLayout());
+        castPanel.add(new JLabel("Cast:"));
+        castPanel.add(castField);
+        castPanel.add(castAddButton);
+        add(castPanel);
+
+        // Query display panel
+        final JPanel queryDisplayPanel = new JPanel();
+        queryDisplayPanel.setLayout(new BoxLayout(queryDisplayPanel, BoxLayout.Y_AXIS));
+        queryDisplayPanel.add(new JLabel("Query:"));
+        queryPanel.setLayout(new BoxLayout(queryPanel, BoxLayout.Y_AXIS));
+        queryDisplayPanel.add(queryPanel);
+        add(queryDisplayPanel);
+
+        // Results area
+        resultsArea.setEditable(false);
+        final JScrollPane scrollPane = new JScrollPane(resultsArea);
+        add(scrollPane);
+
+        // Error label
+        errorLabel.setForeground(Color.RED);
+        add(errorLabel);
+
+        // Main search button
+        add(mainSearchButton);
+
+        // Action listeners
+        genreAddButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SearchView.this.addFilter("Genre", genreField.getText());
+            }
+        });
+        castAddButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SearchView.this.addFilter("Cast", castField.getText());
+            }
+        });
     }
-
 
     /**
-     * React to a button click that results in evt.
-     * @param evt the ActionEvent to react to
+     * Adds a filter to the query and updates the query panel.
+     *
+     * @param type  the type of filter (e.g., Genre, Cast)
+     * @param value the value of the filter
      */
-    public void actionPerformed(ActionEvent evt) {
-        System.out.println("Click " + evt.getActionCommand());
+    private void addFilter(String type, String value) {
+        if (value.isEmpty()) {
+            showError(type + " filter cannot be empty.");
+        }
+        else {
+            clearError();
+            queryFilters.add(type + ": " + value);
+            final JLabel filterLabel = new JLabel(type + ": " + value);
+            filterLabel.setOpaque(true);
+            filterLabel.setBackground(Color.LIGHT_GRAY);
+            filterLabel.setBorder(BorderFactory.createEmptyBorder(MARGIN_SIZE, MARGIN_SIZE, MARGIN_SIZE, MARGIN_SIZE));
+            queryPanel.add(filterLabel);
+            queryPanel.revalidate();
+            queryPanel.repaint();
+        }
     }
 
+    /**
+     * Reacts to changes in SearchViewModel's properties.
+     *
+     * @param evt the property change event
+     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        final LoginState state = (LoginState) evt.getNewValue();
-        setFields(state);
-        usernameErrorField.setText(state.getLoginError());
+        if ("searchResults".equals(evt.getPropertyName())) {
+            updateResultsDisplay((String) evt.getNewValue());
+        }
+        else if ("errorMessage".equals(evt.getPropertyName())) {
+            showError((String) evt.getNewValue());
+        }
     }
 
-    private void setFields(LoginState state) {
-        usernameInputField.setText(state.getUsername());
-        passwordInputField.setText(state.getPassword());
+    /**
+     * Updates the results display area.
+     *
+     * @param results the search results to display
+     */
+    private void updateResultsDisplay(String results) {
+        resultsArea.setText(results);
+    }
+
+    /**
+     * Displays an error message.
+     *
+     * @param errorMessage the error message to display
+     */
+    private void showError(String errorMessage) {
+        errorLabel.setText(errorMessage);
+    }
+
+    /**
+     * Clears the error message.
+     */
+    private void clearError() {
+        errorLabel.setText("");
     }
 
     public String getViewName() {
         return viewName;
-    }
-
-    public void setLoginController(LoginController loginController) {
-        this.loginController = loginController;
-    }
-
-    public void setNoteController(NoteController noteController) {
-        this.noteController = noteController;
     }
 }

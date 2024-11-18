@@ -190,10 +190,16 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Adds the SearchView to the application as a new tab.
+     * @return this builder
+     */
     public AppBuilder addSearchView() {
         searchViewModel = new SearchViewModel();
+
         searchView = new SearchView(searchViewModel);
         searchPanel.add(searchView, searchView.getViewName());
+
         return this;
     }
 
