@@ -1,5 +1,6 @@
 package entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ public class User {
 
     private String name;
     private String password;
-    private List<MediaCollection<AbstractMedia>> mediaCollections;
+    private List<MediaCollection<? extends AbstractMedia>> mediaCollections;
     // This is temporary before the JSON to entity parser is implemented
     private String notes;
 
@@ -39,12 +40,23 @@ public class User {
         this.password = password;
     }
 
-    public List<MediaCollection<AbstractMedia>> getMediaCollections() {
-        return mediaCollections;
+    public void setMediaCollections(List<MediaCollection<? extends AbstractMedia>> mediaCollections) {
+        this.mediaCollections = mediaCollections;
     }
 
-    public void setMediaCollections(List<MediaCollection<AbstractMedia>> mediaCollections) {
-        this.mediaCollections = mediaCollections;
+    /**
+     * Return a (mutable) list of media collections.
+     * @return a list of media collections
+     */
+    @SuppressWarnings("unchecked")
+    public List<MediaCollection<Movie>> getMediaCollectionsMovies() {
+        final List<MediaCollection<Movie>> movieCollections = new ArrayList<>();
+        for (MediaCollection<? extends AbstractMedia> mediaCollection : mediaCollections) {
+            if (mediaCollection.getMediaType() == Movie.class) {
+                movieCollections.add((MediaCollection<Movie>) mediaCollection);
+            }
+        }
+        return movieCollections;
     }
 
     public String getNotes() {
