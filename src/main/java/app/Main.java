@@ -69,6 +69,7 @@ public class Main {
                 .addLoginUseCase()
                 .addChangePasswordUseCase()
                 .addLogoutUseCase()
+                .addListView()
                 .build().setVisible(true);
     }
 }
