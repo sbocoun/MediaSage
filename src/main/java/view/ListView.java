@@ -1,5 +1,13 @@
 package view;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -8,16 +16,13 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 
+/**
+ * View for each of the MediaCollections.
+ */
 public class ListView extends JPanel implements ActionListener {
 
-    private final JComboBox<String> listSelector = new JComboBox<>(new String[]{"Watched", "PLan", "Favourites"});
-    private final JLabel currentListLabel = new JLabel("Watched");
+    private final JComboBox<String> listSelector = new JComboBox<>(new String[]{"Watched", "Plan", "Favourites"});
     private final JButton filterButton = new JButton("Filter");
     private final JButton removeButton = new JButton("Remove");
     private final JButton moveToButton = new JButton("Move to");
