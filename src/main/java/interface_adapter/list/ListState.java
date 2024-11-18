@@ -12,6 +12,7 @@ public class ListState {
     private String currentCollectionName;
     private String currentCollectionType;
     private TableModel tableModel;
+    private String errorMessage;
 
     public List<String> getAvailableCollections() {
         return availableCollections;
@@ -43,5 +44,13 @@ public class ListState {
 
     public void setTableModel(TableModel tableModel) {
         this.tableModel = tableModel;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }

@@ -1,12 +1,15 @@
 package entity;
 
+import java.util.Iterator;
 import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The representation of a list of media.
  * @param <T> the type of media stored in the collection
  */
-public class MediaCollection<T extends AbstractMedia> {
+public class MediaCollection<T extends AbstractMedia> implements Iterable<T> {
     private String name;
     private final String collectionType;
     private final Class<? extends T> mediaType;
@@ -40,14 +43,6 @@ public class MediaCollection<T extends AbstractMedia> {
     }
 
     /**
-     * Return a (mutable) list of media.
-     * @return a list of media
-     */
-    public List<T> getMediaList() {
-        return mediaList;
-    }
-
-    /**
      * Add a piece of media to the collection.
      * @param media the media to add
      */
@@ -69,5 +64,11 @@ public class MediaCollection<T extends AbstractMedia> {
      */
     public Class<? extends T> getMediaType() {
         return mediaType;
+    }
+
+    @NotNull
+    @Override
+    public Iterator<T> iterator() {
+        return mediaList.iterator();
     }
 }

@@ -1,6 +1,5 @@
 package entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,7 +9,7 @@ public class User {
 
     private String name;
     private String password;
-    private List<MediaCollection<? extends AbstractMedia>> mediaCollections;
+    private List<MediaCollection<Movie>> movieCollections;
 
     public User(String name, String password) {
         this.name = name;
@@ -33,22 +32,26 @@ public class User {
         this.password = password;
     }
 
-    public void setMediaCollections(List<MediaCollection<? extends AbstractMedia>> mediaCollections) {
-        this.mediaCollections = mediaCollections;
+    public void setMovieCollections(List<MediaCollection<Movie>> movieCollections) {
+        this.movieCollections = movieCollections;
     }
 
-    /**
-     * Return a (mutable) list of media collections.
-     * @return a list of media collections
-     */
-    @SuppressWarnings("unchecked")
-    public List<MediaCollection<Movie>> getMediaCollectionsMovies() {
-        final List<MediaCollection<Movie>> movieCollections = new ArrayList<>();
-        for (MediaCollection<? extends AbstractMedia> mediaCollection : mediaCollections) {
-            if (mediaCollection.getMediaType() == Movie.class) {
-                movieCollections.add((MediaCollection<Movie>) mediaCollection);
-            }
-        }
+    public List<MediaCollection<Movie>> getMovieCollections() {
         return movieCollections;
     }
+
+    // /**
+    //  * Return a (mutable) list of media collections.
+    //  * @return a list of media collections
+    //  */
+    // @SuppressWarnings("unchecked")
+    // public List<MediaCollection<Movie>> getMediaCollectionsMovies() {
+    //     final List<MediaCollection<Movie>> movieCollections = new ArrayList<>();
+    //     for (MediaCollection<? extends AbstractMedia> mediaCollection : mediaCollections) {
+    //         if (mediaCollection.getMediaType() == Movie.class) {
+    //             movieCollections.add((MediaCollection<Movie>) mediaCollection);
+    //         }
+    //     }
+    //     return movieCollections;
+    // }
 }

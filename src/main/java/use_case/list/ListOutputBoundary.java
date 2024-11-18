@@ -13,8 +13,8 @@ public interface ListOutputBoundary {
 
     /**
      * Prepares the failure view for the media collection list display Use Case.
-     * @param errorMessage the explanation of the failure
+     * @param listOutputData output data containing the explanation of the failure, and a list of available collections
      */
-    void prepareFailView(String errorMessage);
+    void prepareFailView(ListOutputData listOutputData);
 
 }
