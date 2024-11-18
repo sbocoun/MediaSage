@@ -1,4 +1,4 @@
-package data_access;
+package data_access.grade_api;
 
 import java.io.IOException;
 
@@ -52,18 +52,8 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
 
             if (responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE) {
                 final JSONObject userJSONObject = responseBody.getJSONObject("user");
-                final String name = userJSONObject.getString(USERNAME);
-                final String password = userJSONObject.getString(PASSWORD);
-                final JSONObject data = userJSONObject.getJSONObject(INFO);
-                final String notes;
-                if (!data.has(NOTE)) {
-                    notes = "";
-                }
-                else {
-                    notes = data.getString(NOTE);
-                }
-
-                return new User(name, password, notes);
+                final UserBuilder userBuilder = new UserBuilder();
+                return userBuilder.createUser(userJSONObject);
             }
             else {
                 throw new RuntimeException(responseBody.getString(MESSAGE));
@@ -232,5 +222,4 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
             throw new RuntimeException(ex);
         }
     }
-
 }

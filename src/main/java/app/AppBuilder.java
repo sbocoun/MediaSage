@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
-import data_access.DBUserDataAccessObject;
+import data_access.grade_api.DBUserDataAccessObject;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.ChangePasswordPresenter;
@@ -39,7 +39,6 @@ import use_case.login.LoginOutputBoundary;
 import use_case.logout.LogoutInputBoundary;
 import use_case.logout.LogoutInteractor;
 import use_case.logout.LogoutOutputBoundary;
-import use_case.note.NoteDataAccessInterface;
 import use_case.note.NoteInteractor;
 import use_case.note.NoteOutputBoundary;
 import use_case.signup.SignupInputBoundary;
@@ -84,6 +83,7 @@ public class AppBuilder {
     private LoggedInViewModel loggedInViewModel;
     private LoggedInView loggedInView;
     private LoginView loginView;
+    private ListView listView;
 
     /**
      * Adds the initial tabs and card layout views.
@@ -293,5 +293,15 @@ public class AppBuilder {
 
         return application;
 
+    }
+
+    /**
+     * Adds the ListView to the application as a new tab.
+     * @return this builder
+     */
+    public AppBuilder addListView() {
+        listView = new ListView();
+        tabPanel.addTab("List", listView);
+        return this;
     }
 }
