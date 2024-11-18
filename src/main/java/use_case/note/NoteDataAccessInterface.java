@@ -1,5 +1,10 @@
 package use_case.note;
 
+import entity.AbstractMedia;
+import entity.MediaCollection;
+
+import java.util.List;
+
 /**
  * Interface for the NoteDAO. It consists of methods for
  * both loading and saving a note.
@@ -10,11 +15,11 @@ public interface NoteDataAccessInterface {
      * Saves a note for a given user. This will replace any existing note.
      * <p>The password of the user must match that of the user saved in the system.</p>
      *
-     * @param note the note to be saved
+     * @param mediaCollectionsList the list of media collections to be saved
      * @return the contents of the note
      * @throws DataAccessException if the user's note can not be saved for any reason
      */
-    String saveMediaCollections(String note) throws DataAccessException;
+    String saveMediaCollections(List<MediaCollection<? extends AbstractMedia>> mediaCollectionsList) throws DataAccessException;
 
     /**
      * Returns the note associated with the user. The password

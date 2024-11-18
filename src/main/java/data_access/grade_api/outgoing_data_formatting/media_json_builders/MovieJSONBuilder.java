@@ -22,10 +22,12 @@ public class MovieJSONBuilder extends AbstractMediaJSONBuilder {
         final JSONArray cast = new JSONArray();
         for (String actor : media.getCastMembers()) {
             cast.put(actor);
-            movieJSON.put("cast", cast);
-            movieJSON.put("description", media.getDescription());
-            movieJSON.put("runtime", media.getMinuteRuntime());
         }
+
+        movieJSON.put("cast", cast);
+        movieJSON.put("description", media.getDescription());
+        movieJSON.put("runtime", media.getMinuteRuntime());
+
         return movieJSON;
     }
 }
