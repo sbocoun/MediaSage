@@ -10,6 +10,8 @@ import entity.MediaCollection;
 import entity.Movie;
 import entity.User;
 
+import javax.print.attribute.standard.Media;
+
 /**
  * The list display Interactor.
  */
@@ -60,6 +62,32 @@ public class ListInteractor implements ListInputBoundary {
 
         final ListOutputData listOutputData = new ListOutputData(
                 collectionsToTableData(collectionToDisplay), collectionNameToDisplay, availableCollections);
+        listPresenter.prepareSuccessView(listOutputData);
+    }
+
+    /**
+     * Entrypoint for calling the list interactor upon login to update the list view.
+     *
+     * @param user the user containing the information used to refresh the list view
+     */
+    public void execute(User user) {
+        final List<MediaCollection<Movie>> movieCollections = user.getMovieCollections();
+
+        if (movieCollections.isEmpty()) {
+            final MediaCollection<Movie> newCollection = new MediaCollection<>(
+                    "movie night", "to-watch", Movie.class, new ArrayList<>());
+            movieCollections.add(newCollection);
+        }
+
+        final List<String> availableCollections = new ArrayList<>();
+        for (MediaCollection<Movie> movieCollection : movieCollections) {
+            availableCollections.add(movieCollection.getName());
+        }
+
+        final List<Map<String, Object>> collectionDataToDisplay = collectionsToTableData(movieCollections.get(0));
+
+        final ListOutputData listOutputData = new ListOutputData(
+                collectionDataToDisplay, movieCollections.get(0).getName(), availableCollections);
         listPresenter.prepareSuccessView(listOutputData);
     }
 

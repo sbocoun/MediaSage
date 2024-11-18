@@ -28,13 +28,14 @@ public class MainInMemoryOnly {
                 .addLoginView()
                 .addSignupView()
                 .addLoggedInView()
+                .addListView()
+                .addListUseCase()
                 .addNoteUseCase()
                 .addGenUseCase()
                 .addSignupUseCase()
                 .addLoginUseCase()
                 .addChangePasswordUseCase()
                 .addLogoutUseCase()
-                .addListView()
                 .build().setVisible(true);
     }
 }
