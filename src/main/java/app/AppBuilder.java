@@ -63,6 +63,7 @@ public class AppBuilder {
     private final ViewManagerModel userViewManagerModel = new ViewManagerModel();
     private final ViewManagerModel mediaViewManagerModel = new ViewManagerModel();
     private final ViewManagerModel searchViewManagerModel = new ViewManagerModel();
+    // observers that listen for when the view should change
     private final ViewManager userViewManager = new ViewManager(userPanel, cardLayout, userViewManagerModel);
     private final ViewManager mediaViewManager = new ViewManager(mediaPanel, cardLayout, mediaViewManagerModel);
     private final ViewManager searchViewManager = new ViewManager(searchPanel, cardLayout, searchViewManagerModel);

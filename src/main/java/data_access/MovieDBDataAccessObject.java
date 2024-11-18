@@ -1,14 +1,15 @@
 package data_access;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import entity.Movie;
+import entity.Rating;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -35,15 +36,38 @@ public class MovieDBDataAccessObject implements MovieDBDataAccessInterface {
 
     /**
      * Get the complete details of a movie from the TMDB.
+     *
      * @param movieName The name of the movie to be looked up.
      * @return a JSONObject containing the movie genres, cast, runtime, rating, and description.
      * @throws MovieDBDataAccessException if the TMDB API is unsuccessfully called.
      */
-    public JSONObject getCompleteMovieData(String movieName) throws MovieDBDataAccessException {
+    public Movie getMovie(String movieName) throws MovieDBDataAccessException {
         final int movieID = getMovieID(movieName);
         final JSONObject completeMovieData = getMovieDetails(movieID);
-        completeMovieData.put("cast", getMovieCast(movieID));
-        return completeMovieData;
+        final double ratingNormalized = completeMovieData.getDouble("vote_average") * 10;
+
+        final String name = completeMovieData.getString("title");
+        final List<String> genres = getGenres(completeMovieData);
+        final Rating rating = new Rating((int) ratingNormalized);
+        final String description = completeMovieData.getString("overview");
+        final List<String> castMembers = getMovieCast(movieID);
+        final int minuteRunTime = completeMovieData.getInt(RUNTIME);
+        return new Movie(name, genres, rating, description, castMembers, minuteRunTime);
+    }
+
+    /**
+     * Get the genres of a movie in the given JSON data.
+     * @param movieData JSON information from which to retrieve the genres
+     * @return list of genres
+     * @throws JSONException if the JSON information doesn't contain the correct information/format
+     */
+    private List<String> getGenres(JSONObject movieData) throws JSONException {
+        final List<String> result = new ArrayList<>();
+        final JSONArray genres = movieData.getJSONArray(GENRES);
+        for (int i = 0; i < genres.length(); i++) {
+            result.add(genres.getJSONObject(i).getString("name"));
+        }
+        return result;
     }
 
     /**
@@ -63,9 +87,7 @@ public class MovieDBDataAccessObject implements MovieDBDataAccessInterface {
                 .get()
                 .build();
 
-        try {
-            final Response response = client.newCall(request).execute();
-
+        try (Response response = client.newCall(request).execute()) {
             final JSONObject responseBody = new JSONObject(response.body().string());
 
             if (response.isSuccessful()) {
@@ -99,23 +121,11 @@ public class MovieDBDataAccessObject implements MovieDBDataAccessInterface {
                 .addHeader(AUTHORIZATION, BEARER + apiKey)
                 .build();
 
-        try {
-            final Response response = client.newCall(request).execute();
-
+        try (Response response = client.newCall(request).execute()) {
             final JSONObject responseBody = new JSONObject(response.body().string());
 
             if (response.isSuccessful()) {
-                final JSONObject criticalMovieDetails = new JSONObject();
-                final JSONArray genres = responseBody.getJSONArray(GENRES);
-                final JSONArray parsedGenres = new JSONArray();
-                for (int i = 0; i < genres.length(); i++) {
-                    parsedGenres.put(genres.getJSONObject(i).getString("name"));
-                }
-                criticalMovieDetails.put(GENRES, parsedGenres);
-                criticalMovieDetails.put("rating", responseBody.getDouble("vote_average"));
-                criticalMovieDetails.put("description", responseBody.getString("overview"));
-                criticalMovieDetails.put(RUNTIME, responseBody.getInt(RUNTIME));
-                return criticalMovieDetails;
+                return responseBody;
             }
             else {
                 throw new MovieDBDataAccessException(responseBody.getString(MESSAGE));
@@ -133,7 +143,7 @@ public class MovieDBDataAccessObject implements MovieDBDataAccessInterface {
      * @throws MovieDBDataAccessException if the TMDB API is unsuccessfully called.
      * @throws RuntimeException if there's an error formatting the JSON output.
      */
-    private JSONArray getMovieCast(int movieID) throws MovieDBDataAccessException {
+    private List<String> getMovieCast(int movieID) throws MovieDBDataAccessException {
 
         final OkHttpClient client = new OkHttpClient();
 
@@ -144,16 +154,16 @@ public class MovieDBDataAccessObject implements MovieDBDataAccessInterface {
                 .addHeader(AUTHORIZATION, BEARER + apiKey)
                 .build();
 
-        try {
-            final Response response = client.newCall(request).execute();
-
+        try (Response response = client.newCall(request).execute()) {
             final JSONObject responseBody = new JSONObject(response.body().string());
 
             if (response.isSuccessful()) {
                 final JSONArray cast = responseBody.getJSONArray("cast");
-                final JSONArray parsedCast = new JSONArray();
-                for (int i = 0; i < CAST_LIMIT; i++) {
-                    parsedCast.put(cast.getJSONObject(i).getString("name"));
+                final List<String> parsedCast = new ArrayList<>();
+                for (int i = 0; i < cast.length() && parsedCast.size() < CAST_LIMIT; i++) {
+                    if (cast.getJSONObject(i).getString("known_for_department").equals("Acting")) {
+                        parsedCast.add(cast.getJSONObject(i).getString("name"));
+                    }
                 }
                 return parsedCast;
             }
@@ -167,16 +177,11 @@ public class MovieDBDataAccessObject implements MovieDBDataAccessInterface {
     }
 
     /**
-     * Load the api key from the resources/apikey.
-     * @throws RuntimeException if there's an error reading the apikey file.
+     * Load the api key to be used for api calls.
+     *
+     * @param apikey the TMDB API key to be used
      */
-    public void loadApiKeyFromFile() {
-        try {
-            this.apiKey = Files.readString(Paths.get(getClass().getClassLoader()
-                    .getResource("TMDB_apikey").toURI()));
-        }
-        catch (IOException | URISyntaxException ex) {
-            throw new RuntimeException(ex);
-        }
+    public void setApiKey(String apikey) {
+        this.apiKey = apikey;
     }
 }
