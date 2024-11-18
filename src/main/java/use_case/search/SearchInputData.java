@@ -1,29 +1,16 @@
 package use_case.search;
 
 /**
- * Input data for the Search Use Case.
+ * Contains the input data required for executing a search.
  */
 public class SearchInputData {
+    private final String query;
 
-    private final String keyword;
-    private final String genre;
-    private final String cast;
-
-    public SearchInputData(String keyword, String genre, String cast) {
-        this.keyword = keyword;
-        this.genre = genre;
-        this.cast = cast;
+    public SearchInputData(String query) {
+        this.query = query;
     }
 
-    public String getKeyword() {
-        return keyword;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public String getCast() {
-        return cast;
+    public String getQuery() {
+        return query;
     }
 }

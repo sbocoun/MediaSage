@@ -14,6 +14,26 @@ public class NoteInteractorTest {
 
 
             @Override
+            public String saveNote(String note) throws DataAccessException {
+                return "";
+            }
+
+            @Override
+            public String loadNote() throws DataAccessException {
+                return "";
+            }
+
+            @Override
+            public void setCurrentUsername(String username) {
+
+            }
+
+            @Override
+            public void setCurrentPassword(String password) {
+
+            }
+
+            @Override
             public String saveNote(User user, String note) {
                 return "";
             }

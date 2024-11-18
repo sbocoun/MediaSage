@@ -1,5 +1,7 @@
 package use_case.note;
 
+import entity.User;
+
 /**
  * Interface for the NoteDAO. It consists of methods for
  * both loading and saving a note.
@@ -37,4 +39,7 @@ public interface NoteDataAccessInterface {
      */
     void setCurrentPassword(String password);
 
+    String saveNote(User user, String note);
+
+    String loadNote(User user);
 }

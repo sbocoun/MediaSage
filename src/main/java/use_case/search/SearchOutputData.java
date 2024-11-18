@@ -1,25 +1,18 @@
 package use_case.search;
 
-import java.util.List;
+import entity.AbstractMedia;
 
 /**
- * Output data for the Search Use Case.
+ * Contains the output data for the search results.
  */
 public class SearchOutputData {
+    private final AbstractMedia media;
 
-    private final List<String> searchResults;
-    private final boolean useCaseFailed;
-
-    public SearchOutputData(List<String> searchResults, boolean useCaseFailed) {
-        this.searchResults = searchResults;
-        this.useCaseFailed = useCaseFailed;
+    public SearchOutputData(AbstractMedia media) {
+        this.media = media;
     }
 
-    public List<String> getSearchResults() {
-        return searchResults;
-    }
-
-    public boolean isUseCaseFailed() {
-        return useCaseFailed;
+    public AbstractMedia getMedia() {
+        return media;
     }
 }

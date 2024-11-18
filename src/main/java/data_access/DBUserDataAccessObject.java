@@ -81,6 +81,16 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
     }
 
     @Override
+    public String saveNote(User user, String note) {
+        return "";
+    }
+
+    @Override
+    public String loadNote(User user) {
+        return "";
+    }
+
+    @Override
     public boolean existsByName(String username) {
         final OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
