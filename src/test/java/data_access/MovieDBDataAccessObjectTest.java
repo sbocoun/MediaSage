@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.Configurator;
+import data_access.movies.MovieDBDataAccessObject;
 import entity.Movie;
 import org.junit.BeforeClass;
 import org.junit.Test;

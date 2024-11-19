@@ -1,6 +1,6 @@
 package use_case.generate_recommendations;
 
-import data_access.MovieDBDataAccessException;
+import data_access.movies.MovieDBDataAccessException;
 import entity.Movie;
 
 /**
@@ -23,5 +23,4 @@ public interface MovieDBDataAccessInterface {
      * @param apikey the TMDB API key used for api calls
      */
     void setApiKey(String apikey);
-
 }

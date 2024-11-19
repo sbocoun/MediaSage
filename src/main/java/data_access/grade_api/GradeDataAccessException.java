@@ -1,4 +1,4 @@
-package use_case.note;
+package data_access.grade_api;
 
 /**
  * Exception thrown when there is an error with accessing the Grade API.

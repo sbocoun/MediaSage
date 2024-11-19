@@ -1,4 +1,4 @@
-package data_access;
+package data_access.movies;
 
 /**
  * Exception thrown when there is an error with accessing data from the TMDB API.
