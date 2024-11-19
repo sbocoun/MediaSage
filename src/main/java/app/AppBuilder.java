@@ -106,10 +106,10 @@ public class AppBuilder {
         cardPanel.setLayout(cardLayout);
         mediaPanel.setLayout(cardLayout);
         userPanel.setLayout(cardLayout);
-        tabPanel.addTab("Media", mediaPanel);
+        tabPanel.addTab("List", listPanel);
         tabPanel.addTab("Search", searchPanel);
         tabPanel.addTab("User", userPanel);
-        tabPanel.addTab("List", listPanel);
+        tabPanel.addTab("Media", mediaPanel);
     }
 
     /**
@@ -343,16 +343,6 @@ public class AppBuilder {
         searchView = new SearchView(searchViewModel);
         searchPanel.add(searchView, searchView.getViewName());
 
-        return this;
-    }
-
-    /**
-     * Adds the ListView to the application as a new tab.
-     * @return this builder
-     */
-    public AppBuilder addListView() {
-        listView = new ListView();
-        tabPanel.addTab("List", listView);
         return this;
     }
 }

@@ -27,6 +27,7 @@ public class MainInMemoryOnly {
                 .addNoteView()
                 .addLoginView()
                 .addSignupView()
+                .addSearchView()
                 .addLoggedInView()
                 .addListView()
                 .addListUseCase()

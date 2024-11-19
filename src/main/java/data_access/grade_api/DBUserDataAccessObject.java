@@ -18,6 +18,7 @@ import okhttp3.Response;
 public class DBUserDataAccessObject implements UserRepository {
     private static final int SUCCESS_CODE = 200;
     private static final int CREDENTIAL_ERROR = 401;
+    private static final int NOT_FOUND = 404;
     private static final String CONTENT_TYPE_LABEL = "Content-Type";
     private static final String CONTENT_TYPE_JSON = "application/json";
     private static final String STATUS_CODE_LABEL = "status_code";
