@@ -12,18 +12,18 @@ public interface NoteDataAccessInterface {
      *
      * @param note the note to be saved
      * @return the contents of the note
-     * @throws DataAccessException if the user's note can not be saved for any reason
+     * @throws GradeDataAccessException if the user's note can not be saved for any reason
      */
-    String saveNote(String note) throws DataAccessException;
+    String saveNote(String note) throws GradeDataAccessException;
 
     /**
      * Returns the note associated with the user. The password
      * is not checked, so anyone can read the information.
      *
      * @return the contents of the note
-     * @throws DataAccessException if the user's note can not be loaded for any reason
+     * @throws GradeDataAccessException if the user's note can not be loaded for any reason
      */
-    String loadNote() throws DataAccessException;
+    String loadNote() throws GradeDataAccessException;
 
     /**
      * Set the user whose notes the app retrieves.
