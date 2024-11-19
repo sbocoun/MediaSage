@@ -62,7 +62,7 @@ import view.ViewManager;
  */
 public class AppBuilder {
     public static final int HEIGHT = 450;
-    public static final int WIDTH = 400;
+    public static final int WIDTH = 800;
     private NoteInteractor noteInteractor;
     private GenInteractor genInteractor;
     private ListInteractor listInteractor;
@@ -71,6 +71,7 @@ public class AppBuilder {
     private final JPanel userPanel = new JPanel();
     private final JPanel mediaPanel = new JPanel();
     private final JPanel searchPanel = new JPanel();
+    private final JPanel listPanel = new JPanel();
     private final CardLayout cardLayout = new CardLayout();
     private final ViewManagerModel userViewManagerModel = new ViewManagerModel();
     private final ViewManagerModel mediaViewManagerModel = new ViewManagerModel();
@@ -108,6 +109,7 @@ public class AppBuilder {
         tabPanel.addTab("Media", mediaPanel);
         tabPanel.addTab("Search", searchPanel);
         tabPanel.addTab("User", userPanel);
+        tabPanel.addTab("List", listPanel);
     }
 
     /**
@@ -232,8 +234,8 @@ public class AppBuilder {
      */
     public AppBuilder addListView() {
         listViewModel = new ListViewModel();
-        listView = new ListView();
-        tabPanel.addTab("List", listView);
+        listView = new ListView(listViewModel);
+        listPanel.add(listView);
         return this;
     }
 
@@ -320,6 +322,7 @@ public class AppBuilder {
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         application.setTitle("MediaSage");
         application.setSize(WIDTH, HEIGHT);
+        application.setLocationByPlatform(true);
 
         application.add(tabPanel);
 

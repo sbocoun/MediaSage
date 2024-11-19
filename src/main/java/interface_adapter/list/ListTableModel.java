@@ -2,17 +2,14 @@ package interface_adapter.list;
 
 import java.util.List;
 
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
-
-import org.jetbrains.annotations.Nls;
+import javax.swing.table.AbstractTableModel;
 
 /**
  * A TableModel used to display the list of media in the JTable in List View.
  */
-public class ListTableModel implements TableModel {
+public class ListTableModel extends AbstractTableModel {
     private List<String> columnNames;
-    private List<List<Object>> table;
+    private transient List<List<Object>> table;
 
     public ListTableModel(List<String> columnNames, List<List<Object>> table) {
         this.columnNames = columnNames;
@@ -29,21 +26,9 @@ public class ListTableModel implements TableModel {
         return columnNames.size();
     }
 
-    @Nls
     @Override
-    public String getColumnName(int columnIndex) {
-        return columnNames.get(columnIndex);
-    }
-
-    @Override
-    public Class<?> getColumnClass(int columnIndex) {
-        // for now, assume all columns are strings
-        return String.class;
-    }
-
-    @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return false;
+    public String getColumnName(int col) {
+        return columnNames.get(col);
     }
 
     @Override
@@ -51,28 +36,29 @@ public class ListTableModel implements TableModel {
         return table.get(rowIndex).get(columnIndex);
     }
 
-    @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        table.get(rowIndex).set(columnIndex, aValue);
-    }
-
-    @Override
-    public void addTableModelListener(TableModelListener l) {
-        throw new UnsupportedOperationException("Not implemented yet.");
-    }
-
-    @Override
-    public void removeTableModelListener(TableModelListener l) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+    /**
+     * Replace the current data table and columns with the ones from newListTableModel.
+     * @param newListTableModel new list table model
+     */
+    public void replaceTable(ListTableModel newListTableModel) {
+        this.table = newListTableModel.getTable();
+        this.columnNames = newListTableModel.getColumnNames();
+        this.fireTableDataChanged();
     }
 
     /**
-     * Equivalent to reinitializing the TableModel.
-     * @param newColumnNames the names of columns of the table
-     * @param newTable the contents of the table
+     * Return the data table stored in this TableModel.
+     * @return the data table
      */
-    public void setTable(List<String> newColumnNames, List<List<Object>> newTable) {
-        this.columnNames = newColumnNames;
-        this.table = newTable;
+    public List<List<Object>> getTable() {
+        return table;
+    }
+
+    /**
+     * Return the list of column names stored in this TableModel.
+     * @return the list of column names
+     */
+    public List<String> getColumnNames() {
+        return columnNames;
     }
 }

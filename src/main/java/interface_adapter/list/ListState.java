@@ -2,8 +2,6 @@ package interface_adapter.list;
 
 import java.util.List;
 
-import javax.swing.table.TableModel;
-
 /**
  * The State for the media collection list.
  */
@@ -11,7 +9,7 @@ public class ListState {
     private List<String> availableCollections;
     private String currentCollectionName;
     private String currentCollectionType;
-    private TableModel tableModel;
+    private ListTableModel tableModel;
     private String errorMessage;
 
     public List<String> getAvailableCollections() {
@@ -38,11 +36,11 @@ public class ListState {
         this.currentCollectionType = currentCollectionType;
     }
 
-    public TableModel getTableModel() {
+    public ListTableModel getTableModel() {
         return tableModel;
     }
 
-    public void setTableModel(TableModel tableModel) {
+    public void setTableModel(ListTableModel tableModel) {
         this.tableModel = tableModel;
     }
 

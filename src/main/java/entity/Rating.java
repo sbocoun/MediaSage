@@ -14,7 +14,22 @@ public class Rating {
         return score;
     }
 
+    /**
+     * Sets the rating score for the media, constrained to 0-100.
+     * @param score will be restricted to 0-100, then stored as the score
+     */
     public void setScore(int score) {
-        this.score = score;
+        final int maxScore = 100;
+        if (score < 0) {
+            this.score = 0;
+        }
+        else {
+            this.score = Math.min(score, maxScore);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return Integer.toString(score);
     }
 }

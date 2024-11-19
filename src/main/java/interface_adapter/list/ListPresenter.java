@@ -1,7 +1,5 @@
 package interface_adapter.list;
 
-import javax.swing.table.TableModel;
-
 import entity.Movie;
 import use_case.list.ListOutputBoundary;
 import use_case.list.ListOutputData;
@@ -23,10 +21,9 @@ public class ListPresenter implements ListOutputBoundary {
      */
     @Override
     public void prepareSuccessView(ListOutputData listOutputData) {
-
         final ListTableModelFactory listTableModelFactory = new ListTableModelFactory();
         final String mediaType = Movie.class.getName();
-        final TableModel tableModel = listTableModelFactory
+        final ListTableModel tableModel = listTableModelFactory
                 .createListTableModel(mediaType, listOutputData.getCollectionDataToDisplay());
         final ListState listState = listViewModel.getState();
         listState.setCurrentCollectionName(listOutputData.getCollectionNameToDisplay());

@@ -11,12 +11,14 @@ public class ListTableModelFactory {
 
     /**
      * Create a ListTableModel for the relevant mediaType.
+     *
      * @param mediaType the type of AbstractMedia (e.g. entity.Movie)
      * @param mediaList the list of AbstractMedia
      * @return a ListTableModel used to display the list of AbstractMedia in a JTable
      * @throws UnsupportedOperationException if the AbstractMedia type is unknown
      */
-    public ListTableModel createListTableModel(String mediaType, List<Map<String, Object>> mediaList)
+    public ListTableModel createListTableModel(String mediaType,
+                                               List<Map<String, Object>> mediaList)
             throws UnsupportedOperationException {
         // remove this final keyword when adding more media types
         final ListTableModel listTableModel;
