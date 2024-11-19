@@ -8,6 +8,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
 import data_access.grade_api.DBUserDataAccessObject;
+import data_access.grade_api.UserRepository;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.ChangePasswordPresenter;
@@ -68,7 +69,7 @@ public class AppBuilder {
     private final ViewManager mediaViewManager = new ViewManager(mediaPanel, cardLayout, mediaViewManagerModel);
     private final ViewManager searchViewManager = new ViewManager(searchPanel, cardLayout, searchViewManagerModel);
     // thought question: is the hard dependency below a problem?
-    private DBUserDataAccessObject userDataAccessObject;
+    private UserRepository userDataAccessObject;
     private GenDataAccessInterface genDataAccessInterface;
 
     private NoteView noteView;
@@ -103,7 +104,7 @@ public class AppBuilder {
      * @param userDAO the data access object for user information
      * @return this builder
      */
-    public AppBuilder addUserDAO(DBUserDataAccessObject userDAO) {
+    public AppBuilder addUserDAO(UserRepository userDAO) {
         this.userDataAccessObject = userDAO;
         return this;
     }
