@@ -11,13 +11,6 @@ public abstract class AbstractMedia {
     private Rating userRating;
     private Rating externalRating;
 
-    AbstractMedia(String name, List<String> genres, Rating externalRating) {
-        this.name = name;
-        this.genres = genres;
-        this.externalRating = externalRating;
-        this.userRating = new Rating(-1);
-    }
-
     AbstractMedia(String name, List<String> genres, Rating userRating, Rating externalRating) {
         this.name = name;
         this.genres = genres;

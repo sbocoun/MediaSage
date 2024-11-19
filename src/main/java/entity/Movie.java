@@ -12,11 +12,12 @@ public class Movie extends AbstractMedia {
 
     public Movie(String name,
                  List<String> genres,
+                 Rating userRating,
                  Rating externalRating,
                  String description,
                  List<String> castMembers,
                  int minuteRuntime) {
-        super(name, genres, externalRating);
+        super(name, genres, userRating, externalRating);
         this.description = description;
         this.castMembers = castMembers;
         this.minuteRuntime = minuteRuntime;
