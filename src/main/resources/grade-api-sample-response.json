@@ -17,7 +17,8 @@
             "runtime": 136,
             "genres": ["Action", "Sci-Fi"],
             "cast": ["Keanu Reeves", "Lawrence Fishburn", "Carrie-Anne Moss", "Hugo Weaving", "Gloria Foster"],
-            "rating": 87,
+            "userRating": -1,
+            "externalRating": 87,
             "description": "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers."
           },
           {
@@ -25,7 +26,8 @@
             "runtime": 133,
             "genres": ["Music", "Comedy", "Action", "Crime"],
             "cast": ["Dan Aykroyd", "John Belushi", "James Brown", "Cab Calloway", "Ray Charles", "Aretha Franklin"],
-            "rating": 77.3,
+            "userRating": -1,
+            "externalRating": 77.3,
             "description": "Jake Blues, just released from prison, puts his old band back together to save the Catholic home where he and his brother Elwood were raised."
           }
 		]
