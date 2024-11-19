@@ -1,4 +1,4 @@
-package data_access.movies;
+package data_access;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -10,6 +10,8 @@ import java.util.Objects;
 
 import org.json.JSONObject;
 
+import data_access.movies.MovieDBDataAccessException;
+import data_access.movies.MovieJSONFormat;
 import entity.Movie;
 import use_case.generate_recommendations.MovieDBDataAccessInterface;
 

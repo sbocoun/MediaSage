@@ -1,5 +1,7 @@
 package use_case.note;
 
+import data_access.grade_api.GradeDataAccessException;
+
 /**
  * The "Use Case Interactor" for our two note-related use cases of refreshing
  * the contents of the note and saving the contents of the note. Since they

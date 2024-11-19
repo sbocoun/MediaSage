@@ -1,5 +1,7 @@
 package use_case.note;
 
+import data_access.grade_api.GradeDataAccessException;
+
 /**
  * Interface for the NoteDAO. It consists of methods for
  * both loading and saving a note.
@@ -8,6 +10,7 @@ public interface NoteDataAccessInterface {
 
     /**
      * Saves a note for a given user. This will replace any existing note.
+     *
      * <p>The password of the user must match that of the user saved in the system.</p>
      *
      * @param note the note to be saved

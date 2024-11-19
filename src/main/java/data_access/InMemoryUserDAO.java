@@ -3,8 +3,9 @@ package data_access;
 import java.util.HashMap;
 import java.util.Map;
 
+import data_access.grade_api.GradeDataAccessException;
+import data_access.grade_api.UserRepository;
 import entity.User;
-import use_case.note.DataAccessException;
 
 /**
  * In-memory implementation of user data access.
@@ -50,9 +51,9 @@ public class InMemoryUserDAO implements UserRepository {
     }
 
     @Override
-    public String saveNote(String note) throws DataAccessException {
+    public String saveNote(String note) throws GradeDataAccessException {
         if (!users.get(currentUsername).getPassword().equals(currentPassword)) {
-            throw new DataAccessException("Incorrect password");
+            throw new GradeDataAccessException("Incorrect password");
         }
         users.get(currentUsername).setNotes(note);
         return users.get(currentUsername).getNotes();

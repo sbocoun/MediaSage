@@ -10,7 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import use_case.generate_recommendations.GenDataAccessInterface;
-import use_case.note.DataAccessException;
 
 /**
  * An in-memory implementation of the recommendation API.
@@ -19,8 +18,7 @@ public class InMemoryRecommendationDAO implements GenDataAccessInterface {
 
     // Always returns the same sample recommendation from file.
     @Override
-    public JSONArray getRecommendation(List<String> query, String sourceType, String returnType)
-            throws DataAccessException {
+    public JSONArray getRecommendation(List<String> query, String sourceType, String returnType) {
         try {
             final String rawString = Files.readString(Paths.get(getClass().getClassLoader()
                     .getResource("taste-dive-sample-response.json").toURI()));

@@ -11,7 +11,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import use_case.note.DataAccessException;
 
 /**
  * The DAO for user data.
@@ -148,7 +147,7 @@ public class DBUserDataAccessObject implements UserRepository {
     }
 
     @Override
-    public String saveNote(String note) throws DataAccessException {
+    public String saveNote(String note) throws GradeDataAccessException {
         final OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
 
@@ -173,19 +172,22 @@ public class DBUserDataAccessObject implements UserRepository {
                 return loadNote();
             }
             else if (responseBody.getInt(STATUS_CODE_LABEL) == CREDENTIAL_ERROR) {
-                throw new DataAccessException("message could not be found or password was incorrect");
+                throw new GradeDataAccessException("message could not be found or password was incorrect");
             }
             else {
-                throw new DataAccessException("database error: " + responseBody.getString(MESSAGE));
+                throw new GradeDataAccessException("database error: " + responseBody.getString(MESSAGE));
             }
         }
         catch (IOException | JSONException ex) {
-            throw new DataAccessException(ex.getMessage());
+            throw new GradeDataAccessException(ex.getMessage());
+        }
+        catch (GradeDataAccessException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public String loadNote() throws DataAccessException {
+    public String loadNote() throws GradeDataAccessException {
         // Make an API call to get the user object.
         final String username = getCurrentUsername();
         final OkHttpClient client = new OkHttpClient().newBuilder().build();
@@ -206,7 +208,7 @@ public class DBUserDataAccessObject implements UserRepository {
                 return result;
             }
             else {
-                throw new DataAccessException(responseBody.getString(MESSAGE));
+                throw new GradeDataAccessException(responseBody.getString(MESSAGE));
             }
         }
         catch (IOException | JSONException ex) {

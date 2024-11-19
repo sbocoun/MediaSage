@@ -1,6 +1,6 @@
 package use_case.note;
 
-import data_access.grade_api.InMemoryUserDAO;
+import data_access.InMemoryUserDAO;
 import data_access.grade_api.UserRepository;
 import entity.User;
 import org.junit.Before;
