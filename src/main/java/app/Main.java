@@ -62,6 +62,7 @@ public class Main {
                 .addNoteView()
                 .addLoginView()
                 .addSignupView()
+                .addSearchView()
                 .addLoggedInView()
                 .addNoteUseCase()
                 .addGenUseCase()
