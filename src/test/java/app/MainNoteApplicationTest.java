@@ -3,6 +3,7 @@ package app;
 import entity.User;
 import org.junit.Before;
 import org.junit.Test;
+import use_case.note.DataAccessException;
 import use_case.note.NoteDataAccessInterface;
 
 import javax.swing.*;
@@ -20,6 +21,26 @@ public class MainNoteApplicationTest {
 
         // create the data access and inject it into our builder!
         final NoteDataAccessInterface noteDataAccess = new NoteDataAccessInterface() {
+
+            @Override
+            public String saveNote(String note) throws DataAccessException {
+                return "";
+            }
+
+            @Override
+            public String loadNote() throws DataAccessException {
+                return "";
+            }
+
+            @Override
+            public void setCurrentUsername(String username) {
+
+            }
+
+            @Override
+            public void setCurrentPassword(String password) {
+
+            }
 
             private String note = "test";
 

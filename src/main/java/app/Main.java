@@ -1,7 +1,7 @@
 package app;
 
-import data_access.DBUserDataAccessObject;
 import data_access.TasteDiveRecommendation;
+import data_access.grade_api.DBUserDataAccessObject;
 import use_case.generate_recommendations.GenDataAccessInterface;
 
 /**
@@ -62,6 +62,7 @@ public class Main {
                 .addNoteView()
                 .addLoginView()
                 .addSignupView()
+                .addSearchView()
                 .addLoggedInView()
                 .addNoteUseCase()
                 .addGenUseCase()

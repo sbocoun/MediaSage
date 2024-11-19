@@ -6,8 +6,6 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import use_case.note.DataAccessException;
-
 /**
  * The "Use Case Interactor" for the "generate movie recommendations" use case.
  */
@@ -41,8 +39,8 @@ public class GenInteractor implements GenInputBoundary {
             }
             genOutputBoundary.prepareSuccessView(recommendedMovies.toString());
         }
-        catch (DataAccessException ex) {
-            genOutputBoundary.prepareFailView(ex.getMessage());
+        catch (GenDataAccessException ex) {
+            throw new RuntimeException(ex);
         }
     }
 }

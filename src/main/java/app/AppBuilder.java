@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
-import data_access.UserRepository;
+import data_access.grade_api.UserRepository;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.ChangePasswordPresenter;
@@ -45,6 +45,7 @@ import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
 import view.BlankView;
+import view.ListView;
 import view.LoggedInView;
 import view.LoginView;
 import view.NoteView;
@@ -69,7 +70,6 @@ public class AppBuilder {
     private final ViewManagerModel userViewManagerModel = new ViewManagerModel();
     private final ViewManagerModel mediaViewManagerModel = new ViewManagerModel();
     private final ViewManagerModel searchViewManagerModel = new ViewManagerModel();
-    // observers that listen for when the view should change
     private final ViewManager userViewManager = new ViewManager(userPanel, cardLayout, userViewManagerModel);
     private final ViewManager mediaViewManager = new ViewManager(mediaPanel, cardLayout, mediaViewManagerModel);
     private final ViewManager searchViewManager = new ViewManager(searchPanel, cardLayout, searchViewManagerModel);
@@ -299,6 +299,19 @@ public class AppBuilder {
 
         return application;
 
+    }
+
+    /**
+     * Adds the SearchView to the application as a new tab.
+     * @return this builder
+     */
+    public AppBuilder addSearchView() {
+        searchViewModel = new SearchViewModel();
+
+        searchView = new SearchView(searchViewModel);
+        searchPanel.add(searchView, searchView.getViewName());
+
+        return this;
     }
 
     /**

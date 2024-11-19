@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.json.JSONArray;
 
-import use_case.note.DataAccessException;
-
 /**
  * Interface for the recommendation API object. It consists of methods for
  * getting a recommendation, and setting/loading an api key.
@@ -18,11 +16,11 @@ public interface GenDataAccessInterface {
      * @param sourceType the type of media to base recommendations from
      * @param returnType the type of media to recommend
      * @return the list of media recommendations
-     * @throws DataAccessException error accessing the API
+     * @throws GenDataAccessException error accessing the API
      */
     JSONArray getRecommendation(List<String> query,
                                 String sourceType,
-                                String returnType) throws DataAccessException;
+                                String returnType) throws GenDataAccessException;
 
     /**
      * Set api key at runtime.

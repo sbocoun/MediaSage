@@ -1,4 +1,4 @@
-package data_access;
+package data_access.grade_api;
 
 import use_case.change_password.ChangePasswordUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
@@ -7,11 +7,12 @@ import use_case.note.NoteDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
 
 /**
- * A repository of user information.
+ * Facade for the Grade API data access interface.
  */
-public interface UserRepository extends SignupUserDataAccessInterface,
+public interface UserRepository extends
+        NoteDataAccessInterface,
+        SignupUserDataAccessInterface,
         LoginUserDataAccessInterface,
         ChangePasswordUserDataAccessInterface,
-        LogoutUserDataAccessInterface,
-        NoteDataAccessInterface {
+        LogoutUserDataAccessInterface {
 }

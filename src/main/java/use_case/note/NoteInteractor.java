@@ -31,7 +31,7 @@ public class NoteInteractor implements NoteInputBoundary {
             final String note = noteDataAccessInterface.loadNote();
             noteOutputBoundary.prepareSuccessView(note);
         }
-        catch (DataAccessException ex) {
+        catch (GradeDataAccessException ex) {
             noteOutputBoundary.prepareFailView(ex.getMessage());
         }
     }
@@ -48,7 +48,7 @@ public class NoteInteractor implements NoteInputBoundary {
             final String updatedNote = noteDataAccessInterface.saveNote(note);
             noteOutputBoundary.prepareSuccessView(updatedNote);
         }
-        catch (DataAccessException ex) {
+        catch (GradeDataAccessException ex) {
             noteOutputBoundary.prepareFailView(ex.getMessage());
         }
     }
