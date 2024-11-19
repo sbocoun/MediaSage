@@ -1,49 +1,27 @@
 package use_case.note;
 
+import data_access.InMemoryUserDAO;
+import data_access.grade_api.UserRepository;
 import entity.User;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 public class NoteInteractorTest {
+    private UserRepository userRepo;
+
+    @Before
+    public void setup() {
+        userRepo = new InMemoryUserDAO();
+        User user = new User("test", "test", "test");
+        userRepo.save(user);
+        userRepo.setCurrentUsername(user.getName());
+        userRepo.setCurrentPassword(user.getPassword());
+    }
 
     @Test
     public void testExecuteRefreshSuccess() {
-
-        NoteDataAccessInterface noteDAO = new NoteDataAccessInterface() {
-
-
-            @Override
-            public String saveNote(String note) throws DataAccessException {
-                return "";
-            }
-
-            @Override
-            public String loadNote() throws DataAccessException {
-                return "";
-            }
-
-            @Override
-            public void setCurrentUsername(String username) {
-
-            }
-
-            @Override
-            public void setCurrentPassword(String password) {
-
-            }
-
-            @Override
-            public String saveNote(User user, String note) {
-                return "";
-            }
-
-
-            @Override
-            public String loadNote(User user) {
-                return "test";
-            }
-        };
 
         NoteOutputBoundary noteOB = new NoteOutputBoundary() {
             @Override
@@ -57,10 +35,25 @@ public class NoteInteractorTest {
             }
         };
 
-        NoteInteractor noteInteractor = new NoteInteractor(noteDAO, noteOB);
-
+        NoteInteractor noteInteractor = new NoteInteractor(userRepo, noteOB);
         noteInteractor.executeRefresh();
+    }
 
+    @Test
+    public void testSaveSuccess() {
+        NoteOutputBoundary noteOB = new NoteOutputBoundary() {
+            @Override
+            public void prepareSuccessView(String message) {
+                assertEquals("edited test", message);
+            }
 
+            @Override
+            public void prepareFailView(String errorMessage) {
+                fail(errorMessage);
+            }
+        };
+
+        NoteInteractor noteInteractor = new NoteInteractor(userRepo, noteOB);
+        noteInteractor.executeSave("edited test");
     }
 }
