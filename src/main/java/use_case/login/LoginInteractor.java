@@ -1,6 +1,7 @@
 package use_case.login;
 
 import entity.User;
+import use_case.list.ListInteractor;
 
 /**
  * The Login Interactor.
@@ -8,11 +9,20 @@ import entity.User;
 public class LoginInteractor implements LoginInputBoundary {
     private final LoginUserDataAccessInterface userDataAccessObject;
     private final LoginOutputBoundary loginPresenter;
+    // jank solution
+    private ListInteractor listInteractor;
 
     public LoginInteractor(LoginUserDataAccessInterface userDataAccessInterface,
                            LoginOutputBoundary loginOutputBoundary) {
         this.userDataAccessObject = userDataAccessInterface;
         this.loginPresenter = loginOutputBoundary;
+    }
+
+    public LoginInteractor(LoginUserDataAccessInterface userDataAccessInterface,
+                           LoginOutputBoundary loginOutputBoundary,
+                           ListInteractor listInteractor) {
+        this(userDataAccessInterface, loginOutputBoundary);
+        this.listInteractor = listInteractor;
     }
 
     @Override
@@ -29,9 +39,10 @@ public class LoginInteractor implements LoginInputBoundary {
                 loginPresenter.prepareFailView("Incorrect password for \"" + username + "\".");
             }
             else {
+                listInteractor.execute(user);
                 userDataAccessObject.setCurrentUsername(user.getName());
                 userDataAccessObject.setCurrentPassword(pwd);
-                final LoginOutputData loginOutputData = new LoginOutputData(user.getName(), user.getNotes(), false);
+                final LoginOutputData loginOutputData = new LoginOutputData(user.getName(), false);
                 loginPresenter.prepareSuccessView(loginOutputData);
             }
         }

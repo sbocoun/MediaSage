@@ -2,7 +2,6 @@ package app;
 
 import data_access.InMemoryRecommendationDAO;
 import data_access.InMemoryUserDAO;
-import data_access.grade_api.UserRepository;
 import use_case.generate_recommendations.GenDataAccessInterface;
 
 /**
@@ -16,7 +15,9 @@ public class MainInMemoryOnly {
      * @param args args
      */
     public static void main(String[] args) {
-        final UserRepository inMemoryUserDAO = new InMemoryUserDAO();
+        // User repository, but in-memory
+        final InMemoryUserDAO inMemoryUserDAO = new InMemoryUserDAO();
+        inMemoryUserDAO.loadUserFromFile("grade-api-sample-response.json");
         final GenDataAccessInterface inMemoryRecommendationDAO = new InMemoryRecommendationDAO();
 
         final AppBuilder builder = new AppBuilder();
@@ -26,7 +27,10 @@ public class MainInMemoryOnly {
                 .addNoteView()
                 .addLoginView()
                 .addSignupView()
+                .addSearchView()
                 .addLoggedInView()
+                .addListView()
+                .addListUseCase()
                 .addNoteUseCase()
                 .addGenUseCase()
                 .addSignupUseCase()

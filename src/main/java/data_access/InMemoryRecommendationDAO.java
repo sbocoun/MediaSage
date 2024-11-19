@@ -9,6 +9,7 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import use_case.generate_recommendations.GenDataAccessException;
 import use_case.generate_recommendations.GenDataAccessInterface;
 
 /**
@@ -18,7 +19,8 @@ public class InMemoryRecommendationDAO implements GenDataAccessInterface {
 
     // Always returns the same sample recommendation from file.
     @Override
-    public JSONArray getRecommendation(List<String> query, String sourceType, String returnType) {
+    public JSONArray getRecommendation(List<String> query, String sourceType, String returnType)
+            throws GenDataAccessException {
         try {
             final String rawString = Files.readString(Paths.get(getClass().getClassLoader()
                     .getResource("taste-dive-sample-response.json").toURI()));

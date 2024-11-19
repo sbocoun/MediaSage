@@ -16,7 +16,7 @@ public interface GenDataAccessInterface {
      * @param sourceType the type of media to base recommendations from
      * @param returnType the type of media to recommend
      * @return the list of media recommendations
-     * @throws GenDataAccessException error accessing the API
+     * @throws GenDataAccessException error accessing the recommendation API
      */
     JSONArray getRecommendation(List<String> query,
                                 String sourceType,
