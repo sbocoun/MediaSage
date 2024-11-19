@@ -4,15 +4,15 @@ package use_case.list;
  * The Input Data for the media collection list display Use Case.
  */
 public class ListInputData {
-    private String collectionNameToDisplay;
+    private String nameOfDesiredCollection;
     private String displayMediaType;
 
-    public String getCollectionNameToDisplay() {
-        return collectionNameToDisplay;
+    public String getNameOfDesiredCollection() {
+        return nameOfDesiredCollection;
     }
 
-    public void setCollectionNameToDisplay(String collectionNameToDisplay) {
-        this.collectionNameToDisplay = collectionNameToDisplay;
+    public void setNameOfDesiredCollection(String nameOfDesiredCollection) {
+        this.nameOfDesiredCollection = nameOfDesiredCollection;
     }
 
     public String getDisplayMediaType() {
