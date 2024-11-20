@@ -1,4 +1,4 @@
-package data_access.grade_api;
+package data_access.grade_api.incoming_data_formatting;
 
 import java.util.List;
 
@@ -53,9 +53,11 @@ public final class MediaFactory<T> {
         for (int i = 0; i < actorsJSON.length(); i++) {
             actors.add(actorsJSON.getString(i));
         }
-        final Movie result = new Movie(media.getString("name"),
+        final Movie result = new Movie(
+                media.getString("name"),
                 genres,
-                new Rating(media.getInt("rating")),
+                new Rating(media.getInt("userRating")),
+                new Rating(media.getInt("externalRating")),
                 media.getString("description"),
                 actors,
                 media.getInt("runtime"));

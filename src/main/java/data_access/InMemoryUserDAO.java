@@ -5,13 +5,17 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import org.json.JSONObject;
 
-import data_access.grade_api.UserBuilder;
+import data_access.grade_api.GradeDataAccessException;
 import data_access.grade_api.UserRepository;
+import data_access.grade_api.incoming_data_formatting.UserBuilder;
+import entity.AbstractMedia;
+import entity.MediaCollection;
 import entity.User;
 
 /**
@@ -59,7 +63,7 @@ public class InMemoryUserDAO implements UserRepository {
     }
 
     @Override
-    public String saveNote(String note) {
+    public String saveMediaCollections(List<MediaCollection<? extends AbstractMedia>> mediaCollectionsList) throws GradeDataAccessException {
         throw new UnsupportedOperationException(UNSUPPORTED);
     }
 

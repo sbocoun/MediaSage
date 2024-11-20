@@ -11,11 +11,11 @@ public abstract class AbstractMedia {
     private final Rating userRating;
     private final Rating externalRating;
 
-    AbstractMedia(String name, List<String> genres, Rating externalRating) {
+    AbstractMedia(String name, List<String> genres, Rating userRating, Rating externalRating) {
         this.name = name;
         this.genres = genres;
+        this.userRating = userRating;
         this.externalRating = externalRating;
-        this.userRating = new Rating(-1);
     }
 
     public String getName() {

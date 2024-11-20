@@ -1,4 +1,4 @@
-package data_access.grade_api;
+package data_access.grade_api.incoming_data_formatting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,14 +26,17 @@ public class MediaCollectionBuilder<T extends AbstractMedia> {
      * @return the MediaCollection object created from the JSON data
      */
     public MediaCollection<T> createCollection(JSONObject collection) {
-        final String collectionName = collection.getString("name");
-        final String collectionType = collection.getString("collectionType");
         final List<T> mediaList = new ArrayList<>();
         for (int i = 0; i < collection.getJSONArray("media").length(); i++) {
             final JSONObject media = collection.getJSONArray("media").getJSONObject(i);
             final MediaFactory<T> mediaFactory = new MediaFactory<>(type);
             mediaList.add(mediaFactory.createMedia(media));
         }
-        return new MediaCollection<>(collectionName, collectionType, type, mediaList);
+        return new MediaCollection<>(
+                collection.getString("name"),
+                collection.getString("collectionType"),
+                type,
+                mediaList
+        );
     }
 }

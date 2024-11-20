@@ -1,10 +1,15 @@
 package data_access.grade_api;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import data_access.grade_api.incoming_data_formatting.UserBuilder;
+import data_access.grade_api.outgoing_data_formatting.CollectionJSONBuilder;
+import entity.AbstractMedia;
+import entity.MediaCollection;
 import entity.User;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -119,20 +124,26 @@ public class DBUserDataAccessObject implements UserRepository {
     }
 
     @Override
-    public String saveNote(String note) throws GradeDataAccessException {
+    public String saveMediaCollections(List<MediaCollection<? extends AbstractMedia>
+            > mediaCollectionsList) throws GradeDataAccessException {
         // POST METHOD
         final JSONObject requestBody = new JSONObject();
         requestBody.put(USERNAME, getCurrentUsername());
         requestBody.put(PASSWORD, this.currPassword);
-        final JSONArray mediaListArray = new JSONArray(note);
-        requestBody.put(INFO, mediaListArray);
         final MediaType mediaType = MediaType.parse(CONTENT_TYPE_JSON);
+
+        final CollectionJSONBuilder collectionsBuilder = new CollectionJSONBuilder();
+        final JSONArray mediaCollections =
+                collectionsBuilder.buildMediaCollections(mediaCollectionsList);
+
+        requestBody.put(INFO, mediaCollections);
         final RequestBody body = RequestBody.create(requestBody.toString(), mediaType);
         final Request request = new Request.Builder()
                 .url("http://vm003.teach.cs.toronto.edu:20112/modifyUserInfo")
                 .method("PUT", body)
                 .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
                 .build();
+
         try {
             getGradeApiData(request);
             return loadNote();

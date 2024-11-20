@@ -1,5 +1,6 @@
 package entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ public class User {
 
     private String name;
     private String password;
-    private List<MediaCollection<Movie>> movieCollections;
+    private List<MediaCollection<? extends AbstractMedia>> mediaCollections;
 
     public User(String name, String password) {
         this.name = name;
@@ -32,26 +33,32 @@ public class User {
         this.password = password;
     }
 
-    public void setMovieCollections(List<MediaCollection<Movie>> movieCollections) {
-        this.movieCollections = movieCollections;
+    public void setMediaCollections(List<MediaCollection<? extends AbstractMedia>> mediaCollections) {
+        this.mediaCollections = mediaCollections;
     }
 
-    public List<MediaCollection<Movie>> getMovieCollections() {
-        return movieCollections;
+    /**
+     * Return a (mutable) list of media collections.
+     * @param <T> the type of media stored in the collection
+     * @param mediaType the type of media stored in the collection
+     * @return a list of media collections
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends AbstractMedia> List<MediaCollection<T>> getSpecifiedMediaCollections(Class<T> mediaType) {
+        final List<MediaCollection<T>> specifiedCollections = new ArrayList<>();
+        for (MediaCollection<?> mediaCollection : mediaCollections) {
+            if (mediaType.isAssignableFrom(mediaCollection.getMediaType())) {
+                specifiedCollections.add((MediaCollection<T>) mediaCollection);
+            }
+        }
+        return specifiedCollections;
     }
 
-    // /**
-    //  * Return a (mutable) list of media collections.
-    //  * @return a list of media collections
-    //  */
-    // @SuppressWarnings("unchecked")
-    // public List<MediaCollection<Movie>> getMediaCollectionsMovies() {
-    //     final List<MediaCollection<Movie>> movieCollections = new ArrayList<>();
-    //     for (MediaCollection<? extends AbstractMedia> mediaCollection : mediaCollections) {
-    //         if (mediaCollection.getMediaType() == Movie.class) {
-    //             movieCollections.add((MediaCollection<Movie>) mediaCollection);
-    //         }
-    //     }
-    //     return movieCollections;
-    // }
+    /**
+     * Return a (mutable) list of all media collections.
+     * @return a list of all media collections
+     */
+    public List<MediaCollection<? extends AbstractMedia>> getAllMediaCollections() {
+        return mediaCollections;
+    }
 }
