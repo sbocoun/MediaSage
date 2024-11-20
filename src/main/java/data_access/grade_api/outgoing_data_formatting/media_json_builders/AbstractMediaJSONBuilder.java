@@ -18,8 +18,8 @@ public abstract class AbstractMediaJSONBuilder {
     public JSONObject buildJSON(AbstractMedia media) {
         final JSONObject mediaJSON = new JSONObject();
         mediaJSON.put("name", media.getName());
-        mediaJSON.put("userRating", media.getUserRating().getScore());
-        mediaJSON.put("externalRating", media.getExternalRating().getScore());
+        mediaJSON.put("userRating", media.getUserRating());
+        mediaJSON.put("externalRating", media.getExternalRating());
         for (String genre : media.getGenres()) {
             mediaJSON.append("genres", genre);
         }

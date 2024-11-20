@@ -3,6 +3,7 @@ package data_access.grade_api.incoming_data_formatting;
 import java.util.ArrayList;
 import java.util.List;
 
+import entity.AbstractMedia;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -24,10 +25,10 @@ public class UserBuilder {
      */
     public User createUser(JSONObject data) throws UnsupportedOperationException {
         final User user = new User(data.getString("username"), data.getString("password"));
-        final List<MediaCollection<Movie>> movieCollections = new ArrayList<>();
+        final List<MediaCollection<? extends AbstractMedia>> movieCollections = new ArrayList<>();
         final JSONArray collections;
         if (data.get("info") instanceof JSONObject) {
-            user.setMovieCollections(movieCollections);
+            user.setMediaCollections(movieCollections);
             return user;
         }
         else {
@@ -48,7 +49,7 @@ public class UserBuilder {
                 }
             }
         }
-        user.setMovieCollections(movieCollections);
+        user.setMediaCollections(movieCollections);
         return user;
     }
 }

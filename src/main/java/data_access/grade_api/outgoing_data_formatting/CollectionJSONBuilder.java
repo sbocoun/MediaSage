@@ -58,7 +58,7 @@ public class CollectionJSONBuilder {
         final JSONArray mediaJSON = new JSONArray();
         collectionJSON.put("media", mediaJSON);
 
-        for (AbstractMedia media : mediaCollection.getMediaList()) {
+        for (AbstractMedia media : mediaCollection) {
             final AbstractMediaJSONBuilder builder = builders.get(
                     mediaCollection.getMediaType().getName());
             if (builder != null) {

@@ -33,11 +33,12 @@ public final class MovieJSONFormat {
 
         final String name = movieDetails.getString("title");
         final List<String> genres = parseGenres(movieDetails);
-        final Rating rating = new Rating((int) ratingNormalized);
+        final Rating externalRating = new Rating((int) ratingNormalized);
+        final Rating userRating = new Rating(-1);
         final String description = movieDetails.getString("overview");
         final List<String> castMembers = parseCast(movieCast);
         final int minuteRunTime = movieDetails.getInt(RUNTIME);
-        return new Movie(name, genres, rating, description, castMembers, minuteRunTime);
+        return new Movie(name, genres, userRating, externalRating, description, castMembers, minuteRunTime);
     }
 
     /**

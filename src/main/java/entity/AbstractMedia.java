@@ -16,7 +16,6 @@ public abstract class AbstractMedia {
         this.genres = genres;
         this.userRating = userRating;
         this.externalRating = externalRating;
-        this.userRating = new Rating(-1);
     }
 
     public String getName() {

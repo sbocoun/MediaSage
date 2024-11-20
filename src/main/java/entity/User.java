@@ -44,7 +44,7 @@ public class User {
      * @return a list of media collections
      */
     @SuppressWarnings("unchecked")
-    public <T> List<MediaCollection<T>> getSpecifiedMediaCollections(Class<T> mediaType) {
+    public <T extends AbstractMedia> List<MediaCollection<T>> getSpecifiedMediaCollections(Class<T> mediaType) {
         final List<MediaCollection<T>> specifiedCollections = new ArrayList<>();
         for (MediaCollection<?> mediaCollection : mediaCollections) {
             if (mediaType.isAssignableFrom(mediaCollection.getMediaType())) {

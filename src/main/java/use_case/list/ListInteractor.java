@@ -87,7 +87,7 @@ public class ListInteractor implements ListInputBoundary {
      * @return a list of movie collections, with at least one collection
      */
     private List<MediaCollection<Movie>> populateCollectionIfEmpty(User user) {
-        final List<MediaCollection<Movie>> result = user.getMovieCollections();
+        final List<MediaCollection<Movie>> result = user.getSpecifiedMediaCollections(Movie.class);
         if (result.isEmpty()) {
             final MediaCollection<Movie> newCollection = new MediaCollection<>(
                     "movie night", "to-watch", Movie.class, new ArrayList<>());
