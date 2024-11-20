@@ -1,9 +1,6 @@
 package data_access;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -13,8 +10,8 @@ import org.json.JSONObject;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import use_case.generate_recommendations.GenDataAccessException;
 import use_case.generate_recommendations.GenDataAccessInterface;
-import use_case.note.DataAccessException;
 
 /**
  * The DAO for getting recommendations from TasteDive.
@@ -37,12 +34,12 @@ public class TasteDiveRecommendation implements GenDataAccessInterface {
      * @param returnType the type of media to recommend (lowercase)
      * @param verbose if the response should contain extra information about the movie
      * @return the list of media recommendations returned by TasteDive API
-     * @throws DataAccessException error accessing the API
+     * @throws GenDataAccessException error accessing the recommendation API
      */
     public JSONArray getRecommendation(List<String> query,
                                        String sourceType,
                                        String returnType,
-                                       int verbose) throws DataAccessException {
+                                       int verbose) throws GenDataAccessException {
         // Make an API call to get the user object.
         final OkHttpClient client = new OkHttpClient().newBuilder().build();
         final String url = BASE_URL + "?k=" + this.apiKey
@@ -62,7 +59,7 @@ public class TasteDiveRecommendation implements GenDataAccessInterface {
                 return responseBody.getJSONObject("similar").getJSONArray("results");
             }
             else {
-                throw new DataAccessException(responseBody.getString(MESSAGE));
+                throw new GenDataAccessException(responseBody.getString(MESSAGE));
             }
         }
         catch (IOException | JSONException ex) {
@@ -79,11 +76,11 @@ public class TasteDiveRecommendation implements GenDataAccessInterface {
      * @param sourceType the type of media to base recommendations from
      * @param returnType the type of media to recommend
      * @return the list of media recommendations returned by TasteDive API
-     * @throws DataAccessException error accessing the API
+     * @throws GenDataAccessException error accessing the recommendation API
      */
     public JSONArray getRecommendation(List<String> query,
                                        String sourceType,
-                                       String returnType) throws DataAccessException {
+                                       String returnType) throws GenDataAccessException {
         return this.getRecommendation(query, sourceType, returnType, 1);
     }
 
@@ -95,16 +92,4 @@ public class TasteDiveRecommendation implements GenDataAccessInterface {
         this.apiKey = apiKey;
     }
 
-    /**
-     * Load the api key from the resources/apikey.
-     * @throws RuntimeException if there's an error reading the apikey file.
-     */
-    public void loadApiKeyFromFile() {
-        try {
-            this.apiKey = Files.readString(Paths.get(getClass().getClassLoader().getResource("apikey").toURI()));
-        }
-        catch (IOException | URISyntaxException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
 }

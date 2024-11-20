@@ -6,7 +6,6 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import entity.AbstractMedia;
 import entity.MediaCollection;
 import entity.Movie;
 import entity.User;
@@ -25,21 +24,21 @@ public class UserBuilder {
      */
     public User createUser(JSONObject data) throws UnsupportedOperationException {
         final User user = new User(data.getString("username"), data.getString("password"));
-        final List<MediaCollection<? extends AbstractMedia>> mediaCollections = new ArrayList<>();
+        final List<MediaCollection<Movie>> movieCollections = new ArrayList<>();
         final JSONArray collections;
         if (data.get("info") instanceof JSONObject) {
-            user.setMediaCollections(mediaCollections);
+            user.setMovieCollections(movieCollections);
             return user;
         }
         else {
-            collections = (JSONArray) data.get("info");
+            collections = data.getJSONArray("info");
         }
         for (int i = 0; i < collections.length(); i++) {
             final JSONObject collectionJSON = collections.getJSONObject(i);
             switch (collectionJSON.getString("mediaType")) {
                 case "entity.Movie" -> {
                     final MediaCollectionBuilder<Movie> movieBuilder = new MediaCollectionBuilder<>(Movie.class);
-                    mediaCollections.add(movieBuilder.createCollection(collectionJSON));
+                    movieCollections.add(movieBuilder.createCollection(collectionJSON));
                 }
                 case "entity.TV_Show" -> {
                     throw new UnsupportedOperationException("TV shows are not supported yet.");
@@ -49,7 +48,7 @@ public class UserBuilder {
                 }
             }
         }
-        user.setMediaCollections(mediaCollections);
+        user.setMovieCollections(movieCollections);
         return user;
     }
 }

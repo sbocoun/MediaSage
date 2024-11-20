@@ -7,13 +7,15 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
-import data_access.grade_api.DBUserDataAccessObject;
+import data_access.grade_api.UserRepository;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.ChangePasswordPresenter;
 import interface_adapter.change_password.LoggedInViewModel;
 import interface_adapter.generate_recommendations.GenController;
 import interface_adapter.generate_recommendations.GenPresenter;
+import interface_adapter.list.ListPresenter;
+import interface_adapter.list.ListViewModel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
@@ -33,6 +35,8 @@ import use_case.change_password.ChangePasswordOutputBoundary;
 import use_case.generate_recommendations.GenDataAccessInterface;
 import use_case.generate_recommendations.GenInteractor;
 import use_case.generate_recommendations.GenOutputBoundary;
+import use_case.list.ListInteractor;
+import use_case.list.ListOutputBoundary;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -44,30 +48,40 @@ import use_case.note.NoteOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
-import view.*;
+import view.BlankView;
+import view.ListView;
+import view.LoggedInView;
+import view.LoginView;
+import view.NoteView;
+import view.SearchView;
+import view.SignupView;
+import view.ViewManager;
 
 /**
  * Builder for the Note Application.
  */
 public class AppBuilder {
     public static final int HEIGHT = 450;
-    public static final int WIDTH = 400;
+    public static final int WIDTH = 800;
     private NoteInteractor noteInteractor;
     private GenInteractor genInteractor;
+    private ListInteractor listInteractor;
     private final JTabbedPane tabPanel = new JTabbedPane();
     private final JPanel cardPanel = new JPanel();
     private final JPanel userPanel = new JPanel();
     private final JPanel mediaPanel = new JPanel();
     private final JPanel searchPanel = new JPanel();
+    private final JPanel listPanel = new JPanel();
     private final CardLayout cardLayout = new CardLayout();
     private final ViewManagerModel userViewManagerModel = new ViewManagerModel();
     private final ViewManagerModel mediaViewManagerModel = new ViewManagerModel();
     private final ViewManagerModel searchViewManagerModel = new ViewManagerModel();
+    // observers that listen for when the view should change
     private final ViewManager userViewManager = new ViewManager(userPanel, cardLayout, userViewManagerModel);
     private final ViewManager mediaViewManager = new ViewManager(mediaPanel, cardLayout, mediaViewManagerModel);
     private final ViewManager searchViewManager = new ViewManager(searchPanel, cardLayout, searchViewManagerModel);
     // thought question: is the hard dependency below a problem?
-    private DBUserDataAccessObject userDataAccessObject;
+    private UserRepository userDataAccessObject;
     private GenDataAccessInterface genDataAccessInterface;
 
     private NoteView noteView;
@@ -82,6 +96,8 @@ public class AppBuilder {
     private LoggedInViewModel loggedInViewModel;
     private LoggedInView loggedInView;
     private LoginView loginView;
+    private ListView listView;
+    private ListViewModel listViewModel;
 
     /**
      * Adds the initial tabs and card layout views.
@@ -90,9 +106,10 @@ public class AppBuilder {
         cardPanel.setLayout(cardLayout);
         mediaPanel.setLayout(cardLayout);
         userPanel.setLayout(cardLayout);
-        tabPanel.addTab("Media", mediaPanel);
+        tabPanel.addTab("List", listPanel);
         tabPanel.addTab("Search", searchPanel);
         tabPanel.addTab("User", userPanel);
+        tabPanel.addTab("Media", mediaPanel);
     }
 
     /**
@@ -101,7 +118,7 @@ public class AppBuilder {
      * @param userDAO the data access object for user information
      * @return this builder
      */
-    public AppBuilder addUserDAO(DBUserDataAccessObject userDAO) {
+    public AppBuilder addUserDAO(UserRepository userDAO) {
         this.userDataAccessObject = userDAO;
         return this;
     }
@@ -212,6 +229,17 @@ public class AppBuilder {
     }
 
     /**
+     * Adds the ListView to the application as a new tab.
+     * @return this builder
+     */
+    public AppBuilder addListView() {
+        listViewModel = new ListViewModel();
+        listView = new ListView(listViewModel);
+        listPanel.add(listView);
+        return this;
+    }
+
+    /**
      * Adds the Signup Use Case to the application.
      * @return this builder
      */
@@ -227,6 +255,17 @@ public class AppBuilder {
     }
 
     /**
+     * Adds the List Use Case to the application.
+     * @return this builder
+     */
+    public AppBuilder addListUseCase() {
+        // right now, only initializes the list interactor.
+        final ListOutputBoundary listOutputBoundary = new ListPresenter(listViewModel);
+        this.listInteractor = new ListInteractor(userDataAccessObject, listOutputBoundary);
+        return this;
+    }
+
+    /**
      * Adds the Login Use Case to the application.
      * @return this builder
      */
@@ -234,7 +273,7 @@ public class AppBuilder {
         final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(userViewManagerModel,
                 mediaViewManagerModel, loggedInViewModel, signupViewModel, noteViewModel, loginViewModel);
         final LoginInputBoundary loginInteractor = new LoginInteractor(
-                userDataAccessObject, loginOutputBoundary);
+                userDataAccessObject, loginOutputBoundary, listInteractor);
 
         final LoginController loginController = new LoginController(loginInteractor);
         loginView.setLoginController(loginController);
@@ -283,6 +322,7 @@ public class AppBuilder {
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         application.setTitle("MediaSage");
         application.setSize(WIDTH, HEIGHT);
+        application.setLocationByPlatform(true);
 
         application.add(tabPanel);
 
@@ -291,5 +331,18 @@ public class AppBuilder {
 
         return application;
 
+    }
+
+    /**
+     * Adds the SearchView to the application as a new tab.
+     * @return this builder
+     */
+    public AppBuilder addSearchView() {
+        searchViewModel = new SearchViewModel();
+
+        searchView = new SearchView(searchViewModel);
+        searchPanel.add(searchView, searchView.getViewName());
+
+        return this;
     }
 }

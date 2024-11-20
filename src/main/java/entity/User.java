@@ -43,6 +43,7 @@ public class User {
      * @param mediaType the type of media stored in the collection
      * @return a list of media collections
      */
+    @SuppressWarnings("unchecked")
     public <T> List<MediaCollection<T>> getSpecifiedMediaCollections(Class<T> mediaType) {
         final List<MediaCollection<T>> specifiedCollections = new ArrayList<>();
         for (MediaCollection<?> mediaCollection : mediaCollections) {

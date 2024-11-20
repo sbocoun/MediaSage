@@ -5,13 +5,14 @@ import java.util.List;
 
 import org.json.JSONObject;
 
+import entity.AbstractMedia;
 import entity.MediaCollection;
 
 /**
  * A builder for creating MediaCollection objects from JSON data.
  * @param <T> the type of media being created
  */
-public class MediaCollectionBuilder<T> {
+public class MediaCollectionBuilder<T extends AbstractMedia> {
 
     private final Class<T> type;
 

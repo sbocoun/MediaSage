@@ -1,5 +1,7 @@
 package use_case.note;
 
+import data_access.grade_api.GradeDataAccessException;
+
 /**
  * The "Use Case Interactor" for our two note-related use cases of refreshing
  * the contents of the note and saving the contents of the note. Since they
@@ -31,7 +33,7 @@ public class NoteInteractor implements NoteInputBoundary {
             final String note = noteDataAccessInterface.loadNote();
             noteOutputBoundary.prepareSuccessView(note);
         }
-        catch (DataAccessException ex) {
+        catch (GradeDataAccessException ex) {
             noteOutputBoundary.prepareFailView(ex.getMessage());
         }
     }
@@ -49,7 +51,7 @@ public class NoteInteractor implements NoteInputBoundary {
         //     final String updatedNote = noteDataAccessInterface.saveMediaCollections();
         //     noteOutputBoundary.prepareSuccessView(updatedNote);
         // }
-        // catch (DataAccessException ex) {
+        // catch (GradeDataAccessException ex) {
         //     noteOutputBoundary.prepareFailView(ex.getMessage());
         // }
     }

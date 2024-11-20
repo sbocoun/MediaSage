@@ -1,9 +1,9 @@
 package app;
 
-import entity.User;
+import data_access.InMemoryUserDAO;
+import data_access.grade_api.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
-import use_case.note.NoteDataAccessInterface;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,24 +19,10 @@ public class MainNoteApplicationTest {
     public void setUp() {
 
         // create the data access and inject it into our builder!
-        final NoteDataAccessInterface noteDataAccess = new NoteDataAccessInterface() {
-
-            private String note = "test";
-
-            @Override
-            public String saveNote(User user, String note) {
-                this.note = note;
-                return note;
-            }
-
-            @Override
-            public String loadNote(User user) {
-                return note;
-            }
-        };
+        final UserRepository userDAO = new InMemoryUserDAO();
 
         final AppBuilder builder = new AppBuilder();
-        app = builder.addNoteDAO(noteDataAccess)
+        app = builder.addUserDAO(userDAO)
                 .addNoteView()
                 .addNoteUseCase().build();
 

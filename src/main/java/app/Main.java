@@ -50,9 +50,10 @@ public class Main {
      */
     public static void main(String[] args) {
 
+        final Configurator configurator = new Configurator();
         final DBUserDataAccessObject userDataAccessObject = new DBUserDataAccessObject();
         final GenDataAccessInterface genDataAccessInterface = new TasteDiveRecommendation();
-        genDataAccessInterface.loadApiKeyFromFile();
+        genDataAccessInterface.setApiKey(configurator.getTasteDiveApiKey());
 
         final AppBuilder builder = new AppBuilder();
         builder.addUserDAO(userDataAccessObject)
@@ -61,7 +62,10 @@ public class Main {
                 .addNoteView()
                 .addLoginView()
                 .addSignupView()
+                .addSearchView()
                 .addLoggedInView()
+                .addListView()
+                .addListUseCase()
                 .addNoteUseCase()
                 .addGenUseCase()
                 .addSignupUseCase()

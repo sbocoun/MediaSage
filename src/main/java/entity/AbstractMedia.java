@@ -8,14 +8,15 @@ import java.util.List;
 public abstract class AbstractMedia {
     private String name;
     private List<String> genres;
-    private Rating userRating;
-    private Rating externalRating;
+    private final Rating userRating;
+    private final Rating externalRating;
 
     AbstractMedia(String name, List<String> genres, Rating userRating, Rating externalRating) {
         this.name = name;
         this.genres = genres;
         this.userRating = userRating;
         this.externalRating = externalRating;
+        this.userRating = new Rating(-1);
     }
 
     public String getName() {
@@ -34,19 +35,27 @@ public abstract class AbstractMedia {
         this.genres = genres;
     }
 
-    public Rating getUserRating() {
-        return userRating;
+    public int getUserRating() {
+        return userRating.getScore();
     }
 
-    public void setUserRating(Rating userRating) {
-        this.userRating = userRating;
+    /**
+     * Updates the user rating to newRating, if the 0 <= newRating <= 100.
+     * @param newRating new user rating score for the media
+     */
+    public void setUserRatingScore(int newRating) {
+        userRating.setScore(newRating);
     }
 
-    public Rating getExternalRating() {
-        return externalRating;
+    public int getExternalRating() {
+        return externalRating.getScore();
     }
 
-    public void setExternalRating(Rating externalRating) {
-        this.externalRating = externalRating;
+    /**
+     * Updates the external rating to newExternalRatingScore.
+     * @param newExternalRatingScore new external rating score for the media
+     */
+    public void setExternalRating(int newExternalRatingScore) {
+        this.externalRating.setScore(newExternalRatingScore);
     }
 }

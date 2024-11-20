@@ -3,37 +3,27 @@ package data_access.grade_api;
 import java.io.IOException;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import data_access.grade_api.incoming_data_formatting.UserBuilder;
 import data_access.grade_api.outgoing_data_formatting.CollectionJSONBuilder;
 import entity.AbstractMedia;
 import entity.MediaCollection;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import entity.User;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import use_case.change_password.ChangePasswordUserDataAccessInterface;
-import use_case.login.LoginUserDataAccessInterface;
-import use_case.logout.LogoutUserDataAccessInterface;
-import use_case.note.DataAccessException;
-import use_case.note.NoteDataAccessInterface;
-import use_case.signup.SignupUserDataAccessInterface;
 
 /**
  * The DAO for user data.
  */
-public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
-        LoginUserDataAccessInterface,
-        ChangePasswordUserDataAccessInterface,
-        LogoutUserDataAccessInterface,
-        NoteDataAccessInterface {
+public class DBUserDataAccessObject implements UserRepository {
     private static final int SUCCESS_CODE = 200;
     private static final int CREDENTIAL_ERROR = 401;
+    private static final int NOT_FOUND = 404;
     private static final String CONTENT_TYPE_LABEL = "Content-Type";
     private static final String CONTENT_TYPE_JSON = "application/json";
     private static final String STATUS_CODE_LABEL = "status_code";
@@ -41,33 +31,21 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
     private static final String PASSWORD = "password";
     private static final String MESSAGE = "message";
     private static final String INFO = "info";
-    private static final String NOTE = "note";
     private String currUsername;
     private String currPassword;
 
     @Override
     public User get(String username) {
-        // Make an API call to get the user object.
-        final OkHttpClient client = new OkHttpClient().newBuilder().build();
         final Request request = new Request.Builder()
                 .url(String.format("http://vm003.teach.cs.toronto.edu:20112/user?username=%s", username))
                 .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
                 .build();
         try {
-            final Response response = client.newCall(request).execute();
-
-            final JSONObject responseBody = new JSONObject(response.body().string());
-
-            if (responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE) {
-                final JSONObject userJSONObject = responseBody.getJSONObject("user");
-                final UserBuilder userBuilder = new UserBuilder();
-                return userBuilder.createUser(userJSONObject);
-            }
-            else {
-                throw new RuntimeException(responseBody.getString(MESSAGE));
-            }
+            final JSONObject responseBody = getGradeApiData(request);
+            final UserBuilder userBuilder = new UserBuilder();
+            return userBuilder.createUser(responseBody.getJSONObject("user"));
         }
-        catch (IOException | JSONException ex) {
+        catch (GradeDataAccessException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -84,29 +62,21 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
 
     @Override
     public boolean existsByName(String username) {
-        final OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
         final Request request = new Request.Builder()
                 .url(String.format("http://vm003.teach.cs.toronto.edu:20112/checkIfUserExists?username=%s", username))
                 .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
                 .build();
         try {
-            final Response response = client.newCall(request).execute();
-
-            final JSONObject responseBody = new JSONObject(response.body().string());
-
+            final JSONObject responseBody = getGradeApiData(request);
             return responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE;
         }
-        catch (IOException | JSONException ex) {
+        catch (GradeDataAccessException ex) {
             throw new RuntimeException(ex);
         }
     }
 
     @Override
     public void save(User user) {
-        final OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-
         // POST METHOD
         final MediaType mediaType = MediaType.parse(CONTENT_TYPE_JSON);
         final JSONObject requestBody = new JSONObject();
@@ -119,27 +89,15 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
                 .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
                 .build();
         try {
-            final Response response = client.newCall(request).execute();
-
-            final JSONObject responseBody = new JSONObject(response.body().string());
-
-            if (responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE) {
-                // success!
-            }
-            else {
-                throw new RuntimeException(responseBody.getString(MESSAGE));
-            }
+            getGradeApiData(request);
         }
-        catch (IOException | JSONException ex) {
+        catch (GradeDataAccessException ex) {
             throw new RuntimeException(ex);
         }
     }
 
     @Override
     public void changePassword(User user) {
-        final OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-
         // POST METHOD
         final MediaType mediaType = MediaType.parse(CONTENT_TYPE_JSON);
         final JSONObject requestBody = new JSONObject();
@@ -152,19 +110,10 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
                 .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
                 .build();
         try {
-            final Response response = client.newCall(request).execute();
-
-            final JSONObject responseBody = new JSONObject(response.body().string());
-
-            if (responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE) {
-                // success!
-                this.currPassword = user.getPassword();
-            }
-            else {
-                throw new RuntimeException(responseBody.getString(MESSAGE));
-            }
+            getGradeApiData(request);
+            this.currPassword = user.getPassword();
         }
-        catch (IOException | JSONException ex) {
+        catch (GradeDataAccessException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -176,16 +125,12 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
 
     @Override
     public String saveMediaCollections(List<MediaCollection<? extends AbstractMedia>
-            > mediaCollectionsList) throws DataAccessException {
-        final OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-
+            > mediaCollectionsList) throws GradeDataAccessException {
         // POST METHOD
-        final MediaType mediaType = MediaType.parse(CONTENT_TYPE_JSON);
         final JSONObject requestBody = new JSONObject();
-
         requestBody.put(USERNAME, getCurrentUsername());
         requestBody.put(PASSWORD, this.currPassword);
+        final MediaType mediaType = MediaType.parse(CONTENT_TYPE_JSON);
 
         final CollectionJSONBuilder collectionsBuilder = new CollectionJSONBuilder();
         final JSONArray mediaCollections =
@@ -193,7 +138,6 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
 
         requestBody.put(INFO, mediaCollections);
         final RequestBody body = RequestBody.create(requestBody.toString(), mediaType);
-
         final Request request = new Request.Builder()
                 .url("http://vm003.teach.cs.toronto.edu:20112/modifyUserInfo")
                 .method("PUT", body)
@@ -201,55 +145,59 @@ public class DBUserDataAccessObject implements SignupUserDataAccessInterface,
                 .build();
 
         try {
-            final Response response = client.newCall(request).execute();
-
-            final JSONObject responseBody = new JSONObject(response.body().string());
-
-            if (responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE) {
-                return loadNote();
-            }
-            else if (responseBody.getInt(STATUS_CODE_LABEL) == CREDENTIAL_ERROR) {
-                throw new DataAccessException("message could not be found or password was incorrect");
-            }
-            else {
-                throw new DataAccessException("database error: " + responseBody.getString(MESSAGE));
-            }
+            getGradeApiData(request);
+            return loadNote();
         }
-        catch (IOException | JSONException ex) {
-            throw new DataAccessException(ex.getMessage());
+        catch (GradeDataAccessException ex) {
+            requestBody.remove(PASSWORD);
+            throw new GradeDataAccessException(ex.getMessage() + "%nSanitized Query:%n" + requestBody);
         }
     }
 
     @Override
-    public String loadNote() throws DataAccessException {
+    public String loadNote() throws GradeDataAccessException {
         // Make an API call to get the user object.
         final String username = getCurrentUsername();
-        final OkHttpClient client = new OkHttpClient().newBuilder().build();
         final Request request = new Request.Builder()
                 .url(String.format("http://vm003.teach.cs.toronto.edu:20112/user?username=%s", username))
                 .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
                 .build();
-        try {
-            final Response response = client.newCall(request).execute();
+        final JSONObject responseBody = getGradeApiData(request);
+        final JSONObject userJSONObject = responseBody.getJSONObject("user");
+        JSONArray mediaCollectionArray = new JSONArray();
+        if (userJSONObject.get(INFO) instanceof JSONArray) {
+            mediaCollectionArray = userJSONObject.getJSONArray(INFO);
+        }
+        return mediaCollectionArray.toString();
+    }
 
+    /**
+     * Wrapper for making a request to the Grade API.
+     * @param request the request to make to the Grade API
+     * @return the JSON response from the API
+     * @throws GradeDataAccessException if Grade API is not available or request is malformed
+     */
+    private JSONObject getGradeApiData(Request request) throws GradeDataAccessException {
+        final OkHttpClient client = new OkHttpClient().newBuilder().build();
+        try (Response response = client.newCall(request).execute()) {
+            if (response.body() == null) {
+                final String error = "Got a null response while calling the Grade API.";
+                throw new GradeDataAccessException(error);
+            }
             final JSONObject responseBody = new JSONObject(response.body().string());
-
-            if (responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE) {
-                final JSONObject userJSONObject = responseBody.getJSONObject("user");
-                final JSONObject data = userJSONObject.getJSONObject(INFO);
-                if (!data.has(NOTE)) {
-                    return "";
-                }
-                else {
-                    return data.getString(NOTE);
-                }
+            final int responseCode = responseBody.getInt(STATUS_CODE_LABEL);
+            if (responseBody.getInt(STATUS_CODE_LABEL) == CREDENTIAL_ERROR) {
+                throw new GradeDataAccessException("message could not be found or password was incorrect");
+            }
+            else if (!response.isSuccessful() && responseCode != NOT_FOUND) {
+                throw new GradeDataAccessException("database error: " + responseBody.getString(MESSAGE));
             }
             else {
-                throw new DataAccessException(responseBody.getString(MESSAGE));
+                return responseBody;
             }
         }
-        catch (IOException | JSONException ex) {
-            throw new RuntimeException(ex);
+        catch (IOException ex) {
+            throw new GradeDataAccessException(ex.getMessage());
         }
     }
 }
