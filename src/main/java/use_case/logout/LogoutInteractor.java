@@ -11,7 +11,6 @@ import use_case.list.ListOutputData;
 public class LogoutInteractor implements LogoutInputBoundary {
     private final LogoutUserDataAccessInterface userDataAccessObject;
     private final LogoutOutputBoundary logoutPresenter;
-    private final ListOutputBoundary listPresenter;
 
     public LogoutInteractor(LogoutUserDataAccessInterface userDataAccessInterface,
                             LogoutOutputBoundary logoutOutputBoundary,
@@ -36,7 +35,7 @@ public class LogoutInteractor implements LogoutInputBoundary {
         else {
             final LogoutOutputData logoutOutputData = new LogoutOutputData(userDataAccessObject.getCurrentUsername(),
                     false);
-            userDataAccessObject.setCurrentUsername(null);
+            userDataAccessObject.clearCurrentUser();
             logoutPresenter.prepareSuccessView(logoutOutputData);
             final ListOutputData listOutputData = new ListOutputData("logged out", new ArrayList<>());
             listPresenter.prepareFailView(listOutputData);

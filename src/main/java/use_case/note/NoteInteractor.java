@@ -1,6 +1,10 @@
 package use_case.note;
 
+import java.util.List;
+
 import data_access.grade_api.GradeDataAccessException;
+import entity.AbstractMedia;
+import entity.MediaCollection;
 
 /**
  * The "Use Case Interactor" for our two note-related use cases of refreshing
@@ -11,11 +15,6 @@ public class NoteInteractor implements NoteInputBoundary {
 
     private final NoteDataAccessInterface noteDataAccessInterface;
     private final NoteOutputBoundary noteOutputBoundary;
-    // Note: this program has it hardcoded which user object it is getting data for;
-    // you could change this if you wanted to generalize the code. For example,
-    // you might allow a user of the program to create a new note, which you
-    // could store as a "user" through the API OR you might maintain all notes
-    // in a JSON object stored in one common "user" stored through the API.
 
     public NoteInteractor(NoteDataAccessInterface noteDataAccessInterface,
                           NoteOutputBoundary noteOutputBoundary) {
@@ -25,13 +24,14 @@ public class NoteInteractor implements NoteInputBoundary {
 
     /**
      * Executes the refresh note use case.
-     *
      */
     @Override
     public void executeRefresh() {
         try {
-            final String note = noteDataAccessInterface.loadNote();
-            noteOutputBoundary.prepareSuccessView(note);
+            final List<MediaCollection<? extends AbstractMedia>> mediaCollections =
+                    noteDataAccessInterface.loadMediaCollections();
+            noteOutputBoundary.prepareSuccessView(
+                    noteDataAccessInterface.convertCollectionsListToString(mediaCollections));
         }
         catch (GradeDataAccessException ex) {
             noteOutputBoundary.prepareFailView(ex.getMessage());
@@ -40,19 +40,19 @@ public class NoteInteractor implements NoteInputBoundary {
 
     /**
      * Executes the save note use case.
-     *
-     * @param note the input data
      */
     @Override
-    public void executeSave(String note) {
-        // TODO: update this for saving the user's mediaCollection later
-        // try {
-        //
-        //     final String updatedNote = noteDataAccessInterface.saveMediaCollections();
-        //     noteOutputBoundary.prepareSuccessView(updatedNote);
-        // }
-        // catch (GradeDataAccessException ex) {
-        //     noteOutputBoundary.prepareFailView(ex.getMessage());
-        // }
+    public void executeSave(String mediaCollectionsString) {
+        final List<MediaCollection<? extends AbstractMedia>> mediaCollections =
+                noteDataAccessInterface.convertStringToMediaCollections(mediaCollectionsString);
+        try {
+            final List<MediaCollection<? extends AbstractMedia>> updatedMediaCollections =
+                    noteDataAccessInterface.saveMediaCollections(mediaCollections);
+            noteOutputBoundary.prepareSuccessView(
+                    noteDataAccessInterface.convertCollectionsListToString(updatedMediaCollections));
+        }
+        catch (GradeDataAccessException ex) {
+            noteOutputBoundary.prepareFailView(ex.getMessage());
+        }
     }
 }

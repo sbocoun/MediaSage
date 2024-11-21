@@ -14,10 +14,8 @@ public class NoteInteractorTest {
     @Before
     public void setup() {
         userRepo = new InMemoryUserDAO();
-        User user = new User("test", "test", "test");
+        User user = new User("test", "test");
         userRepo.save(user);
-        userRepo.setCurrentUsername(user.getName());
-        userRepo.setCurrentPassword(user.getPassword());
     }
 
     @Test

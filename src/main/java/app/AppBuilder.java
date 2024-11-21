@@ -110,7 +110,7 @@ public class AppBuilder {
         tabPanel.addTab("List", listPanel);
         tabPanel.addTab("Search", searchPanel);
         tabPanel.addTab("User", userPanel);
-        tabPanel.addTab("Media", mediaPanel);
+        tabPanel.addTab("Debug", mediaPanel);
     }
 
     /**

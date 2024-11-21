@@ -31,8 +31,7 @@ public class DBUserDataAccessObject implements UserRepository {
     private static final String PASSWORD = "password";
     private static final String MESSAGE = "message";
     private static final String INFO = "info";
-    private String currUsername;
-    private String currPassword;
+    private User currentUser;
 
     @Override
     public User get(String username) {
@@ -43,7 +42,10 @@ public class DBUserDataAccessObject implements UserRepository {
         try {
             final JSONObject responseBody = getGradeApiData(request);
             final UserBuilder userBuilder = new UserBuilder();
-            return userBuilder.createUser(responseBody.getJSONObject("user"));
+            final User user = userBuilder.createUser(responseBody.getJSONObject("user"));
+            this.currentUser = user;
+            return user;
+
         }
         catch (GradeDataAccessException ex) {
             throw new RuntimeException(ex);
@@ -51,13 +53,8 @@ public class DBUserDataAccessObject implements UserRepository {
     }
 
     @Override
-    public void setCurrentUsername(String name) {
-        this.currUsername = name;
-    }
-
-    @Override
-    public void setCurrentPassword(String password) {
-        this.currPassword = password;
+    public void clearCurrentUser() {
+        this.currentUser = null;
     }
 
     @Override
@@ -111,7 +108,7 @@ public class DBUserDataAccessObject implements UserRepository {
                 .build();
         try {
             getGradeApiData(request);
-            this.currPassword = user.getPassword();
+            this.currentUser = get(user.getName());
         }
         catch (GradeDataAccessException ex) {
             throw new RuntimeException(ex);
@@ -120,16 +117,23 @@ public class DBUserDataAccessObject implements UserRepository {
 
     @Override
     public String getCurrentUsername() {
-        return currUsername;
+        final String result;
+        if (currentUser != null) {
+            result = currentUser.getName();
+        }
+        else {
+            result = "";
+        }
+        return result;
     }
 
     @Override
-    public String saveMediaCollections(List<MediaCollection<? extends AbstractMedia>
-            > mediaCollectionsList) throws GradeDataAccessException {
+    public List<MediaCollection<? extends AbstractMedia>> saveMediaCollections(
+            List<MediaCollection<? extends AbstractMedia>> mediaCollectionsList) throws GradeDataAccessException {
         // POST METHOD
         final JSONObject requestBody = new JSONObject();
-        requestBody.put(USERNAME, getCurrentUsername());
-        requestBody.put(PASSWORD, this.currPassword);
+        requestBody.put(USERNAME, this.currentUser.getName());
+        requestBody.put(PASSWORD, this.currentUser.getPassword());
         final MediaType mediaType = MediaType.parse(CONTENT_TYPE_JSON);
 
         final CollectionJSONBuilder collectionsBuilder = new CollectionJSONBuilder();
@@ -146,7 +150,7 @@ public class DBUserDataAccessObject implements UserRepository {
 
         try {
             getGradeApiData(request);
-            return loadNote();
+            return loadMediaCollections();
         }
         catch (GradeDataAccessException ex) {
             requestBody.remove(PASSWORD);
@@ -155,20 +159,39 @@ public class DBUserDataAccessObject implements UserRepository {
     }
 
     @Override
-    public String loadNote() throws GradeDataAccessException {
-        // Make an API call to get the user object.
-        final String username = getCurrentUsername();
-        final Request request = new Request.Builder()
-                .url(String.format("http://vm003.teach.cs.toronto.edu:20112/user?username=%s", username))
-                .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
-                .build();
-        final JSONObject responseBody = getGradeApiData(request);
-        final JSONObject userJSONObject = responseBody.getJSONObject("user");
-        JSONArray mediaCollectionArray = new JSONArray();
-        if (userJSONObject.get(INFO) instanceof JSONArray) {
-            mediaCollectionArray = userJSONObject.getJSONArray(INFO);
+    public List<MediaCollection<? extends AbstractMedia>> loadMediaCollections() throws GradeDataAccessException {
+        refreshUser();
+        return currentUser.getAllMediaCollections();
+    }
+
+    @Override
+    public String convertCollectionsListToString(List<MediaCollection<? extends AbstractMedia>> mediaCollectionList) {
+        final CollectionJSONBuilder collectionsBuilder = new CollectionJSONBuilder();
+        return collectionsBuilder.buildMediaCollections(mediaCollectionList).toString();
+    }
+
+    @Override
+    public List<MediaCollection<? extends AbstractMedia>> convertStringToMediaCollections(
+            String mediaCollectionsString) {
+        final JSONArray jsonCollections = new JSONArray(mediaCollectionsString);
+        // borrowing the UserBuilder to build the correct media collections list
+        final JSONObject mockJsonUser = new JSONObject();
+        mockJsonUser.put("username", "mock");
+        mockJsonUser.put("password", "mock");
+        mockJsonUser.put("info", jsonCollections);
+        final UserBuilder userBuilder = new UserBuilder();
+        final User mockUser = userBuilder.createUser(mockJsonUser);
+        return mockUser.getAllMediaCollections();
+    }
+
+    /**
+     * Refreshes the currently active user from database.
+     * Does nothing if not currently logged in, i.e. currentUser is null.
+     */
+    private void refreshUser() {
+        if (currentUser != null) {
+            currentUser = get(currentUser.getName());
         }
-        return mediaCollectionArray.toString();
     }
 
     /**
