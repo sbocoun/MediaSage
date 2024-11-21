@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import interface_adapter.generate_recommendations.GenController;
@@ -23,11 +24,12 @@ import interface_adapter.note.NoteViewModel;
  */
 public class NoteView extends JPanel implements ActionListener, PropertyChangeListener {
 
-    private final String viewName = "note";
+    private final String viewName = "debug";
     private final NoteViewModel noteViewModel;
 
-    private final JLabel noteName = new JLabel("note for");
+    private final JLabel noteName = new JLabel("debug view for");
     private final JTextArea noteInputField = new JTextArea();
+    private final JScrollPane scrollPane = new JScrollPane(noteInputField);
 
     private final JButton saveButton = new JButton("Save");
     private final JButton refreshButton = new JButton("Refresh");
@@ -49,7 +51,7 @@ public class NoteView extends JPanel implements ActionListener, PropertyChangeLi
         saveButton.addActionListener(
                 evt -> {
                     if (evt.getSource().equals(saveButton)) {
-                        noteController.execute(noteInputField.getText());
+                        noteController.executeSave(noteInputField.getText());
 
                     }
                 }
@@ -58,7 +60,7 @@ public class NoteView extends JPanel implements ActionListener, PropertyChangeLi
         refreshButton.addActionListener(
                 evt -> {
                     if (evt.getSource().equals(refreshButton)) {
-                        noteController.execute(null);
+                        noteController.executeRefresh();
 
                     }
                 }
@@ -75,7 +77,7 @@ public class NoteView extends JPanel implements ActionListener, PropertyChangeLi
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         this.add(noteName);
-        this.add(noteInputField);
+        this.add(scrollPane);
         this.add(buttons);
     }
 

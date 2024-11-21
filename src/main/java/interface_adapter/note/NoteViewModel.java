@@ -7,7 +7,7 @@ import interface_adapter.ViewModel;
  */
 public class NoteViewModel extends ViewModel<NoteState> {
     public NoteViewModel() {
-        super("note");
+        super("debug");
         setState(new NoteState());
     }
 }

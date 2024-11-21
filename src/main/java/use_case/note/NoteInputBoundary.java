@@ -1,19 +1,20 @@
 package use_case.note;
 
 /**
- * The Input Boundary for our note-related use cases. Since they are closely related,
+ * The Input Boundary for our "Media Collections String"-related use cases. Since they are closely related,
  * we have included them both in the same interface for simplicity.
  */
 public interface NoteInputBoundary {
 
     /**
-     * Executes the refresh note use case.
+     * Executes the refresh Media Collections String use case.
      */
     void executeRefresh();
 
     /**
-     * Executes the save note use case.
-     * @param message the input data
+     * Executes the save Media Collections String use case.
+     *
+     * @param mediaCollectionsString the string representation of the media collections to save
      */
-    void executeSave(String message);
+    void executeSave(String mediaCollectionsString);
 }

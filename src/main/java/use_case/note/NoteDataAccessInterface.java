@@ -13,35 +13,39 @@ import entity.MediaCollection;
 public interface NoteDataAccessInterface {
 
     /**
-     * Saves a note for a given user. This will replace any existing note.
-     *
-     * <p>The password of the user must match that of the user saved in the system.</p>
+     * Saves a list of media collections for a given user. This will replace any existing media collections list.
+     * User must be logged in via LoginDataAccessInterface.
      *
      * @param mediaCollectionsList the list of media collections to be saved
-     * @return the contents of the note
-     * @throws GradeDataAccessException if the user's note can not be saved for any reason
+     * @return the list of media collections
+     * @throws GradeDataAccessException if the user's list of media collections can not be saved for any reason
      */
-    String saveMediaCollections(List<MediaCollection<? extends AbstractMedia>> mediaCollectionsList) throws GradeDataAccessException;
+    List<MediaCollection<? extends AbstractMedia>> saveMediaCollections(
+            List<MediaCollection<? extends AbstractMedia>> mediaCollectionsList)
+            throws GradeDataAccessException;
 
     /**
-     * Returns the note associated with the user. The password
+     * Returns the list of media collections associated with the user. The password
      * is not checked, so anyone can read the information.
      *
-     * @return the contents of the note
-     * @throws GradeDataAccessException if the user's note can not be loaded for any reason
+     * @return the list of media collections
+     * @throws GradeDataAccessException if the user's list of media collections can not be loaded for any reason
      */
-    String loadNote() throws GradeDataAccessException;
+    List<MediaCollection<? extends AbstractMedia>> loadMediaCollections() throws GradeDataAccessException;
 
     /**
-     * Set the user whose notes the app retrieves.
-     * @param username the username of the user
+     * Converts the list of media collections to string representation for debug use.
+     *
+     * @param mediaCollectionList the list of media collections to be converted to string
+     * @return the string representation of the list of media collections
      */
-    void setCurrentUsername(String username);
+    String convertCollectionsListToString(List<MediaCollection<? extends AbstractMedia>> mediaCollectionList);
 
     /**
-     * Sets the password of the user for authentication.
-     * @param password the password of the user
+     * Converts the string representation of media collections to its entity form.
+     *
+     * @param mediaCollectionsString the string representation of the list of media collections
+     * @return the list of media collection entities
      */
-    void setCurrentPassword(String password);
-
+    List<MediaCollection<? extends AbstractMedia>> convertStringToMediaCollections(String mediaCollectionsString);
 }
