@@ -11,7 +11,6 @@ import java.util.Objects;
 
 import org.json.JSONObject;
 
-import data_access.grade_api.GradeDataAccessException;
 import data_access.grade_api.UserRepository;
 import data_access.grade_api.incoming_data_formatting.UserBuilder;
 import entity.AbstractMedia;
@@ -24,8 +23,7 @@ import entity.User;
 public class InMemoryUserDAO implements UserRepository {
     private static final String UNSUPPORTED = "Not supported for in-memory user object.";
     private final Map<String, User> users = new HashMap<>();
-    private String currentUsername;
-    private String currentPassword;
+    private User currentUser;
 
     @Override
     public boolean existsByName(String username) {
@@ -44,17 +42,19 @@ public class InMemoryUserDAO implements UserRepository {
 
     @Override
     public String getCurrentUsername() {
-        return currentUsername;
+        final String result;
+        if (currentUser != null) {
+            result = currentUser.getName();
+        }
+        else {
+            result = "";
+        }
+        return result;
     }
 
     @Override
-    public void setCurrentUsername(String username) {
-        this.currentUsername = username;
-    }
-
-    @Override
-    public void setCurrentPassword(String currentPassword) {
-        this.currentPassword = currentPassword;
+    public void clearCurrentUser() {
+        this.currentUser = null;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class InMemoryUserDAO implements UserRepository {
     }
 
     @Override
-    public String saveMediaCollections(List<MediaCollection<? extends AbstractMedia>> mediaCollectionsList) throws GradeDataAccessException {
+    public String saveMediaCollections(List<MediaCollection<? extends AbstractMedia>> mediaCollectionsList) {
         throw new UnsupportedOperationException(UNSUPPORTED);
     }
 

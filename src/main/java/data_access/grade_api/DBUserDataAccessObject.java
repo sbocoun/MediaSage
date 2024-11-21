@@ -31,8 +31,7 @@ public class DBUserDataAccessObject implements UserRepository {
     private static final String PASSWORD = "password";
     private static final String MESSAGE = "message";
     private static final String INFO = "info";
-    private String currUsername;
-    private String currPassword;
+    private User currentUser;
 
     @Override
     public User get(String username) {
@@ -43,7 +42,10 @@ public class DBUserDataAccessObject implements UserRepository {
         try {
             final JSONObject responseBody = getGradeApiData(request);
             final UserBuilder userBuilder = new UserBuilder();
-            return userBuilder.createUser(responseBody.getJSONObject("user"));
+            final User user = userBuilder.createUser(responseBody.getJSONObject("user"));
+            this.currentUser = user;
+            return user;
+
         }
         catch (GradeDataAccessException ex) {
             throw new RuntimeException(ex);
@@ -51,13 +53,8 @@ public class DBUserDataAccessObject implements UserRepository {
     }
 
     @Override
-    public void setCurrentUsername(String name) {
-        this.currUsername = name;
-    }
-
-    @Override
-    public void setCurrentPassword(String password) {
-        this.currPassword = password;
+    public void clearCurrentUser() {
+        this.currentUser = null;
     }
 
     @Override
@@ -111,7 +108,7 @@ public class DBUserDataAccessObject implements UserRepository {
                 .build();
         try {
             getGradeApiData(request);
-            this.currPassword = user.getPassword();
+            this.currentUser = get(user.getName());
         }
         catch (GradeDataAccessException ex) {
             throw new RuntimeException(ex);
@@ -120,7 +117,14 @@ public class DBUserDataAccessObject implements UserRepository {
 
     @Override
     public String getCurrentUsername() {
-        return currUsername;
+        final String result;
+        if (currentUser != null) {
+            result = currentUser.getName();
+        }
+        else {
+            result = "";
+        }
+        return result;
     }
 
     @Override
@@ -128,8 +132,8 @@ public class DBUserDataAccessObject implements UserRepository {
             > mediaCollectionsList) throws GradeDataAccessException {
         // POST METHOD
         final JSONObject requestBody = new JSONObject();
-        requestBody.put(USERNAME, getCurrentUsername());
-        requestBody.put(PASSWORD, this.currPassword);
+        requestBody.put(USERNAME, this.currentUser.getName());
+        requestBody.put(PASSWORD, this.currentUser.getPassword());
         final MediaType mediaType = MediaType.parse(CONTENT_TYPE_JSON);
 
         final CollectionJSONBuilder collectionsBuilder = new CollectionJSONBuilder();

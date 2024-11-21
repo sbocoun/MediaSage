@@ -21,7 +21,7 @@ public interface LoginUserDataAccessInterface {
     void save(User user);
 
     /**
-     * Returns the user with the given username.
+     * Returns the user with the given username, and saves it as the currently active user.
      * @param username the username to look up
      * @return the user with the given username
      */
@@ -32,16 +32,4 @@ public interface LoginUserDataAccessInterface {
      * @return the username of the current user; null indicates that no one is logged into the application.
      */
     String getCurrentUsername();
-
-    /**
-     * Sets the username indicating who is the current user of the application.
-     * @param username the new current username; null to indicate that no one is currently logged into the application.
-     */
-    void setCurrentUsername(String username);
-
-    /**
-     * Sets the password for authentication in the rest of the application.
-     * @param password the current password
-     */
-    void setCurrentPassword(String password);
 }

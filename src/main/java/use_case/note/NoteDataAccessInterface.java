@@ -21,7 +21,8 @@ public interface NoteDataAccessInterface {
      * @return the contents of the note
      * @throws GradeDataAccessException if the user's note can not be saved for any reason
      */
-    String saveMediaCollections(List<MediaCollection<? extends AbstractMedia>> mediaCollectionsList) throws GradeDataAccessException;
+    String saveMediaCollections(List<MediaCollection<? extends AbstractMedia>> mediaCollectionsList)
+            throws GradeDataAccessException;
 
     /**
      * Returns the note associated with the user. The password
@@ -31,17 +32,4 @@ public interface NoteDataAccessInterface {
      * @throws GradeDataAccessException if the user's note can not be loaded for any reason
      */
     String loadNote() throws GradeDataAccessException;
-
-    /**
-     * Set the user whose notes the app retrieves.
-     * @param username the username of the user
-     */
-    void setCurrentUsername(String username);
-
-    /**
-     * Sets the password of the user for authentication.
-     * @param password the password of the user
-     */
-    void setCurrentPassword(String password);
-
 }
