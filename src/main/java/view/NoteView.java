@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import interface_adapter.generate_recommendations.GenController;
@@ -28,6 +29,7 @@ public class NoteView extends JPanel implements ActionListener, PropertyChangeLi
 
     private final JLabel noteName = new JLabel("debug view for");
     private final JTextArea noteInputField = new JTextArea();
+    private final JScrollPane scrollPane = new JScrollPane(noteInputField);
 
     private final JButton saveButton = new JButton("Save");
     private final JButton refreshButton = new JButton("Refresh");
@@ -75,7 +77,7 @@ public class NoteView extends JPanel implements ActionListener, PropertyChangeLi
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         this.add(noteName);
-        this.add(noteInputField);
+        this.add(scrollPane);
         this.add(buttons);
     }
 
