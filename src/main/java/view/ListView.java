@@ -19,6 +19,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import interface_adapter.list.ListState;
@@ -207,7 +209,12 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         if (!state.getCurrentCollectionName().isBlank()) {
             mediaCollectionSelector.setSelectedItem(state.getCurrentCollectionName());
         }
-        refreshTable(state);
+        if ("logged out".equals(state.getErrorMessage())) {
+            clearTable();
+        }
+        else {
+            refreshTable(state);
+        }
     }
 
     /**
@@ -236,5 +243,12 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
             mediaListTable.setModel(newTableModel);
             newTableModel.fireTableDataChanged();
         }
+    }
+
+    /**
+     * Clear the table.
+     */
+    public void clearTable() {
+        SwingUtilities.invokeLater(() -> mediaListTable.setModel(new DefaultTableModel()));
     }
 }

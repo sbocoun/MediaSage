@@ -1,18 +1,26 @@
 package use_case.logout;
 
+import java.util.ArrayList;
+
+import use_case.list.ListOutputBoundary;
+import use_case.list.ListOutputData;
+
 /**
  * The Logout Interactor.
  */
 public class LogoutInteractor implements LogoutInputBoundary {
-    private LogoutUserDataAccessInterface userDataAccessObject;
-    private LogoutOutputBoundary logoutPresenter;
+    private final LogoutUserDataAccessInterface userDataAccessObject;
+    private final LogoutOutputBoundary logoutPresenter;
+    private final ListOutputBoundary listPresenter;
 
     public LogoutInteractor(LogoutUserDataAccessInterface userDataAccessInterface,
-                            LogoutOutputBoundary logoutOutputBoundary) {
+                            LogoutOutputBoundary logoutOutputBoundary,
+                            ListOutputBoundary listPresenter) {
         // Save the DAO and Presenter in the instance variables.
         // Which parameter is the DAO and which is the presenter?
         userDataAccessObject = userDataAccessInterface;
         logoutPresenter = logoutOutputBoundary;
+        this.listPresenter = listPresenter;
     }
 
     @Override
@@ -30,6 +38,8 @@ public class LogoutInteractor implements LogoutInputBoundary {
                     false);
             userDataAccessObject.setCurrentUsername(null);
             logoutPresenter.prepareSuccessView(logoutOutputData);
+            final ListOutputData listOutputData = new ListOutputData("logged out", new ArrayList<>());
+            listPresenter.prepareFailView(listOutputData);
         }
     }
 }
