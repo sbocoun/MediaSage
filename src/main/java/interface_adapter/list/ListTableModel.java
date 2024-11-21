@@ -1,5 +1,6 @@
 package interface_adapter.list;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
@@ -14,6 +15,11 @@ public class ListTableModel extends AbstractTableModel {
     public ListTableModel(List<String> columnNames, List<List<Object>> table) {
         this.columnNames = columnNames;
         this.table = table;
+    }
+
+    public ListTableModel() {
+        this.columnNames = new ArrayList<>();
+        this.table = new ArrayList<>(List.of(new ArrayList<>()));
     }
 
     @Override

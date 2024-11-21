@@ -98,6 +98,7 @@ public class AppBuilder {
     private LoginView loginView;
     private ListView listView;
     private ListViewModel listViewModel;
+    private ListOutputBoundary listPresenter;
 
     /**
      * Adds the initial tabs and card layout views.
@@ -260,8 +261,8 @@ public class AppBuilder {
      */
     public AppBuilder addListUseCase() {
         // right now, only initializes the list interactor.
-        final ListOutputBoundary listOutputBoundary = new ListPresenter(listViewModel);
-        this.listInteractor = new ListInteractor(userDataAccessObject, listOutputBoundary);
+        listPresenter = new ListPresenter(listViewModel);
+        this.listInteractor = new ListInteractor(userDataAccessObject, listPresenter);
         return this;
     }
 
@@ -306,7 +307,7 @@ public class AppBuilder {
                 mediaViewManagerModel, blankViewModel, loggedInViewModel, loginViewModel);
 
         final LogoutInputBoundary logoutInteractor =
-                new LogoutInteractor(userDataAccessObject, logoutOutputBoundary);
+                new LogoutInteractor(userDataAccessObject, logoutOutputBoundary, listPresenter);
 
         final LogoutController logoutController = new LogoutController(logoutInteractor);
         loggedInView.setLogoutController(logoutController);

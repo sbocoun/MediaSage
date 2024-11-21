@@ -1,5 +1,7 @@
 package interface_adapter.list;
 
+import java.util.ArrayList;
+
 import entity.Movie;
 import use_case.list.ListOutputBoundary;
 import use_case.list.ListOutputData;
@@ -26,6 +28,7 @@ public class ListPresenter implements ListOutputBoundary {
         final ListTableModel tableModel = listTableModelFactory
                 .createListTableModel(mediaType, listOutputData.getCollectionDataToDisplay());
         final ListState listState = listViewModel.getState();
+        listState.setErrorMessage("");
         listState.setCurrentCollectionName(listOutputData.getCollectionNameToDisplay());
         listState.setAvailableCollections(listOutputData.getAvailableCollections());
         listState.setCurrentCollectionType(mediaType);
@@ -43,7 +46,16 @@ public class ListPresenter implements ListOutputBoundary {
     public void prepareFailView(ListOutputData listOutputData) {
         final ListState listState = listViewModel.getState();
         listState.setErrorMessage(listOutputData.getErrorMessage());
-        listState.setAvailableCollections(listOutputData.getAvailableCollections());
+        final String loggedOut = "logged out";
+        if (loggedOut.equals(listOutputData.getErrorMessage())) {
+            listState.setAvailableCollections(new ArrayList<>());
+            listState.setTableModel(new ListTableModel());
+            listState.setCurrentCollectionName("");
+            listState.setCurrentCollectionType("");
+        }
+        else {
+            listState.setAvailableCollections(listOutputData.getAvailableCollections());
+        }
         listViewModel.setState(listState);
         listViewModel.firePropertyChanged();
     }
