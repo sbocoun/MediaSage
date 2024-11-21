@@ -128,8 +128,8 @@ public class DBUserDataAccessObject implements UserRepository {
     }
 
     @Override
-    public String saveMediaCollections(List<MediaCollection<? extends AbstractMedia>
-            > mediaCollectionsList) throws GradeDataAccessException {
+    public List<MediaCollection<? extends AbstractMedia>> saveMediaCollections(
+            List<MediaCollection<? extends AbstractMedia>> mediaCollectionsList) throws GradeDataAccessException {
         // POST METHOD
         final JSONObject requestBody = new JSONObject();
         requestBody.put(USERNAME, this.currentUser.getName());
@@ -150,7 +150,7 @@ public class DBUserDataAccessObject implements UserRepository {
 
         try {
             getGradeApiData(request);
-            return loadNote();
+            return loadMediaCollections();
         }
         catch (GradeDataAccessException ex) {
             requestBody.remove(PASSWORD);
@@ -159,20 +159,39 @@ public class DBUserDataAccessObject implements UserRepository {
     }
 
     @Override
-    public String loadNote() throws GradeDataAccessException {
-        // Make an API call to get the user object.
-        final String username = getCurrentUsername();
-        final Request request = new Request.Builder()
-                .url(String.format("http://vm003.teach.cs.toronto.edu:20112/user?username=%s", username))
-                .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
-                .build();
-        final JSONObject responseBody = getGradeApiData(request);
-        final JSONObject userJSONObject = responseBody.getJSONObject("user");
-        JSONArray mediaCollectionArray = new JSONArray();
-        if (userJSONObject.get(INFO) instanceof JSONArray) {
-            mediaCollectionArray = userJSONObject.getJSONArray(INFO);
+    public List<MediaCollection<? extends AbstractMedia>> loadMediaCollections() throws GradeDataAccessException {
+        refreshUser();
+        return currentUser.getAllMediaCollections();
+    }
+
+    @Override
+    public String convertCollectionsListToString(List<MediaCollection<? extends AbstractMedia>> mediaCollectionList) {
+        final CollectionJSONBuilder collectionsBuilder = new CollectionJSONBuilder();
+        return collectionsBuilder.buildMediaCollections(mediaCollectionList).toString();
+    }
+
+    @Override
+    public List<MediaCollection<? extends AbstractMedia>> convertStringToMediaCollections(
+            String mediaCollectionsString) {
+        final JSONArray jsonCollections = new JSONArray(mediaCollectionsString);
+        // borrowing the UserBuilder to build the correct media collections list
+        final JSONObject mockJsonUser = new JSONObject();
+        mockJsonUser.put("username", "mock");
+        mockJsonUser.put("password", "mock");
+        mockJsonUser.put("info", jsonCollections);
+        final UserBuilder userBuilder = new UserBuilder();
+        final User mockUser = userBuilder.createUser(mockJsonUser);
+        return mockUser.getAllMediaCollections();
+    }
+
+    /**
+     * Refreshes the currently active user from database.
+     * Does nothing if not currently logged in, i.e. currentUser is null.
+     */
+    private void refreshUser() {
+        if (currentUser != null) {
+            currentUser = get(currentUser.getName());
         }
-        return mediaCollectionArray.toString();
     }
 
     /**

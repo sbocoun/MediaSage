@@ -23,10 +23,10 @@ import interface_adapter.note.NoteViewModel;
  */
 public class NoteView extends JPanel implements ActionListener, PropertyChangeListener {
 
-    private final String viewName = "note";
+    private final String viewName = "debug";
     private final NoteViewModel noteViewModel;
 
-    private final JLabel noteName = new JLabel("note for");
+    private final JLabel noteName = new JLabel("debug view for");
     private final JTextArea noteInputField = new JTextArea();
 
     private final JButton saveButton = new JButton("Save");
@@ -49,7 +49,7 @@ public class NoteView extends JPanel implements ActionListener, PropertyChangeLi
         saveButton.addActionListener(
                 evt -> {
                     if (evt.getSource().equals(saveButton)) {
-                        noteController.execute(noteInputField.getText());
+                        noteController.executeSave(noteInputField.getText());
 
                     }
                 }
@@ -58,7 +58,7 @@ public class NoteView extends JPanel implements ActionListener, PropertyChangeLi
         refreshButton.addActionListener(
                 evt -> {
                     if (evt.getSource().equals(refreshButton)) {
-                        noteController.execute(null);
+                        noteController.executeRefresh();
 
                     }
                 }

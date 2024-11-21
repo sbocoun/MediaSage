@@ -1,8 +1,8 @@
 package interface_adapter.note;
 
 /**
- * The State for a note.
- * <p>For this example, a note is simply a string.</p>
+ * The State for the debug view. Contains the string representation of a list of media collections.
+ *
  */
 public class NoteState {
     private String username;

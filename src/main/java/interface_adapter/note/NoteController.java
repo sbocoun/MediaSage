@@ -14,15 +14,18 @@ public class NoteController {
     }
 
     /**
-     * Executes the Note related Use Cases.
-     * @param note the note to be recorded
+     * Executes the mediaCollectionsString Refresh Use Case.
      */
-    public void execute(String note) {
-        if (note != null) {
-            noteInteractor.executeSave(note);
-        }
-        else {
-            noteInteractor.executeRefresh();
-        }
+    public void executeRefresh() {
+        noteInteractor.executeRefresh();
+    }
+
+    /**
+     * Executes the Media Collections Save Use Cases.
+     *
+     * @param mediaCollectionsString string representation of the Media Collections to save
+     */
+    public void executeSave(String mediaCollectionsString) {
+        noteInteractor.executeSave(mediaCollectionsString);
     }
 }

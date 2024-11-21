@@ -21,7 +21,7 @@ import entity.User;
  * In-memory implementation of user data access.
  */
 public class InMemoryUserDAO implements UserRepository {
-    private static final String UNSUPPORTED = "Not supported for in-memory user object.";
+    private static final String UNSUPPORTED = "Not implemented yet for in-memory user object.";
     private final Map<String, User> users = new HashMap<>();
     private User currentUser;
 
@@ -63,12 +63,24 @@ public class InMemoryUserDAO implements UserRepository {
     }
 
     @Override
-    public String saveMediaCollections(List<MediaCollection<? extends AbstractMedia>> mediaCollectionsList) {
+    public List<MediaCollection<? extends AbstractMedia>> saveMediaCollections(
+            List<MediaCollection<? extends AbstractMedia>> mediaCollectionsList) {
         throw new UnsupportedOperationException(UNSUPPORTED);
     }
 
     @Override
-    public String loadNote() {
+    public List<MediaCollection<? extends AbstractMedia>> loadMediaCollections() {
+        throw new UnsupportedOperationException(UNSUPPORTED);
+    }
+
+    @Override
+    public String convertCollectionsListToString(List<MediaCollection<? extends AbstractMedia>> mediaCollectionList) {
+        throw new UnsupportedOperationException(UNSUPPORTED);
+    }
+
+    @Override
+    public List<MediaCollection<? extends AbstractMedia>> convertStringToMediaCollections(
+            String mediaCollectionsString) {
         throw new UnsupportedOperationException(UNSUPPORTED);
     }
 
