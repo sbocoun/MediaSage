@@ -1,18 +1,25 @@
 package data_access.grade_api.outgoing_data_formatting;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import entity.AbstractMedia;
 import entity.MediaCollection;
-import entity.Movie;
 
 /**
  * A builder for creating a JSON array of media collections.
  */
 public class CollectionJSONBuilder {
+    private final Map<String, AbstractMediaJSONBuilder> builders = new HashMap<>();
+
+    public CollectionJSONBuilder() {
+        builders.put("entity.Movie", new MovieJSONBuilder());
+        // Add other media type builders here
+    }
 
     /**
      * Builds a JSON array of media collections.
@@ -48,21 +55,9 @@ public class CollectionJSONBuilder {
         collectionJSON.put("mediaType", mediaType);
         final JSONArray mediaJSONArray = new JSONArray();
         for (AbstractMedia media : mediaCollection) {
-            mediaJSONArray.put(buildMedia(media));
+            mediaJSONArray.put(builders.get(mediaType).buildJSON(media));
         }
         collectionJSON.put("media", mediaJSONArray);
         return collectionJSON;
-    }
-
-    private JSONObject buildMedia(AbstractMedia media) {
-        final JSONObject mediaJSON;
-        final MediaJSONBuilder builder = new MediaJSONBuilder();
-        if (media instanceof Movie) {
-            mediaJSON = builder.buildJSON((Movie) media);
-        }
-        else {
-            throw new UnsupportedOperationException("Unsupported media type: " + media.getClass().getName());
-        }
-        return mediaJSON;
     }
 }
