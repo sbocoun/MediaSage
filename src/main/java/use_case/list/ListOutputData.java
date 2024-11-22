@@ -1,13 +1,12 @@
 package use_case.list;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Output Data for the media collection list display Use Case.
  */
 public class ListOutputData {
-    private List<Map<String, Object>> collectionDataToDisplay;
+    private List<List<Object>> collectionDataToDisplay;
     private String collectionNameToDisplay = "";
     private final List<String> availableCollections;
     private String errorMessage = "";
@@ -18,7 +17,7 @@ public class ListOutputData {
      * @param collectionNameToDisplay the name of the media collection to display
      * @param availableCollections all media collections stored in the user
      */
-    public ListOutputData(List<Map<String, Object>> collectionToDisplay,
+    public ListOutputData(List<List<Object>> collectionToDisplay,
                           String collectionNameToDisplay,
                           List<String> availableCollections) {
         this.collectionDataToDisplay = collectionToDisplay;
@@ -36,7 +35,7 @@ public class ListOutputData {
         this.availableCollections = availableCollections;
     }
 
-    public List<Map<String, Object>> getCollectionDataToDisplay() {
+    public List<List<Object>> getCollectionDataToDisplay() {
         return collectionDataToDisplay;
     }
 
