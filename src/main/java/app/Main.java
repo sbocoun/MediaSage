@@ -23,6 +23,7 @@ import use_case.generate_recommendations.GenDataAccessInterface;
  * switching between views depending on your project.
  */
 public class Main {
+    static final boolean DEBUG = false;
 
     /**
      * The main entry point of the application.
@@ -48,6 +49,7 @@ public class Main {
      * </p>
      * @param args commandline arguments are ignored
      */
+
     public static void main(String[] args) {
 
         final Configurator configurator = new Configurator();
@@ -55,7 +57,7 @@ public class Main {
         final GenDataAccessInterface genDataAccessInterface = new TasteDiveRecommendation();
         genDataAccessInterface.setApiKey(configurator.getTasteDiveApiKey());
 
-        final AppBuilder builder = new AppBuilder();
+        final AppBuilder builder = new AppBuilder(DEBUG);
         builder.addUserDAO(userDataAccessObject)
                 .addGenDAO(genDataAccessInterface)
                 .addBlankView()

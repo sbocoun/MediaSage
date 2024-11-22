@@ -102,15 +102,19 @@ public class AppBuilder {
 
     /**
      * Adds the initial tabs and card layout views.
+     *
+     * @param debug if the program is in debug mode
      */
-    public AppBuilder() {
+    public AppBuilder(boolean debug) {
         cardPanel.setLayout(cardLayout);
         mediaPanel.setLayout(cardLayout);
         userPanel.setLayout(cardLayout);
         tabPanel.addTab("List", listPanel);
         tabPanel.addTab("Search", searchPanel);
         tabPanel.addTab("User", userPanel);
-        tabPanel.addTab("Debug", mediaPanel);
+        if (debug) {
+            tabPanel.addTab("Debug", mediaPanel);
+        }
     }
 
     /**

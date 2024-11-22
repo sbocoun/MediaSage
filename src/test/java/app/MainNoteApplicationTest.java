@@ -21,7 +21,7 @@ public class MainNoteApplicationTest {
         // create the data access and inject it into our builder!
         final UserRepository userDAO = new InMemoryUserDAO();
 
-        final AppBuilder builder = new AppBuilder();
+        final AppBuilder builder = new AppBuilder(true);
         app = builder.addUserDAO(userDAO)
                 .addNoteView()
                 .addNoteUseCase().build();
