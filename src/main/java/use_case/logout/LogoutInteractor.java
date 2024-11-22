@@ -11,6 +11,7 @@ import use_case.list.ListOutputData;
 public class LogoutInteractor implements LogoutInputBoundary {
     private final LogoutUserDataAccessInterface userDataAccessObject;
     private final LogoutOutputBoundary logoutPresenter;
+    private final ListOutputBoundary listPresenter;
 
     public LogoutInteractor(LogoutUserDataAccessInterface userDataAccessInterface,
                             LogoutOutputBoundary logoutOutputBoundary,
