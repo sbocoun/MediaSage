@@ -18,6 +18,7 @@ public class CollectionJSONBuilder {
 
     public CollectionJSONBuilder() {
         builders.put("entity.Movie", new MovieJSONBuilder());
+        builders.put("entity.Television", new TelevisionJSONBuilder());
         // Add other media type builders here
     }
 

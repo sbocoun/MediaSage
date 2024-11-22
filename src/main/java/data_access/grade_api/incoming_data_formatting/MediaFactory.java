@@ -1,12 +1,16 @@
 package data_access.grade_api.incoming_data_formatting;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import entity.Movie;
 import entity.Rating;
+import entity.Television;
 
 /**
  * A factory for creating media collections.
@@ -28,31 +32,30 @@ public final class MediaFactory<T> {
     public T createMedia(JSONObject media) {
         return switch (type.getName()) {
             case "entity.Movie" -> movieConstructor(media);
-            case "entity.TVShow" -> tvShowConstructor(media);
-            case "entity.Music" -> musicConstructor(media);
+            case "entity.Television" -> tvShowConstructor(media);
             default -> null;
         };
     }
 
-    private T musicConstructor(JSONObject media) {
-        return null;
-    }
-
     private T tvShowConstructor(JSONObject media) {
-        return null;
+        final List<String> genres = getArrayFromJSON(media.getJSONArray("genres"));
+        final List<String> actors = getArrayFromJSON(media.getJSONArray("cast"));
+        final Map<Integer, Integer> seasonToEpisodeCount = getSeasonEpisodeMap(
+                media.getJSONObject("season-episode-count"));
+        final Television result = new Television(
+                media.getString("name"),
+                genres,
+                new Rating(media.getInt("userRating")),
+                new Rating(media.getInt("externalRating")),
+                media.getString("description"),
+                actors);
+        result.setSeasonToEpisodeCount(seasonToEpisodeCount);
+        return type.cast(result);
     }
 
     private T movieConstructor(JSONObject media) {
-        final JSONArray genresJSON = media.getJSONArray("genres");
-        final List<String> genres = new java.util.ArrayList<>();
-        for (int i = 0; i < genresJSON.length(); i++) {
-            genres.add(genresJSON.getString(i));
-        }
-        final JSONArray actorsJSON = media.getJSONArray("cast");
-        final List<String> actors = new java.util.ArrayList<>();
-        for (int i = 0; i < actorsJSON.length(); i++) {
-            actors.add(actorsJSON.getString(i));
-        }
+        final List<String> genres = getArrayFromJSON(media.getJSONArray("genres"));
+        final List<String> actors = getArrayFromJSON(media.getJSONArray("cast"));
         final Movie result = new Movie(
                 media.getString("name"),
                 genres,
@@ -61,11 +64,22 @@ public final class MediaFactory<T> {
                 media.getString("description"),
                 actors,
                 media.getInt("runtime"));
-        if (type.isInstance(result)) {
-            return type.cast(result);
+        return type.cast(result);
+    }
+
+    private List<String> getArrayFromJSON(JSONArray jsonArray) {
+        final List<String> result = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            result.add(jsonArray.getString(i));
         }
-        else {
-            throw new IllegalArgumentException("Invalid media type");
+        return result;
+    }
+
+    private Map<Integer, Integer> getSeasonEpisodeMap(JSONObject seasonsJSON) {
+        final Map<Integer, Integer> result = new HashMap<>();
+        for (String season : seasonsJSON.keySet()) {
+            result.put(Integer.valueOf(season), seasonsJSON.getInt(season));
         }
+        return result;
     }
 }

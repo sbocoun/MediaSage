@@ -1,6 +1,7 @@
 package interface_adapter.list;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,36 +9,41 @@ import java.util.Map;
  * A factory for creating ListTableModel depending on the type of AbstractMedia displayed.
  */
 public class ListTableModelFactory {
+    private final Map<String, List<String>> mediaColumns;
+    private final String entityMovie = "entity.Movie";
+    private final String entityTelevision = "entity.Television";
+
+    /**
+     * Creates a new ListTableModelFactory that creates the corresponding ListTableModel for the media type.
+     */
+    public ListTableModelFactory() {
+        final List<String> movieColumns = new ArrayList<>(List.of(
+                "name", "runtime", "description", "genres", "cast", "user-rating", "external-rating"));
+        final List<String> televisionColumns = new ArrayList<>(List.of(
+                "name", "seasons", "total episodes", "description", "genres", "cast",
+                "user-rating", "external-rating"));
+        this.mediaColumns = new HashMap<>();
+        mediaColumns.put(entityMovie, movieColumns);
+        mediaColumns.put(entityTelevision, televisionColumns);
+    }
 
     /**
      * Create a ListTableModel for the relevant mediaType.
      *
      * @param mediaType the type of AbstractMedia (e.g. entity.Movie)
-     * @param mediaList the list of AbstractMedia
+     * @param mediaData the table (list of list) of abstract media data
      * @return a ListTableModel used to display the list of AbstractMedia in a JTable
      * @throws UnsupportedOperationException if the AbstractMedia type is unknown
      */
     public ListTableModel createListTableModel(String mediaType,
-                                               List<Map<String, Object>> mediaList)
+                                               List<List<Object>> mediaData)
             throws UnsupportedOperationException {
-        // remove this final keyword when adding more media types
         final ListTableModel listTableModel;
-        if ("entity.Movie".equals(mediaType)) {
-            final List<String> columnNames = new ArrayList<>(List.of(
-                    "name", "runtime", "description", "genres", "cast", "rating (user)", "rating (external)"));
-            final List<List<Object>> table = new ArrayList<>();
-            for (final Map<String, Object> media : mediaList) {
-                final List<Object> row = new ArrayList<>();
-                row.add(media.get("name"));
-                row.add(media.get("runtime"));
-                row.add(media.get("description"));
-                row.add(media.get("genres"));
-                row.add(media.get("cast"));
-                row.add(media.get("user-rating"));
-                row.add(media.get("external-rating"));
-                table.add(row);
-            }
-            listTableModel = new ListTableModel(columnNames, table);
+        if (entityMovie.equals(mediaType)) {
+            listTableModel = new ListTableModel(mediaColumns.get(entityMovie), mediaData);
+        }
+        else if (entityTelevision.equals(mediaType)) {
+            listTableModel = new ListTableModel(mediaColumns.get(entityTelevision), mediaData);
         }
         else {
             throw new UnsupportedOperationException("Unknown media type.");
