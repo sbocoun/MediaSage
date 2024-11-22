@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The representation of a Movie.
+ * The representation of a TV show.
  */
 public class Television extends AbstractMedia {
     private String description;
