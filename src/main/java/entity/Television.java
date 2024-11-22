@@ -10,7 +10,7 @@ import java.util.Map;
 public class Television extends AbstractMedia {
     private String description;
     private List<String> castMembers;
-    private final Map<Integer, Integer> seasonToEpisodeCount;
+    private Map<Integer, Integer> seasonToEpisodeCount;
 
     public Television(String name,
                       List<String> genres,
@@ -80,5 +80,21 @@ public class Television extends AbstractMedia {
      */
     public int getSeasons() {
         return seasonToEpisodeCount.size();
+    }
+
+    /**
+     * Get the map of season to episode count.
+     * @return the map of season to episode count
+     */
+    public Map<Integer, Integer> getSeasonToEpisodeCount() {
+        return seasonToEpisodeCount;
+    }
+
+    /**
+     * Get the map of season to episode count.
+     * @param seasonsMap the map of season to episode count
+     */
+    public void setSeasonToEpisodeCount(Map<Integer, Integer> seasonsMap) {
+        this.seasonToEpisodeCount = seasonsMap;
     }
 }

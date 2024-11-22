@@ -3,12 +3,13 @@ package data_access.grade_api.incoming_data_formatting;
 import java.util.ArrayList;
 import java.util.List;
 
-import entity.AbstractMedia;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import entity.AbstractMedia;
 import entity.MediaCollection;
 import entity.Movie;
+import entity.Television;
 import entity.User;
 
 /**
@@ -25,10 +26,10 @@ public class UserBuilder {
      */
     public User createUser(JSONObject data) throws UnsupportedOperationException {
         final User user = new User(data.getString("username"), data.getString("password"));
-        final List<MediaCollection<? extends AbstractMedia>> movieCollections = new ArrayList<>();
+        final List<MediaCollection<? extends AbstractMedia>> mediaCollections = new ArrayList<>();
         final JSONArray collections;
         if (data.get("info") instanceof JSONObject) {
-            user.setMediaCollections(movieCollections);
+            user.setMediaCollections(mediaCollections);
             return user;
         }
         else {
@@ -39,17 +40,16 @@ public class UserBuilder {
             switch (collectionJSON.getString("mediaType")) {
                 case "entity.Movie" -> {
                     final MediaCollectionBuilder<Movie> movieBuilder = new MediaCollectionBuilder<>(Movie.class);
-                    movieCollections.add(movieBuilder.createCollection(collectionJSON));
+                    mediaCollections.add(movieBuilder.createCollection(collectionJSON));
                 }
-                case "entity.TV_Show" -> {
-                    throw new UnsupportedOperationException("TV shows are not supported yet.");
+                case "entity.Television" -> {
+                    final MediaCollectionBuilder<Television> tvBuilder = new MediaCollectionBuilder<>(Television.class);
+                    mediaCollections.add(tvBuilder.createCollection(collectionJSON));
                 }
-                default -> {
-                    throw new UnsupportedOperationException("Unsupported entity type.");
-                }
+                default -> throw new UnsupportedOperationException("Unsupported entity type.");
             }
         }
-        user.setMediaCollections(movieCollections);
+        user.setMediaCollections(mediaCollections);
         return user;
     }
 }
