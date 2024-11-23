@@ -14,6 +14,7 @@ import interface_adapter.change_password.ChangePasswordPresenter;
 import interface_adapter.change_password.LoggedInViewModel;
 import interface_adapter.generate_recommendations.GenController;
 import interface_adapter.generate_recommendations.GenPresenter;
+import interface_adapter.list.ListController;
 import interface_adapter.list.ListPresenter;
 import interface_adapter.list.ListViewModel;
 import interface_adapter.login.LoginController;
@@ -102,15 +103,20 @@ public class AppBuilder {
 
     /**
      * Adds the initial tabs and card layout views.
+     *
+     * @param debug if the program is in debug mode
      */
-    public AppBuilder() {
+    public AppBuilder(boolean debug) {
         cardPanel.setLayout(cardLayout);
         mediaPanel.setLayout(cardLayout);
         userPanel.setLayout(cardLayout);
         tabPanel.addTab("List", listPanel);
         tabPanel.addTab("Search", searchPanel);
         tabPanel.addTab("User", userPanel);
-        tabPanel.addTab("Debug", mediaPanel);
+        if (debug) {
+            tabPanel.addTab("Debug", mediaPanel);
+        }
+        tabPanel.setSelectedIndex(2);
     }
 
     /**
@@ -163,13 +169,13 @@ public class AppBuilder {
      * @throws RuntimeException if this method is called before addNoteView
      */
     public AppBuilder addGenUseCase() {
-        final GenOutputBoundary genOutputBoundary = new GenPresenter(noteViewModel);
+        final GenOutputBoundary genOutputBoundary = new GenPresenter(listViewModel);
         genInteractor = new GenInteractor(genDataAccessInterface, genOutputBoundary);
         final GenController genController = new GenController(genInteractor);
-        if (noteView == null) {
-            throw new RuntimeException("addNoteView must be called before addGenUseCase");
+        if (listView == null) {
+            throw new RuntimeException("addListView must be called before addGenUseCase");
         }
-        noteView.setGenController(genController);
+        listView.setGenController(genController);
         return this;
     }
 
@@ -260,9 +266,10 @@ public class AppBuilder {
      * @return this builder
      */
     public AppBuilder addListUseCase() {
-        // right now, only initializes the list interactor.
         listPresenter = new ListPresenter(listViewModel);
         this.listInteractor = new ListInteractor(userDataAccessObject, listPresenter);
+        final ListController listController = new ListController(listInteractor);
+        listView.setListController(listController);
         return this;
     }
 
@@ -301,10 +308,15 @@ public class AppBuilder {
     /**
      * Adds the Logout Use Case to the application.
      * @return this builder
+     * @throws RuntimeException if this method is called before addListUsecase
      */
     public AppBuilder addLogoutUseCase() {
         final LogoutOutputBoundary logoutOutputBoundary = new LogoutPresenter(userViewManagerModel,
                 mediaViewManagerModel, blankViewModel, loggedInViewModel, loginViewModel);
+
+        if (listPresenter == null) {
+            throw new RuntimeException("addListUsecase must be called before addLogoutUseCase");
+        }
 
         final LogoutInputBoundary logoutInteractor =
                 new LogoutInteractor(userDataAccessObject, logoutOutputBoundary, listPresenter);

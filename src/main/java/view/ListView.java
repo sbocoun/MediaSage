@@ -11,6 +11,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -18,11 +19,14 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import interface_adapter.generate_recommendations.GenController;
+import interface_adapter.list.ListController;
 import interface_adapter.list.ListState;
 import interface_adapter.list.ListTableModel;
 import interface_adapter.list.ListViewModel;
@@ -38,10 +42,15 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     private final JButton filterButton = new JButton("Filter");
     private final JButton removeButton = new JButton("Remove");
     private final JButton moveToButton = new JButton("Move to");
+    private final JButton recommendButton = new JButton("Generate Recommendation");
+    private final JTextArea recommendBox = new JTextArea();
     private final JTextField filterField = new JTextField(10);
     private final JTable mediaListTable = new JTable();
     private final List<JRadioButton> radioButtonList = new ArrayList<>();
     private final List<String> movieDescriptions = new ArrayList<>();
+    private ListController listController;
+    private GenController genController;
+    private boolean isUserAction = true;
 
     public ListView(ListViewModel listViewModel) {
         listViewModel.addPropertyChangeListener(this);
@@ -66,19 +75,59 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         add(scrollPane, BorderLayout.CENTER);
 
         final JPanel bottomPanel = new JPanel();
-        bottomPanel.add(removeButton);
-        bottomPanel.add(moveToButton);
-        add(bottomPanel, BorderLayout.SOUTH);
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
+        buildButtonsPanel(bottomPanel);
 
-        filterButton.addActionListener(this);
-        removeButton.addActionListener(this);
-        moveToButton.addActionListener(this);
-        mediaCollectionSelector.addActionListener(this);
+        final JScrollPane scrollRecommendBox = new JScrollPane(recommendBox);
+        scrollRecommendBox.setSize(TABLE_WIDTH, TABLE_HEIGHT / 2);
+        bottomPanel.add(scrollRecommendBox);
+
+        add(bottomPanel, BorderLayout.SOUTH);
 
         // Test
         addItem("Movie 1", "Test1");
         addItem("Movie 2", "Test2");
         addItem("Movie 3", "Test3");
+
+        buildActionListeners();
+    }
+
+    /**
+     * Builds the button panels below the media table.
+     * @param bottomPanel the panel to add the buttons to
+     */
+    private void buildButtonsPanel(JPanel bottomPanel) {
+        final JPanel buttonPanel = new JPanel();
+        buttonPanel.add(removeButton);
+        buttonPanel.add(moveToButton);
+        buttonPanel.add(recommendButton);
+        bottomPanel.add(buttonPanel);
+    }
+
+    /**
+     * Builds all the action listeners for buttons in the View.
+     */
+    private void buildActionListeners() {
+        filterButton.addActionListener(this);
+        removeButton.addActionListener(this);
+        moveToButton.addActionListener(this);
+        mediaCollectionSelector.addActionListener(this);
+
+        recommendButton.addActionListener(
+                evt -> {
+                    if (evt.getSource().equals(recommendButton)) {
+                        genController.execute(recommendBox.getText());
+                    }
+                }
+        );
+
+        mediaCollectionSelector.addActionListener(
+                evt -> {
+                    if (evt.getSource().equals(mediaCollectionSelector) && isUserAction) {
+                        listController.executeCollectionSwitch((String) mediaCollectionSelector.getSelectedItem());
+                    }
+                }
+        );
     }
 
     /**
@@ -198,23 +247,34 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     }
 
     /**
+     * Sets the recommendation generation controller.
+     * @param genController the recommendation generation controller
+     */
+    public void setGenController(GenController genController) {
+        this.genController = genController;
+    }
+
+    /**
      * Update the view.
      * @param evt A PropertyChangeEvent object describing the event source
      *          and the property that has changed.
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        isUserAction = false;
         final ListState state = (ListState) evt.getNewValue();
-        repopulateMediaCollectionSelection(state.getAvailableCollections());
-        if (!state.getCurrentCollectionName().isBlank()) {
-            mediaCollectionSelector.setSelectedItem(state.getCurrentCollectionName());
-        }
-        if ("logged out".equals(state.getErrorMessage())) {
+        if ("logout".equals(evt.getPropertyName())) {
             clearTable();
         }
-        else {
+        else if ("display data".equals(evt.getPropertyName())) {
+            repopulateMediaCollectionSelection(state.getAvailableCollections());
+            mediaCollectionSelector.setSelectedItem(state.getCurrentCollectionName());
             refreshTable(state);
         }
+        else if ("recommendation".equals(evt.getPropertyName())) {
+            setRecommendationFields(state);
+        }
+        isUserAction = true;
     }
 
     /**
@@ -236,12 +296,15 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     public void refreshTable(ListState state) {
         final TableModel currentTableModel = mediaListTable.getModel();
         final ListTableModel newTableModel = state.getTableModel();
-        if (currentTableModel instanceof ListTableModel) {
-            ((ListTableModel) currentTableModel).replaceTable(newTableModel);
+        if (currentTableModel instanceof ListTableModel castedCurrentTableModel
+                && castedCurrentTableModel.getColumnNames().size() == newTableModel.getColumnNames().size()) {
+            castedCurrentTableModel.replaceTable(newTableModel);
         }
         else {
-            mediaListTable.setModel(newTableModel);
-            newTableModel.fireTableDataChanged();
+            SwingUtilities.invokeLater(() -> {
+                mediaListTable.setModel(newTableModel);
+                newTableModel.fireTableDataChanged();
+            });
         }
     }
 
@@ -250,5 +313,14 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
      */
     public void clearTable() {
         SwingUtilities.invokeLater(() -> mediaListTable.setModel(new DefaultTableModel()));
+        mediaCollectionSelector.removeAllItems();
+    }
+
+    private void setRecommendationFields(ListState state) {
+        recommendBox.setText(state.getGeneratedRecommendations());
+    }
+
+    public void setListController(ListController listController) {
+        this.listController = listController;
     }
 }

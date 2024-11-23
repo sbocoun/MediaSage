@@ -1,8 +1,5 @@
 package interface_adapter.list;
 
-import java.util.ArrayList;
-
-import entity.Movie;
 import use_case.list.ListOutputBoundary;
 import use_case.list.ListOutputData;
 
@@ -24,17 +21,16 @@ public class ListPresenter implements ListOutputBoundary {
     @Override
     public void prepareSuccessView(ListOutputData listOutputData) {
         final ListTableModelFactory listTableModelFactory = new ListTableModelFactory();
-        final String mediaType = Movie.class.getName();
         final ListTableModel tableModel = listTableModelFactory
-                .createListTableModel(mediaType, listOutputData.getCollectionDataToDisplay());
+                .createListTableModel(listOutputData.getCollectionType(), listOutputData.getCollectionData());
         final ListState listState = listViewModel.getState();
         listState.setErrorMessage("");
-        listState.setCurrentCollectionName(listOutputData.getCollectionNameToDisplay());
+        listState.setCurrentCollectionName(listOutputData.getCollectionName());
         listState.setAvailableCollections(listOutputData.getAvailableCollections());
-        listState.setCurrentCollectionType(mediaType);
+        listState.setCurrentCollectionType(listOutputData.getCollectionType());
         listState.setTableModel(tableModel);
         listViewModel.setState(listState);
-        listViewModel.firePropertyChanged();
+        listViewModel.firePropertyChanged("display data");
     }
 
     /**
@@ -46,17 +42,14 @@ public class ListPresenter implements ListOutputBoundary {
     public void prepareFailView(ListOutputData listOutputData) {
         final ListState listState = listViewModel.getState();
         listState.setErrorMessage(listOutputData.getErrorMessage());
-        final String loggedOut = "logged out";
-        if (loggedOut.equals(listOutputData.getErrorMessage())) {
-            listState.setAvailableCollections(new ArrayList<>());
-            listState.setTableModel(new ListTableModel());
-            listState.setCurrentCollectionName("");
-            listState.setCurrentCollectionType("");
-        }
-        else {
-            listState.setAvailableCollections(listOutputData.getAvailableCollections());
-        }
-        listViewModel.setState(listState);
-        listViewModel.firePropertyChanged();
+        listViewModel.firePropertyChanged("error");
+    }
+
+    /**
+     * Prepares the failure view for the media collection display related Use Cases.
+     */
+    @Override
+    public void prepareLogoutView() {
+        listViewModel.firePropertyChanged("logout");
     }
 }

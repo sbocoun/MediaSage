@@ -11,6 +11,7 @@ public class ListState {
     private String currentCollectionType;
     private ListTableModel tableModel;
     private String errorMessage;
+    private String generatedRecommendations;
 
     public List<String> getAvailableCollections() {
         return availableCollections;
@@ -50,5 +51,13 @@ public class ListState {
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    public String getGeneratedRecommendations() {
+        return generatedRecommendations;
+    }
+
+    public void setGeneratedRecommendations(String generatedRecommendations) {
+        this.generatedRecommendations = generatedRecommendations;
     }
 }
