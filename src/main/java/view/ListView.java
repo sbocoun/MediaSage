@@ -50,6 +50,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     private final List<String> movieDescriptions = new ArrayList<>();
     private ListController listController;
     private GenController genController;
+    private boolean isUserAction = true;
 
     public ListView(ListViewModel listViewModel) {
         listViewModel.addPropertyChangeListener(this);
@@ -122,7 +123,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
 
         mediaCollectionSelector.addActionListener(
                 evt -> {
-                    if (evt.getSource().equals(mediaCollectionSelector)) {
+                    if (evt.getSource().equals(mediaCollectionSelector) && isUserAction) {
                         listController.executeCollectionSwitch((String) mediaCollectionSelector.getSelectedItem());
                     }
                 }
@@ -260,6 +261,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        isUserAction = false;
         final ListState state = (ListState) evt.getNewValue();
         if ("logout".equals(evt.getPropertyName())) {
             clearTable();
@@ -272,6 +274,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         else if ("recommendation".equals(evt.getPropertyName())) {
             setRecommendationFields(state);
         }
+        isUserAction = true;
     }
 
     /**
@@ -310,6 +313,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
      */
     public void clearTable() {
         SwingUtilities.invokeLater(() -> mediaListTable.setModel(new DefaultTableModel()));
+        mediaCollectionSelector.removeAllItems();
     }
 
     private void setRecommendationFields(ListState state) {
