@@ -293,12 +293,15 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     public void refreshTable(ListState state) {
         final TableModel currentTableModel = mediaListTable.getModel();
         final ListTableModel newTableModel = state.getTableModel();
-        if (currentTableModel instanceof ListTableModel) {
-            ((ListTableModel) currentTableModel).replaceTable(newTableModel);
+        if (currentTableModel instanceof ListTableModel castedCurrentTableModel
+                && castedCurrentTableModel.getColumnNames().size() == newTableModel.getColumnNames().size()) {
+            castedCurrentTableModel.replaceTable(newTableModel);
         }
         else {
-            mediaListTable.setModel(newTableModel);
-            newTableModel.fireTableDataChanged();
+            SwingUtilities.invokeLater(() -> {
+                mediaListTable.setModel(newTableModel);
+                newTableModel.fireTableDataChanged();
+            });
         }
     }
 
