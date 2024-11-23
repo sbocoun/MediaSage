@@ -167,13 +167,13 @@ public class AppBuilder {
      * @throws RuntimeException if this method is called before addNoteView
      */
     public AppBuilder addGenUseCase() {
-        final GenOutputBoundary genOutputBoundary = new GenPresenter(noteViewModel);
+        final GenOutputBoundary genOutputBoundary = new GenPresenter(listViewModel);
         genInteractor = new GenInteractor(genDataAccessInterface, genOutputBoundary);
         final GenController genController = new GenController(genInteractor);
-        if (noteView == null) {
-            throw new RuntimeException("addNoteView must be called before addGenUseCase");
+        if (listView == null) {
+            throw new RuntimeException("addListView must be called before addGenUseCase");
         }
-        noteView.setGenController(genController);
+        listView.setGenController(genController);
         return this;
     }
 

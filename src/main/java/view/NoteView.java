@@ -14,7 +14,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import interface_adapter.generate_recommendations.GenController;
 import interface_adapter.note.NoteController;
 import interface_adapter.note.NoteState;
 import interface_adapter.note.NoteViewModel;
@@ -24,29 +23,21 @@ import interface_adapter.note.NoteViewModel;
  */
 public class NoteView extends JPanel implements ActionListener, PropertyChangeListener {
 
-    private final String viewName = "debug";
-    private final NoteViewModel noteViewModel;
-
-    private final JLabel noteName = new JLabel("debug view for");
+    private final JLabel noteName = new JLabel("debug view");
     private final JTextArea noteInputField = new JTextArea();
-    private final JScrollPane scrollPane = new JScrollPane(noteInputField);
-
     private final JButton saveButton = new JButton("Save");
     private final JButton refreshButton = new JButton("Refresh");
     private NoteController noteController;
-    private final JButton generateButton = new JButton("Generate Recommendations");
-    private GenController genController;
 
     public NoteView(NoteViewModel noteViewModel) {
 
         noteName.setAlignmentX(Component.CENTER_ALIGNMENT);
-        this.noteViewModel = noteViewModel;
-        this.noteViewModel.addPropertyChangeListener(this);
+        noteViewModel.addPropertyChangeListener(this);
 
         final JPanel buttons = new JPanel();
         buttons.add(saveButton);
         buttons.add(refreshButton);
-        buttons.add(generateButton);
+        buttons.add(new JButton("Generate Recommendations"));
 
         saveButton.addActionListener(
                 evt -> {
@@ -66,18 +57,10 @@ public class NoteView extends JPanel implements ActionListener, PropertyChangeLi
                 }
         );
 
-        generateButton.addActionListener(
-                evt -> {
-                    if (evt.getSource().equals(generateButton)) {
-                        genController.execute(noteInputField.getText());
-                    }
-                }
-        );
-
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         this.add(noteName);
-        this.add(scrollPane);
+        this.add(new JScrollPane(noteInputField));
         this.add(buttons);
     }
 
@@ -105,15 +88,11 @@ public class NoteView extends JPanel implements ActionListener, PropertyChangeLi
     }
 
     public String getViewName() {
-        return viewName;
+        return "debug";
     }
 
     public void setNoteController(NoteController controller) {
         this.noteController = controller;
-    }
-
-    public void setGenController(GenController genController) {
-        this.genController = genController;
     }
 }
 

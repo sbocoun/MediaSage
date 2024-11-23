@@ -1,14 +1,17 @@
 package interface_adapter.generate_recommendations;
 
-import interface_adapter.note.NoteViewModel;
+import interface_adapter.list.ListViewModel;
 import use_case.generate_recommendations.GenOutputBoundary;
 
+/**
+ * Presenter for the output of TasteDive recommendations.
+ */
 public class GenPresenter implements GenOutputBoundary {
 
-    private final NoteViewModel noteViewModel;
+    private final ListViewModel listViewModel;
 
-    public GenPresenter(NoteViewModel noteViewModel) {
-        this.noteViewModel = noteViewModel;
+    public GenPresenter(ListViewModel listViewModel) {
+        this.listViewModel = listViewModel;
     }
 
     /**
@@ -18,9 +21,8 @@ public class GenPresenter implements GenOutputBoundary {
      */
     @Override
     public void prepareSuccessView(String recommendations) {
-        noteViewModel.getState().setNote(recommendations);
-        noteViewModel.getState().setError(null);
-        noteViewModel.firePropertyChanged();
+        listViewModel.getState().setGeneratedRecommendations(recommendations);
+        listViewModel.firePropertyChanged("recommendation");
     }
 
     /**
@@ -30,7 +32,7 @@ public class GenPresenter implements GenOutputBoundary {
      */
     @Override
     public void prepareFailView(String errorMessage) {
-        noteViewModel.getState().setError(errorMessage);
-        noteViewModel.firePropertyChanged();
+        listViewModel.getState().setErrorMessage(errorMessage);
+        listViewModel.firePropertyChanged("recommendation");
     }
 }
