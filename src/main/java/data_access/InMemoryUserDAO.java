@@ -70,12 +70,14 @@ public class InMemoryUserDAO implements UserRepository {
     @Override
     public List<MediaCollection<? extends AbstractMedia>> saveMediaCollections(
             List<MediaCollection<? extends AbstractMedia>> mediaCollectionsList) {
-        throw new UnsupportedOperationException(UNSUPPORTED);
+        currentUser.setMediaCollections(mediaCollectionsList);
+        save(currentUser);
+        return get(currentUser.getName()).getAllMediaCollections();
     }
 
     @Override
     public List<MediaCollection<? extends AbstractMedia>> loadMediaCollections() {
-        throw new UnsupportedOperationException(UNSUPPORTED);
+        return currentUser.getAllMediaCollections();
     }
 
     @Override

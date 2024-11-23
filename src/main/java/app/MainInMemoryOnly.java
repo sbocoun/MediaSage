@@ -33,6 +33,7 @@ public class MainInMemoryOnly {
                 .addNoteView()
                 .addNoteUseCase()
                 .addListUseCase()
+                .addListUpdateUseCase()
                 .addGenUseCase()
                 .addSignupUseCase()
                 .addLoginUseCase()

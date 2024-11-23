@@ -1,6 +1,5 @@
 package interface_adapter.list;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
@@ -15,11 +14,6 @@ public class ListTableModel extends AbstractTableModel {
     public ListTableModel(List<String> columnNames, List<List<Object>> table) {
         this.columnNames = columnNames;
         this.table = table;
-    }
-
-    public ListTableModel() {
-        this.columnNames = new ArrayList<>();
-        this.table = new ArrayList<>(List.of(new ArrayList<>()));
     }
 
     @Override
@@ -66,5 +60,17 @@ public class ListTableModel extends AbstractTableModel {
      */
     public List<String> getColumnNames() {
         return columnNames;
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int col) {
+        final int userRatingCol = columnNames.indexOf("user-rating");
+        return col == userRatingCol;
+    }
+
+    @Override
+    public void setValueAt(Object value, int row, int col) {
+        table.get(row).set(col, value);
+        fireTableCellUpdated(row, col);
     }
 }

@@ -22,6 +22,9 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -30,6 +33,7 @@ import interface_adapter.list.ListController;
 import interface_adapter.list.ListState;
 import interface_adapter.list.ListTableModel;
 import interface_adapter.list.ListViewModel;
+import interface_adapter.list_update.ListUpdateController;
 
 /**
  * View for each of the MediaCollections.
@@ -43,12 +47,14 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     private final JButton removeButton = new JButton("Remove");
     private final JButton moveToButton = new JButton("Move to");
     private final JButton recommendButton = new JButton("Generate Recommendation");
+    private final JLabel statusLabel = new JLabel();
     private final JTextArea recommendBox = new JTextArea();
     private final JTextField filterField = new JTextField(10);
     private final JTable mediaListTable = new JTable();
     private final List<JRadioButton> radioButtonList = new ArrayList<>();
     private final List<String> movieDescriptions = new ArrayList<>();
     private ListController listController;
+    private ListUpdateController listUpdateController;
     private GenController genController;
     private boolean isUserAction = true;
 
@@ -79,8 +85,9 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         buildButtonsPanel(bottomPanel);
 
         final JScrollPane scrollRecommendBox = new JScrollPane(recommendBox);
-        scrollRecommendBox.setSize(TABLE_WIDTH, TABLE_HEIGHT / 2);
+        scrollRecommendBox.setPreferredSize(new Dimension(TABLE_WIDTH, TABLE_HEIGHT / 2));
         bottomPanel.add(scrollRecommendBox);
+        bottomPanel.add(statusLabel);
 
         add(bottomPanel, BorderLayout.SOUTH);
 
@@ -254,6 +261,14 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         this.genController = genController;
     }
 
+    public void setListController(ListController listController) {
+        this.listController = listController;
+    }
+
+    public void setListUpdateController(ListUpdateController listUpdateController) {
+        this.listUpdateController = listUpdateController;
+    }
+
     /**
      * Update the view.
      * @param evt A PropertyChangeEvent object describing the event source
@@ -274,7 +289,27 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         else if ("recommendation".equals(evt.getPropertyName())) {
             setRecommendationFields(state);
         }
+        else if (evt.getPropertyName().contains("update")) {
+            updateStatusLabel(evt, state);
+        }
         isUserAction = true;
+    }
+
+    private void updateStatusLabel(PropertyChangeEvent evt, ListState state) {
+        if ("update successful".equals(evt.getPropertyName())) {
+            setEphemeralLabel(state.getSuccessMessage());
+        }
+        else {
+            setEphemeralLabel(state.getErrorMessage());
+        }
+    }
+
+    private void setEphemeralLabel(String message) {
+        statusLabel.setText(message);
+        final int delay = 3000;
+        final Timer timer = new Timer(delay, evt -> statusLabel.setText(""));
+        timer.setRepeats(false);
+        timer.start();
     }
 
     /**
@@ -302,6 +337,8 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         }
         else {
             SwingUtilities.invokeLater(() -> {
+                // add the anonymously defined RatingUpdateListener here whenever the TableModel gets replaced
+                newTableModel.addTableModelListener(new UserRatingUpdateListener());
                 mediaListTable.setModel(newTableModel);
                 newTableModel.fireTableDataChanged();
             });
@@ -318,9 +355,52 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
 
     private void setRecommendationFields(ListState state) {
         recommendBox.setText(state.getGeneratedRecommendations());
+        recommendBox.updateUI();
     }
 
-    public void setListController(ListController listController) {
-        this.listController = listController;
+    /**
+     * A listener for rating column updates in the table.
+     */
+    class UserRatingUpdateListener implements TableModelListener {
+        @Override
+        public void tableChanged(TableModelEvent e) {
+            if (mediaListTable.getModel() instanceof ListTableModel listTableModel) {
+                if (listTableModel.getColumnNames().indexOf("user-rating") == e.getColumn() && isUserAction) {
+                    // assumption: only 1 user rating is updated at a time, which is consistent with the default editor
+                    final int row = e.getFirstRow();
+                    final int ratingCol = e.getColumn();
+                    if (validateRating(row, ratingCol)) {
+                        listUpdateController.executeUserRatingUpdate(
+                                (String) mediaCollectionSelector.getSelectedItem(),
+                                (String) mediaListTable.getModel().getValueAt(row, 0),
+                                Integer.parseInt((String) mediaListTable.getModel().getValueAt(row, ratingCol)));
+                    }
+                    else {
+                        setEphemeralLabel("Invalid input.");
+                    }
+                }
+            }
+        }
+
+        /**
+         * Check that the rating contained at row, col is a valid rating, and set it to -1 if not.
+         * @param row the row containing the updated rating
+         * @param col the col containing the updated rating
+         * @return if the rating is valid
+         */
+        private boolean validateRating(int row, int col) {
+            final Object ratingRaw = mediaListTable.getModel().getValueAt(row, col);
+            boolean result = false;
+            try {
+                Integer.parseInt((String) ratingRaw);
+                result = true;
+            }
+            catch (NumberFormatException | ClassCastException ex) {
+                isUserAction = false;
+                mediaListTable.getModel().setValueAt(-1, row, col);
+                isUserAction = true;
+            }
+            return result;
+        }
     }
 }

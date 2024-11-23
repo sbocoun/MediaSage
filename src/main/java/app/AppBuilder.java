@@ -17,6 +17,8 @@ import interface_adapter.generate_recommendations.GenPresenter;
 import interface_adapter.list.ListController;
 import interface_adapter.list.ListPresenter;
 import interface_adapter.list.ListViewModel;
+import interface_adapter.list_update.ListUpdateController;
+import interface_adapter.list_update.ListUpdatePresenter;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
@@ -38,6 +40,7 @@ import use_case.generate_recommendations.GenInteractor;
 import use_case.generate_recommendations.GenOutputBoundary;
 import use_case.list.ListInteractor;
 import use_case.list.ListOutputBoundary;
+import use_case.list_update.ListUpdateInteractor;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -62,7 +65,7 @@ import view.ViewManager;
  * Builder for the Note Application.
  */
 public class AppBuilder {
-    public static final int HEIGHT = 450;
+    public static final int HEIGHT = 600;
     public static final int WIDTH = 800;
     private NoteInteractor noteInteractor;
     private GenInteractor genInteractor;
@@ -270,6 +273,22 @@ public class AppBuilder {
         this.listInteractor = new ListInteractor(userDataAccessObject, listPresenter);
         final ListController listController = new ListController(listInteractor);
         listView.setListController(listController);
+        return this;
+    }
+
+    /**
+     * Adds the List Update Use Case to the application.
+     * @return this builder
+     * @throws RuntimeException if this method is called before addListUsecase
+     */
+    public AppBuilder addListUpdateUseCase() {
+        if (listPresenter == null) {
+            throw new RuntimeException("addListUsecase must be called before addListUpdateUseCase");
+        }
+        final ListUpdateInteractor listUpdateInteractor =
+                new ListUpdateInteractor(userDataAccessObject, new ListUpdatePresenter(listViewModel));
+        final ListUpdateController listUpdateController = new ListUpdateController(listUpdateInteractor);
+        listView.setListUpdateController(listUpdateController);
         return this;
     }
 

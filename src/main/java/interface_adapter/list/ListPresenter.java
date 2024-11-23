@@ -27,7 +27,6 @@ public class ListPresenter implements ListOutputBoundary {
         listState.setErrorMessage("");
         listState.setCurrentCollectionName(listOutputData.getCollectionName());
         listState.setAvailableCollections(listOutputData.getAvailableCollections());
-        listState.setCurrentCollectionType(listOutputData.getCollectionType());
         listState.setTableModel(tableModel);
         listViewModel.setState(listState);
         listViewModel.firePropertyChanged("display data");
