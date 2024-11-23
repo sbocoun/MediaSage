@@ -37,7 +37,8 @@ public class InMemoryUserDAO implements UserRepository {
 
     @Override
     public User get(String username) {
-        return users.get(username);
+        this.currentUser = users.get(username);
+        return currentUser;
     }
 
     @Override

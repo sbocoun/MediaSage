@@ -8,7 +8,7 @@ import use_case.generate_recommendations.GenDataAccessInterface;
  * A media recommendation application, but with dummy api calls.
  */
 public class MainInMemoryOnly {
-    static final boolean DEBUG = false;
+    static final boolean DEBUG = true;
 
     /**
      * The entrypoint of the application where all external api calls are replaced by dummy implementations.
@@ -30,16 +30,14 @@ public class MainInMemoryOnly {
                 .addSearchView()
                 .addLoggedInView()
                 .addListView()
+                .addNoteView()
+                .addNoteUseCase()
                 .addListUseCase()
                 .addGenUseCase()
                 .addSignupUseCase()
                 .addLoginUseCase()
                 .addChangePasswordUseCase()
-                .addLogoutUseCase();
-        if (DEBUG) {
-            builder.addNoteView()
-                    .addNoteUseCase();
-        }
-        builder.build().setVisible(true);
+                .addLogoutUseCase()
+                .build().setVisible(true);
     }
 }

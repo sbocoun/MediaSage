@@ -116,6 +116,7 @@ public class AppBuilder {
         if (debug) {
             tabPanel.addTab("Debug", mediaPanel);
         }
+        tabPanel.setSelectedIndex(2);
     }
 
     /**
