@@ -3,6 +3,8 @@ package use_case.list;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jetbrains.annotations.Nullable;
+
 import data_access.grade_api.UserRepository;
 import entity.AbstractMedia;
 import entity.MediaCollection;
@@ -22,33 +24,45 @@ public class ListInteractor implements ListInputBoundary {
         this.listPresenter = listOutputBoundary;
     }
 
+    /**
+     * Entrypoint for calling the list interactor to display a media collection with the given name.
+     * @param listInputData the input data containing the name of a media collection to display
+     */
     @Override
     public void execute(ListInputData listInputData) {
         final User user = userDataAccessObject.get(userDataAccessObject.getCurrentUsername());
-        final List<MediaCollection<? extends AbstractMedia>> mediaCollections = populateCollectionIfEmpty(user);
+        final List<MediaCollection<? extends AbstractMedia>> mediaCollections = user.getAllMediaCollections();
         final MediaCollection<? extends AbstractMedia> desiredCollection = findCollectionWithName(mediaCollections,
                 listInputData.getNameOfDesiredCollection());
-        final String nameOfDesiredCollection = desiredCollection.getName();
-        final List<String> availableCollections = getAvailableCollections(mediaCollections);
-
-        final ListOutputData listOutputData = new ListOutputData(
-                collectionsToTableRowData(desiredCollection),
-                nameOfDesiredCollection,
-                availableCollections);
-        listPresenter.prepareSuccessView(listOutputData);
+        if (desiredCollection == null) {
+            final ListOutputData listOutputData = new ListOutputData(
+                    "Collection with the name " + listInputData.getNameOfDesiredCollection() + " not found.",
+                    getAvailableCollections(mediaCollections));
+            listPresenter.prepareFailView(listOutputData);
+        }
+        else {
+            final ListOutputData listOutputData = new ListOutputData(
+                    collectionsToTableRowData(desiredCollection),
+                    desiredCollection.getName(),
+                    desiredCollection.getMediaType().getName(),
+                    getAvailableCollections(mediaCollections));
+            listPresenter.prepareSuccessView(listOutputData);
+        }
     }
 
     /**
      * Entrypoint for calling the list interactor upon login to update the list view.
      *
-     * @param user the user containing the information used to refresh the list view
+     * @param mediaCollections the media collection used to refresh the list view
      */
-    public void execute(User user) {
-        final List<MediaCollection<? extends AbstractMedia>> movieCollections = populateCollectionIfEmpty(user);
-        final List<String> availableCollections = getAvailableCollections(movieCollections);
-        final List<List<Object>> collectionDataToDisplay = collectionsToTableRowData(movieCollections.get(0));
+    public void executeOnLogin(List<MediaCollection<? extends AbstractMedia>> mediaCollections) {
+        final List<MediaCollection<? extends AbstractMedia>> movieCollections =
+                populateCollectionIfEmpty(mediaCollections);
         final ListOutputData listOutputData = new ListOutputData(
-                collectionDataToDisplay, movieCollections.get(0).getName(), availableCollections);
+                collectionsToTableRowData(movieCollections.get(0)),
+                movieCollections.get(0).getName(),
+                movieCollections.get(0).getMediaType().getName(),
+                getAvailableCollections(movieCollections));
         listPresenter.prepareSuccessView(listOutputData);
     }
 
@@ -58,10 +72,10 @@ public class ListInteractor implements ListInputBoundary {
      * @param collectionName the name of the collection to find
      * @return the collection corresponding to collectionName
      */
+    @Nullable
     private MediaCollection<? extends AbstractMedia> findCollectionWithName(
             List<MediaCollection<? extends AbstractMedia>> mediaCollections, String collectionName) {
-        // failsafe case for when there's no desired collection in input data, such as a new user account
-        MediaCollection<? extends AbstractMedia> result = mediaCollections.get(0);
+        MediaCollection<? extends AbstractMedia> result = null;
         for (MediaCollection<? extends AbstractMedia> collection : mediaCollections) {
             if (collection.getName().equals(collectionName)) {
                 result = collection;
@@ -81,18 +95,18 @@ public class ListInteractor implements ListInputBoundary {
     }
 
     /**
-     * Populate the movie collections with a default movie collection.
-     * @param user the user to retrieve the movie collections from
-     * @return a list of movie collections, with at least one collection
+     * Populate the media collections with a default movie collection.
+     * @param mediaCollections the media collections
+     * @return a list of media collections, with at least one movie collection
      */
-    private List<MediaCollection<? extends AbstractMedia>> populateCollectionIfEmpty(User user) {
-        final List<MediaCollection<? extends AbstractMedia>> result = user.getAllMediaCollections();
-        if (result.isEmpty()) {
+    private List<MediaCollection<? extends AbstractMedia>> populateCollectionIfEmpty(
+            List<MediaCollection<? extends AbstractMedia>> mediaCollections) {
+        if (mediaCollections.isEmpty()) {
             final MediaCollection<? extends AbstractMedia> newCollection = new MediaCollection<>(
                     "movie night", "to-watch", Movie.class, new ArrayList<>());
-            result.add(newCollection);
+            mediaCollections.add(newCollection);
         }
-        return result;
+        return mediaCollections;
     }
 
     private List<List<Object>> collectionsToTableRowData(MediaCollection<? extends AbstractMedia> movieCollection) {

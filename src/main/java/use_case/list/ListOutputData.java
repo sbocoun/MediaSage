@@ -6,22 +6,27 @@ import java.util.List;
  * Output Data for the media collection list display Use Case.
  */
 public class ListOutputData {
-    private List<List<Object>> collectionDataToDisplay;
-    private String collectionNameToDisplay = "";
+    private List<List<Object>> collectionData;
+    private String collectionName = "";
+    private String collectionType = "";
     private final List<String> availableCollections;
     private String errorMessage = "";
 
     /**
      * Success output data for the List Output Boundary.
-     * @param collectionToDisplay the media collection to display
-     * @param collectionNameToDisplay the name of the media collection to display
+     *
+     * @param collectionToDisplay  the media collection to display
+     * @param collectionName       the name of the media collection to display
+     * @param collectionType       the type of the media collection to display
      * @param availableCollections all media collections stored in the user
      */
     public ListOutputData(List<List<Object>> collectionToDisplay,
-                          String collectionNameToDisplay,
+                          String collectionName,
+                          String collectionType,
                           List<String> availableCollections) {
-        this.collectionDataToDisplay = collectionToDisplay;
-        this.collectionNameToDisplay = collectionNameToDisplay;
+        this.collectionData = collectionToDisplay;
+        this.collectionName = collectionName;
+        this.collectionType = collectionType;
         this.availableCollections = availableCollections;
     }
 
@@ -35,12 +40,12 @@ public class ListOutputData {
         this.availableCollections = availableCollections;
     }
 
-    public List<List<Object>> getCollectionDataToDisplay() {
-        return collectionDataToDisplay;
+    public List<List<Object>> getCollectionData() {
+        return collectionData;
     }
 
-    public String getCollectionNameToDisplay() {
-        return collectionNameToDisplay;
+    public String getCollectionName() {
+        return collectionName;
     }
 
     public List<String> getAvailableCollections() {
@@ -49,5 +54,13 @@ public class ListOutputData {
 
     public String getErrorMessage() {
         return errorMessage;
+    }
+
+    public String getCollectionType() {
+        return collectionType;
+    }
+
+    public void setCollectionType(String collectionType) {
+        this.collectionType = collectionType;
     }
 }

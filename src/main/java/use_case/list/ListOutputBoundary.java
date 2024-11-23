@@ -12,9 +12,13 @@ public interface ListOutputBoundary {
     void prepareSuccessView(ListOutputData outputData);
 
     /**
-     * Prepares the failure view for the media collection list display Use Case.
-     * @param listOutputData output data containing the explanation of the failure, and a list of available collections
+     * Prepares the logout view for the media collection list display Use Case.
+     */
+    void prepareLogoutView();
+
+    /**
+     * Prepares the fail view for the media collection list display Use Case.
+     * @param listOutputData the output data
      */
     void prepareFailView(ListOutputData listOutputData);
-
 }

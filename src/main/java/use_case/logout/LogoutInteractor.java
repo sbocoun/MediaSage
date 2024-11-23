@@ -1,9 +1,6 @@
 package use_case.logout;
 
-import java.util.ArrayList;
-
 import use_case.list.ListOutputBoundary;
-import use_case.list.ListOutputData;
 
 /**
  * The Logout Interactor.
@@ -38,8 +35,7 @@ public class LogoutInteractor implements LogoutInputBoundary {
                     false);
             userDataAccessObject.clearCurrentUser();
             logoutPresenter.prepareSuccessView(logoutOutputData);
-            final ListOutputData listOutputData = new ListOutputData("logged out", new ArrayList<>());
-            listPresenter.prepareFailView(listOutputData);
+            listPresenter.prepareLogoutView();
         }
     }
 }
