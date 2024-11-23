@@ -26,6 +26,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import interface_adapter.generate_recommendations.GenController;
+import interface_adapter.list.ListController;
 import interface_adapter.list.ListState;
 import interface_adapter.list.ListTableModel;
 import interface_adapter.list.ListViewModel;
@@ -47,6 +48,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     private final JTable mediaListTable = new JTable();
     private final List<JRadioButton> radioButtonList = new ArrayList<>();
     private final List<String> movieDescriptions = new ArrayList<>();
+    private ListController listController;
     private GenController genController;
 
     public ListView(ListViewModel listViewModel) {
@@ -81,23 +83,12 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
 
         add(bottomPanel, BorderLayout.SOUTH);
 
-        filterButton.addActionListener(this);
-        removeButton.addActionListener(this);
-        moveToButton.addActionListener(this);
-        mediaCollectionSelector.addActionListener(this);
-
         // Test
         addItem("Movie 1", "Test1");
         addItem("Movie 2", "Test2");
         addItem("Movie 3", "Test3");
 
-        recommendButton.addActionListener(
-                evt -> {
-                    if (evt.getSource().equals(recommendButton)) {
-                        genController.execute(recommendBox.getText());
-                    }
-                }
-        );
+        buildActionListeners();
     }
 
     /**
@@ -110,6 +101,32 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         buttonPanel.add(moveToButton);
         buttonPanel.add(recommendButton);
         bottomPanel.add(buttonPanel);
+    }
+
+    /**
+     * Builds all the action listeners for buttons in the View.
+     */
+    private void buildActionListeners() {
+        filterButton.addActionListener(this);
+        removeButton.addActionListener(this);
+        moveToButton.addActionListener(this);
+        mediaCollectionSelector.addActionListener(this);
+
+        recommendButton.addActionListener(
+                evt -> {
+                    if (evt.getSource().equals(recommendButton)) {
+                        genController.execute(recommendBox.getText());
+                    }
+                }
+        );
+
+        mediaCollectionSelector.addActionListener(
+                evt -> {
+                    if (evt.getSource().equals(mediaCollectionSelector)) {
+                        listController.executeCollectionSwitch((String) mediaCollectionSelector.getSelectedItem());
+                    }
+                }
+        );
     }
 
     /**
@@ -294,5 +311,9 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
 
     private void setRecommendationFields(ListState state) {
         recommendBox.setText(state.getGeneratedRecommendations());
+    }
+
+    public void setListController(ListController listController) {
+        this.listController = listController;
     }
 }

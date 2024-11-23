@@ -23,7 +23,7 @@ import use_case.generate_recommendations.GenDataAccessInterface;
  * switching between views depending on your project.
  */
 public class Main {
-    static final boolean DEBUG = false;
+    static final boolean DEBUG = true;
 
     /**
      * The main entry point of the application.

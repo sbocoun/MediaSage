@@ -14,6 +14,7 @@ import interface_adapter.change_password.ChangePasswordPresenter;
 import interface_adapter.change_password.LoggedInViewModel;
 import interface_adapter.generate_recommendations.GenController;
 import interface_adapter.generate_recommendations.GenPresenter;
+import interface_adapter.list.ListController;
 import interface_adapter.list.ListPresenter;
 import interface_adapter.list.ListViewModel;
 import interface_adapter.login.LoginController;
@@ -264,9 +265,10 @@ public class AppBuilder {
      * @return this builder
      */
     public AppBuilder addListUseCase() {
-        // right now, only initializes the list interactor.
         listPresenter = new ListPresenter(listViewModel);
         this.listInteractor = new ListInteractor(userDataAccessObject, listPresenter);
+        final ListController listController = new ListController(listInteractor);
+        listView.setListController(listController);
         return this;
     }
 
@@ -305,10 +307,15 @@ public class AppBuilder {
     /**
      * Adds the Logout Use Case to the application.
      * @return this builder
+     * @throws RuntimeException if this method is called before addListUsecase
      */
     public AppBuilder addLogoutUseCase() {
         final LogoutOutputBoundary logoutOutputBoundary = new LogoutPresenter(userViewManagerModel,
                 mediaViewManagerModel, blankViewModel, loggedInViewModel, loginViewModel);
+
+        if (listPresenter == null) {
+            throw new RuntimeException("addListUsecase must be called before addLogoutUseCase");
+        }
 
         final LogoutInputBoundary logoutInteractor =
                 new LogoutInteractor(userDataAccessObject, logoutOutputBoundary, listPresenter);
