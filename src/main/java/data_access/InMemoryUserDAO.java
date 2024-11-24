@@ -104,4 +104,9 @@ public class InMemoryUserDAO implements UserRepository {
                     + "both src/main/resources/" + userFilename + " exist.");
         }
     }
+
+    @Override
+    public <T extends AbstractMedia> MediaCollection<T> getNamedCollection(String collectionName, String mediaType) {
+        return currentUser.getNamedCollection(collectionName, mediaType);
+    }
 }

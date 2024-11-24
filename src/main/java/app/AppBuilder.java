@@ -12,6 +12,9 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.ChangePasswordPresenter;
 import interface_adapter.change_password.LoggedInViewModel;
+import interface_adapter.filter_list.FilterController;
+import interface_adapter.filter_list.FilterPresenter;
+import interface_adapter.filter_list.FilterViewModel;
 import interface_adapter.generate_recommendations.GenController;
 import interface_adapter.generate_recommendations.GenPresenter;
 import interface_adapter.list.ListController;
@@ -33,6 +36,7 @@ import interface_adapter.signup.SignupViewModel;
 import use_case.change_password.ChangePasswordInputBoundary;
 import use_case.change_password.ChangePasswordInteractor;
 import use_case.change_password.ChangePasswordOutputBoundary;
+import use_case.filter_list.FilterInteractor;
 import use_case.generate_recommendations.GenDataAccessInterface;
 import use_case.generate_recommendations.GenInteractor;
 import use_case.generate_recommendations.GenOutputBoundary;
@@ -241,7 +245,7 @@ public class AppBuilder {
      */
     public AppBuilder addListView() {
         listViewModel = new ListViewModel();
-        listView = new ListView(listViewModel);
+        listView = new ListView(listViewModel, new FilterViewModel());
         listPanel.add(listView);
         return this;
     }
@@ -270,6 +274,18 @@ public class AppBuilder {
         this.listInteractor = new ListInteractor(userDataAccessObject, listPresenter);
         final ListController listController = new ListController(listInteractor);
         listView.setListController(listController);
+        return this;
+    }
+
+    /**
+     * Adds the Filter List Use Case to the application.
+     * @return this builder
+     */
+    public AppBuilder addFilterListUseCase() {
+        final FilterPresenter filterPresenter = new FilterPresenter(listViewModel);
+        final FilterInteractor filterInteractor = new FilterInteractor(filterPresenter, userDataAccessObject);
+        final FilterController filterController = new FilterController(filterInteractor);
+        listView.setFilterController(filterController);
         return this;
     }
 

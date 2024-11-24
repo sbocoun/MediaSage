@@ -17,6 +17,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import javax.print.attribute.standard.Media;
+
 /**
  * The DAO for user data.
  */
@@ -125,6 +127,12 @@ public class DBUserDataAccessObject implements UserRepository {
             result = "";
         }
         return result;
+    }
+
+    @Override
+    public <T extends AbstractMedia> MediaCollection<T>
+        getNamedCollection(String collectionName, String mediaType) {
+        return currentUser.getNamedCollection(collectionName, mediaType);
     }
 
     @Override
