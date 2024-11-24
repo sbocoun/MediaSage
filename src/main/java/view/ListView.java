@@ -373,7 +373,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
                         listUpdateController.executeUserRatingUpdate(
                                 (String) mediaCollectionSelector.getSelectedItem(),
                                 (String) mediaListTable.getModel().getValueAt(row, 0),
-                                Integer.parseInt((String) mediaListTable.getModel().getValueAt(row, ratingCol)));
+                                (int) mediaListTable.getModel().getValueAt(row, ratingCol));
                     }
                     else {
                         setEphemeralLabel("Invalid input.");
@@ -392,15 +392,31 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
             final Object ratingRaw = mediaListTable.getModel().getValueAt(row, col);
             boolean result = false;
             try {
-                Integer.parseInt((String) ratingRaw);
+                final String ratingString = (String) ratingRaw;
+                if (ratingString.isBlank()) {
+                    clearRating(row, col);
+                }
+                else {
+                    convertToInt(ratingString, row, col);
+                }
                 result = true;
             }
             catch (NumberFormatException | ClassCastException ex) {
-                isUserAction = false;
-                mediaListTable.getModel().setValueAt(-1, row, col);
-                isUserAction = true;
+                clearRating(row, col);
             }
             return result;
+        }
+
+        private void clearRating(int row, int col) {
+            isUserAction = false;
+            mediaListTable.getModel().setValueAt(-1, row, col);
+            isUserAction = true;
+        }
+
+        private void convertToInt(String ratingString, int row, int col) {
+            isUserAction = false;
+            mediaListTable.getModel().setValueAt(Integer.parseInt(ratingString), row, col);
+            isUserAction = true;
         }
     }
 }
