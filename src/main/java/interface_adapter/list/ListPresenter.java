@@ -22,7 +22,7 @@ public class ListPresenter implements ListOutputBoundary {
     public void prepareSuccessView(ListOutputData listOutputData) {
         final ListTableModelFactory listTableModelFactory = new ListTableModelFactory();
         final ListTableModel tableModel = listTableModelFactory
-                .createListTableModel(listOutputData.getCollectionType(), listOutputData.getCollectionData());
+                .createListTableModel(listOutputData.getMediaType(), listOutputData.getCollectionData());
         final ListState listState = listViewModel.getState();
         listState.setErrorMessage("");
         listState.setCurrentCollectionName(listOutputData.getCollectionName());

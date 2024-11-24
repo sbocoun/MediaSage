@@ -8,7 +8,7 @@ import java.util.List;
 public class ListOutputData {
     private List<List<Object>> collectionData;
     private String collectionName = "";
-    private String collectionType = "";
+    private String mediaType = "";
     private final List<String> availableCollections;
     private String errorMessage = "";
 
@@ -17,16 +17,16 @@ public class ListOutputData {
      *
      * @param collectionToDisplay  the media collection to display
      * @param collectionName       the name of the media collection to display
-     * @param collectionType       the type of the media collection to display
+     * @param mediaType            the type of the media  stored in the collection to display
      * @param availableCollections all media collections stored in the user
      */
     public ListOutputData(List<List<Object>> collectionToDisplay,
                           String collectionName,
-                          String collectionType,
+                          String mediaType,
                           List<String> availableCollections) {
         this.collectionData = collectionToDisplay;
         this.collectionName = collectionName;
-        this.collectionType = collectionType;
+        this.mediaType = mediaType;
         this.availableCollections = availableCollections;
     }
 
@@ -56,11 +56,7 @@ public class ListOutputData {
         return errorMessage;
     }
 
-    public String getCollectionType() {
-        return collectionType;
-    }
-
-    public void setCollectionType(String collectionType) {
-        this.collectionType = collectionType;
+    public String getMediaType() {
+        return mediaType;
     }
 }

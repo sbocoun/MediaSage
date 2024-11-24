@@ -18,9 +18,9 @@ public class ListInteractor implements ListInputBoundary {
     private final UserRepository userDataAccessObject;
     private final ListOutputBoundary listPresenter;
 
-    public ListInteractor(UserRepository signupDataAccessInterface,
+    public ListInteractor(UserRepository userDataAccessObject,
                           ListOutputBoundary listOutputBoundary) {
-        this.userDataAccessObject = signupDataAccessInterface;
+        this.userDataAccessObject = userDataAccessObject;
         this.listPresenter = listOutputBoundary;
     }
 
