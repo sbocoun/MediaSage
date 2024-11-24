@@ -106,7 +106,7 @@ public class ListInteractor implements ListInputBoundary {
             List<MediaCollection<? extends AbstractMedia>> mediaCollections) {
         if (mediaCollections.isEmpty()) {
             final MediaCollection<? extends AbstractMedia> newCollection = new MediaCollection<>(
-                    "movie night", "to-watch", Movie.class, new ArrayList<>());
+                    "Default Collection", "watched", Movie.class, new ArrayList<>());
             mediaCollections.add(newCollection);
         }
         return mediaCollections;

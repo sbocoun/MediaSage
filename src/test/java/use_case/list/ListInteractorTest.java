@@ -203,9 +203,9 @@ public class ListInteractorTest {
             @Override
             public void prepareSuccessView(ListOutputData outputData) {
                 final List<List<Object>> defaultCollection = new ArrayList<>();
-                final List<String> availableCollections = new ArrayList<>(List.of("movie night"));
+                final List<String> availableCollections = new ArrayList<>(List.of("Default Collection"));
                 assertEquals(defaultCollection, outputData.getCollectionData());
-                assertEquals("movie night", outputData.getCollectionName());
+                assertEquals("Default Collection", outputData.getCollectionName());
                 assertEquals(availableCollections, outputData.getAvailableCollections());
                 assertEquals("entity.Movie", outputData.getMediaType());
             }
