@@ -1,4 +1,4 @@
-package data_access.grade_api;
+package data_access.grade_api.incoming_data_formatting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import entity.AbstractMedia;
 import entity.MediaCollection;
 import entity.Movie;
+import entity.Television;
 import entity.User;
 
 /**
@@ -32,7 +33,7 @@ public class UserBuilder {
             return user;
         }
         else {
-            collections = (JSONArray) data.get("info");
+            collections = data.getJSONArray("info");
         }
         for (int i = 0; i < collections.length(); i++) {
             final JSONObject collectionJSON = collections.getJSONObject(i);
@@ -41,12 +42,11 @@ public class UserBuilder {
                     final MediaCollectionBuilder<Movie> movieBuilder = new MediaCollectionBuilder<>(Movie.class);
                     mediaCollections.add(movieBuilder.createCollection(collectionJSON));
                 }
-                case "entity.TV_Show" -> {
-                    throw new UnsupportedOperationException("TV shows are not supported yet.");
+                case "entity.Television" -> {
+                    final MediaCollectionBuilder<Television> tvBuilder = new MediaCollectionBuilder<>(Television.class);
+                    mediaCollections.add(tvBuilder.createCollection(collectionJSON));
                 }
-                default -> {
-                    throw new UnsupportedOperationException("Unsupported entity type.");
-                }
+                default -> throw new UnsupportedOperationException("Unsupported entity type.");
             }
         }
         user.setMediaCollections(mediaCollections);

@@ -8,27 +8,123 @@
     "creation_time": null,
     "info": [
       {
-        "name": "Movie Watchlist",
         "collectionType": "watched",
+        "name": "Movie Watchlist",
         "mediaType": "entity.Movie",
-        "media": [
+        "media":
+        [
           {
+            "cast":
+            [
+              "Keanu Reeves",
+              "Lawrence Fishburn",
+              "Carrie-Anne Moss",
+              "Hugo Weaving",
+              "Gloria Foster"
+            ],
+            "externalRating": 87,
+            "genres":
+            [
+              "Action",
+              "Sci-Fi"
+            ],
             "name": "The Matrix",
+            "description": "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.",
             "runtime": 136,
-            "genres": ["Action", "Sci-Fi"],
-            "cast": ["Keanu Reeves", "Lawrence Fishburn", "Carrie-Anne Moss", "Hugo Weaving", "Gloria Foster"],
-            "rating": 8.7,
-            "description": "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers."
+            "userRating": -1
           },
           {
+            "cast":
+            [
+              "Dan Aykroyd",
+              "John Belushi",
+              "James Brown",
+              "Cab Calloway",
+              "Ray Charles",
+              "Aretha Franklin"
+            ],
+            "externalRating": 77,
+            "genres":
+            [
+              "Music",
+              "Comedy",
+              "Action",
+              "Crime"
+            ],
             "name": "The Blues Brothers",
+            "description": "Jake Blues, just released from prison, puts his old band back together to save the Catholic home where he and his brother Elwood were raised.",
             "runtime": 133,
-            "genres": ["Music", "Comedy", "Action", "Crime"],
-            "cast": ["Dan Aykroyd", "John Belushi", "James Brown", "Cab Calloway", "Ray Charles", "Aretha Franklin"],
-            "rating": 7.73,
-            "description": "Jake Blues, just released from prison, puts his old band back together to save the Catholic home where he and his brother Elwood were raised."
+            "userRating": -1
           }
-		]
+        ]
+      },
+      {
+        "collectionType": "watched",
+        "name": "watchlist 2",
+        "mediaType": "entity.Television",
+        "media":
+        [
+          {
+            "cast":
+            [
+              "Jim Caviezel",
+              "Michael Emerson",
+              "Kevin Chapman",
+              "Taraji P. Henson",
+              "Amy Acker"
+            ],
+            "season-episode-count":
+            {
+              "1": 23,
+              "2": 22,
+              "3": 23,
+              "4": 22,
+              "5": 13
+            },
+            "externalRating": 81,
+            "genres":
+            [
+              "Drama",
+              "Action & Adventure",
+              "Sci-Fi & Fantasy",
+              "Crime"
+            ],
+            "name": "Person of Interest",
+            "description": "John Reese, former CIA paramilitary operative, is presumed dead and teams up with reclusive billionaire Finch to prevent violent crimes in New York City by initiating their own type of justice. With the special training that Reese has had in Covert Operations and Finch's genius software inventing mind, the two are a perfect match for the job that they have to complete. With the help of surveillance equipment, they work \"outside the law\" and get the right criminal behind bars. ",
+            "userRating": -1
+          }
+        ]
+      },
+      {
+        "collectionType": "watched",
+        "name": "Movie testlist",
+        "mediaType": "entity.Movie",
+        "media":
+        [
+          {
+            "cast":
+            [
+              "Dan Aykroyd",
+              "John Belushi",
+              "James Brown",
+              "Cab Calloway",
+              "Ray Charles",
+              "Aretha Franklin"
+            ],
+            "externalRating": 77,
+            "genres":
+            [
+              "Music",
+              "Comedy",
+              "Action",
+              "Crime"
+            ],
+            "name": "The Blues Brothers",
+            "description": "Jake Blues, just released from prison, puts his old band back together to save the Catholic home where he and his brother Elwood were raised.",
+            "runtime": 133,
+            "userRating": -1
+          }
+        ]
       }
     ],
     "password": "test",

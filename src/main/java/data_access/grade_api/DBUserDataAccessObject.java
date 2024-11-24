@@ -1,10 +1,15 @@
 package data_access.grade_api;
 
 import java.io.IOException;
+import java.util.List;
 
-import org.json.JSONException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import data_access.grade_api.incoming_data_formatting.UserBuilder;
+import data_access.grade_api.outgoing_data_formatting.CollectionJSONBuilder;
+import entity.AbstractMedia;
+import entity.MediaCollection;
 import entity.User;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -18,6 +23,7 @@ import okhttp3.Response;
 public class DBUserDataAccessObject implements UserRepository {
     private static final int SUCCESS_CODE = 200;
     private static final int CREDENTIAL_ERROR = 401;
+    private static final int NOT_FOUND = 404;
     private static final String CONTENT_TYPE_LABEL = "Content-Type";
     private static final String CONTENT_TYPE_JSON = "application/json";
     private static final String STATUS_CODE_LABEL = "status_code";
@@ -25,67 +31,49 @@ public class DBUserDataAccessObject implements UserRepository {
     private static final String PASSWORD = "password";
     private static final String MESSAGE = "message";
     private static final String INFO = "info";
-    private static final String NOTE = "note";
-    private String currUsername;
-    private String currPassword;
+    private User currentUser;
 
     @Override
     public User get(String username) {
-        // Make an API call to get the user object.
-        final OkHttpClient client = new OkHttpClient().newBuilder().build();
         final Request request = new Request.Builder()
                 .url(String.format("http://vm003.teach.cs.toronto.edu:20112/user?username=%s", username))
                 .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
                 .build();
-        try (Response response = client.newCall(request).execute()) {
-            final JSONObject responseBody = new JSONObject(response.body().string());
+        try {
+            final JSONObject responseBody = getGradeApiData(request);
+            final UserBuilder userBuilder = new UserBuilder();
+            final User user = userBuilder.createUser(responseBody.getJSONObject("user"));
+            this.currentUser = user;
+            return user;
 
-            if (responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE) {
-                final JSONObject userJSONObject = responseBody.getJSONObject("user");
-                final UserBuilder userBuilder = new UserBuilder();
-                return userBuilder.createUser(userJSONObject);
-            }
-            else {
-                throw new RuntimeException(responseBody.getString(MESSAGE));
-            }
         }
-        catch (IOException | JSONException ex) {
+        catch (GradeDataAccessException ex) {
             throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public void setCurrentUsername(String name) {
-        this.currUsername = name;
-    }
-
-    @Override
-    public void setCurrentPassword(String password) {
-        this.currPassword = password;
+    public void clearCurrentUser() {
+        this.currentUser = null;
     }
 
     @Override
     public boolean existsByName(String username) {
-        final OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
         final Request request = new Request.Builder()
                 .url(String.format("http://vm003.teach.cs.toronto.edu:20112/checkIfUserExists?username=%s", username))
                 .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
                 .build();
-        try (Response response = client.newCall(request).execute()) {
-            final JSONObject responseBody = new JSONObject(response.body().string());
+        try {
+            final JSONObject responseBody = getGradeApiData(request);
             return responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE;
         }
-        catch (IOException | JSONException ex) {
+        catch (GradeDataAccessException ex) {
             throw new RuntimeException(ex);
         }
     }
 
     @Override
     public void save(User user) {
-        final OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-
         // POST METHOD
         final MediaType mediaType = MediaType.parse(CONTENT_TYPE_JSON);
         final JSONObject requestBody = new JSONObject();
@@ -97,23 +85,16 @@ public class DBUserDataAccessObject implements UserRepository {
                 .method("POST", body)
                 .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
                 .build();
-        try (Response response = client.newCall(request).execute()) {
-            final JSONObject responseBody = new JSONObject(response.body().string());
-
-            if (responseBody.getInt(STATUS_CODE_LABEL) != SUCCESS_CODE) {
-                throw new RuntimeException(responseBody.getString(MESSAGE));
-            }
+        try {
+            getGradeApiData(request);
         }
-        catch (IOException | JSONException ex) {
+        catch (GradeDataAccessException ex) {
             throw new RuntimeException(ex);
         }
     }
 
     @Override
     public void changePassword(User user) {
-        final OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-
         // POST METHOD
         final MediaType mediaType = MediaType.parse(CONTENT_TYPE_JSON);
         final JSONObject requestBody = new JSONObject();
@@ -125,61 +106,9 @@ public class DBUserDataAccessObject implements UserRepository {
                 .method("PUT", body)
                 .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
                 .build();
-        try (Response response = client.newCall(request).execute()) {
-            final JSONObject responseBody = new JSONObject(response.body().string());
-
-            if (responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE) {
-                // success!
-                this.currPassword = user.getPassword();
-            }
-            else {
-                throw new RuntimeException(responseBody.getString(MESSAGE));
-            }
-        }
-        catch (IOException | JSONException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    @Override
-    public String getCurrentUsername() {
-        return currUsername;
-    }
-
-    @Override
-    public String saveNote(String note) throws GradeDataAccessException {
-        final OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-
-        // POST METHOD
-        final MediaType mediaType = MediaType.parse(CONTENT_TYPE_JSON);
-        final JSONObject requestBody = new JSONObject();
-        requestBody.put(USERNAME, getCurrentUsername());
-        requestBody.put(PASSWORD, this.currPassword);
-        final JSONObject extra = new JSONObject();
-        extra.put("note", note);
-        requestBody.put(INFO, extra);
-        final RequestBody body = RequestBody.create(requestBody.toString(), mediaType);
-        final Request request = new Request.Builder()
-                .url("http://vm003.teach.cs.toronto.edu:20112/modifyUserInfo")
-                .method("PUT", body)
-                .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
-                .build();
-        try (Response response = client.newCall(request).execute()) {
-            final JSONObject responseBody = new JSONObject(response.body().string());
-
-            if (responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE) {
-                return loadNote();
-            }
-            else if (responseBody.getInt(STATUS_CODE_LABEL) == CREDENTIAL_ERROR) {
-                throw new GradeDataAccessException("message could not be found or password was incorrect");
-            }
-            else {
-                throw new GradeDataAccessException("database error: " + responseBody.getString(MESSAGE));
-            }
-        }
-        catch (IOException | JSONException ex) {
-            throw new GradeDataAccessException(ex.getMessage());
+        try {
+            getGradeApiData(request);
+            this.currentUser = get(user.getName());
         }
         catch (GradeDataAccessException ex) {
             throw new RuntimeException(ex);
@@ -187,32 +116,111 @@ public class DBUserDataAccessObject implements UserRepository {
     }
 
     @Override
-    public String loadNote() throws GradeDataAccessException {
-        // Make an API call to get the user object.
-        final String username = getCurrentUsername();
-        final OkHttpClient client = new OkHttpClient().newBuilder().build();
+    public String getCurrentUsername() {
+        final String result;
+        if (currentUser != null) {
+            result = currentUser.getName();
+        }
+        else {
+            result = "";
+        }
+        return result;
+    }
+
+    @Override
+    public List<MediaCollection<? extends AbstractMedia>> saveMediaCollections(
+            List<MediaCollection<? extends AbstractMedia>> mediaCollectionsList) throws GradeDataAccessException {
+        // POST METHOD
+        final JSONObject requestBody = new JSONObject();
+        requestBody.put(USERNAME, this.currentUser.getName());
+        requestBody.put(PASSWORD, this.currentUser.getPassword());
+        final MediaType mediaType = MediaType.parse(CONTENT_TYPE_JSON);
+
+        final CollectionJSONBuilder collectionsBuilder = new CollectionJSONBuilder();
+        final JSONArray mediaCollections =
+                collectionsBuilder.buildMediaCollections(mediaCollectionsList);
+
+        requestBody.put(INFO, mediaCollections);
+        final RequestBody body = RequestBody.create(requestBody.toString(), mediaType);
         final Request request = new Request.Builder()
-                .url(String.format("http://vm003.teach.cs.toronto.edu:20112/user?username=%s", username))
+                .url("http://vm003.teach.cs.toronto.edu:20112/modifyUserInfo")
+                .method("PUT", body)
                 .addHeader(CONTENT_TYPE_LABEL, CONTENT_TYPE_JSON)
                 .build();
-        try (Response response = client.newCall(request).execute()) {
-            final JSONObject responseBody = new JSONObject(response.body().string());
 
-            if (responseBody.getInt(STATUS_CODE_LABEL) == SUCCESS_CODE) {
-                final JSONObject userJSONObject = responseBody.getJSONObject("user");
-                final JSONObject data = userJSONObject.getJSONObject(INFO);
-                String result = "";
-                if (data.has(NOTE)) {
-                    result = data.getString(NOTE);
-                }
-                return result;
+        try {
+            getGradeApiData(request);
+            return loadMediaCollections();
+        }
+        catch (GradeDataAccessException ex) {
+            requestBody.remove(PASSWORD);
+            throw new GradeDataAccessException(ex.getMessage() + "%nSanitized Query:%n" + requestBody);
+        }
+    }
+
+    @Override
+    public List<MediaCollection<? extends AbstractMedia>> loadMediaCollections() throws GradeDataAccessException {
+        refreshUser();
+        return currentUser.getAllMediaCollections();
+    }
+
+    @Override
+    public String convertCollectionsListToString(List<MediaCollection<? extends AbstractMedia>> mediaCollectionList) {
+        final CollectionJSONBuilder collectionsBuilder = new CollectionJSONBuilder();
+        return collectionsBuilder.buildMediaCollections(mediaCollectionList).toString();
+    }
+
+    @Override
+    public List<MediaCollection<? extends AbstractMedia>> convertStringToMediaCollections(
+            String mediaCollectionsString) {
+        final JSONArray jsonCollections = new JSONArray(mediaCollectionsString);
+        // borrowing the UserBuilder to build the correct media collections list
+        final JSONObject mockJsonUser = new JSONObject();
+        mockJsonUser.put("username", "mock");
+        mockJsonUser.put("password", "mock");
+        mockJsonUser.put("info", jsonCollections);
+        final UserBuilder userBuilder = new UserBuilder();
+        final User mockUser = userBuilder.createUser(mockJsonUser);
+        return mockUser.getAllMediaCollections();
+    }
+
+    /**
+     * Refreshes the currently active user from database.
+     * Does nothing if not currently logged in, i.e. currentUser is null.
+     */
+    private void refreshUser() {
+        if (currentUser != null) {
+            currentUser = get(currentUser.getName());
+        }
+    }
+
+    /**
+     * Wrapper for making a request to the Grade API.
+     * @param request the request to make to the Grade API
+     * @return the JSON response from the API
+     * @throws GradeDataAccessException if Grade API is not available or request is malformed
+     */
+    private JSONObject getGradeApiData(Request request) throws GradeDataAccessException {
+        final OkHttpClient client = new OkHttpClient().newBuilder().build();
+        try (Response response = client.newCall(request).execute()) {
+            if (response.body() == null) {
+                final String error = "Got a null response while calling the Grade API.";
+                throw new GradeDataAccessException(error);
+            }
+            final JSONObject responseBody = new JSONObject(response.body().string());
+            final int responseCode = responseBody.getInt(STATUS_CODE_LABEL);
+            if (responseBody.getInt(STATUS_CODE_LABEL) == CREDENTIAL_ERROR) {
+                throw new GradeDataAccessException("message could not be found or password was incorrect");
+            }
+            else if (!response.isSuccessful() && responseCode != NOT_FOUND) {
+                throw new GradeDataAccessException("database error: " + responseBody.getString(MESSAGE));
             }
             else {
-                throw new GradeDataAccessException(responseBody.getString(MESSAGE));
+                return responseBody;
             }
         }
-        catch (IOException | JSONException ex) {
-            throw new RuntimeException(ex);
+        catch (IOException ex) {
+            throw new GradeDataAccessException(ex.getMessage());
         }
     }
 }

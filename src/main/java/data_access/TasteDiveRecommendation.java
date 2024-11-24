@@ -34,7 +34,7 @@ public class TasteDiveRecommendation implements GenDataAccessInterface {
      * @param returnType the type of media to recommend (lowercase)
      * @param verbose if the response should contain extra information about the movie
      * @return the list of media recommendations returned by TasteDive API
-     * @throws GenDataAccessException error accessing the API
+     * @throws GenDataAccessException error accessing the recommendation API
      */
     public JSONArray getRecommendation(List<String> query,
                                        String sourceType,
@@ -76,7 +76,7 @@ public class TasteDiveRecommendation implements GenDataAccessInterface {
      * @param sourceType the type of media to base recommendations from
      * @param returnType the type of media to recommend
      * @return the list of media recommendations returned by TasteDive API
-     * @throws GenDataAccessException error accessing the API
+     * @throws GenDataAccessException error accessing the recommendation API
      */
     public JSONArray getRecommendation(List<String> query,
                                        String sourceType,
