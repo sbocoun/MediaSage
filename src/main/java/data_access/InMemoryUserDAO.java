@@ -104,4 +104,9 @@ public class InMemoryUserDAO implements UserRepository {
                     + "both src/main/resources/" + userFilename + " exist.");
         }
     }
+
+    @Override
+    public User getCurrentUser() {
+        return currentUser;
+    }
 }

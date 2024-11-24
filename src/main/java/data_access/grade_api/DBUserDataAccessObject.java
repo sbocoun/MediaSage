@@ -223,4 +223,9 @@ public class DBUserDataAccessObject implements UserRepository {
             throw new GradeDataAccessException(ex.getMessage());
         }
     }
+
+    @Override
+    public User getCurrentUser() {
+        return currentUser;
+    }
 }
