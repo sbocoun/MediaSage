@@ -39,7 +39,7 @@ import view.filter_panels.FilterPanelManager;
  */
 public class ListView extends JPanel implements ActionListener, PropertyChangeListener {
 
-    private static final int TABLE_WIDTH = 500;
+    private static final int TABLE_WIDTH = 800;
     private static final int TABLE_HEIGHT = 200;
     private final JComboBox<String> mediaCollectionSelector = new JComboBox<>();
     private final JButton removeButton = new JButton("Remove");
@@ -56,13 +56,13 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     private FilterController filterController;
 
     // View Models
-    private ListViewModel listViewModel;
-    private FilterViewModel filterViewModel;
+    private final ListViewModel listViewModel;
+    private final FilterViewModel filterViewModel;
 
     private boolean isUserAction = true;
 
     // Filter panel
-    private FilterPanelManager filterPanelManager;
+    private final FilterPanelManager filterPanelManager;
     private final JButton filterButton = new JButton("Apply Filters");
     private final JButton clearButton = new JButton("Clear Filters");
 
@@ -83,11 +83,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         add(topPanel, BorderLayout.NORTH);
 
         final JPanel filterPanel = new JPanel();
-        filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.Y_AXIS));
-        filterPanel.add(filterPanelManager.getFilterPanelContainer());
-        filterPanel.add(filterButton);
-        filterPanel.add(clearButton);
-        add(filterPanel, BorderLayout.EAST);
+        buildFiltersPanel(filterPanel);
 
         listViewModel.getState().setMediaTable(mediaListTable);
         mediaListTable.setPreferredScrollableViewportSize(new Dimension(TABLE_WIDTH, TABLE_HEIGHT));
@@ -122,6 +118,18 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         buttonPanel.add(moveToButton);
         buttonPanel.add(recommendButton);
         bottomPanel.add(buttonPanel);
+    }
+
+    /**
+     * Builds the filter panel on the right side of the view.
+     * @param filterPanel the panel to add the filter panel to
+     */
+    private void buildFiltersPanel(JPanel filterPanel) {
+        filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.Y_AXIS));
+        filterPanel.add(filterPanelManager.getFilterPanelContainer());
+        filterPanel.add(filterButton);
+        filterPanel.add(clearButton);
+        this.add(filterPanel, BorderLayout.EAST);
     }
 
     /**
@@ -213,48 +221,6 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         else if (e.getSource() == moveToButton) {
             moveSelectedMovie();
         }
-    }
-
-    /**
-     * Filters the movie list based on the given description text.
-     *
-     * @param filterText The text to filter descriptions by
-     */
-    private void filterMoviesByDescription(String filterText) {
-        mediaListTable.removeAll();
-
-        for (int i = 0; i < movieDescriptions.size(); i++) {
-            final String description = movieDescriptions.get(i).toLowerCase();
-            if (description.contains(filterText)) {
-                addFilteredItem(i);
-            }
-        }
-
-        revalidate();
-        repaint();
-    }
-
-    /**
-     * Adds a filtered item to the itemListPanel.
-     *
-     * @param index The index of the item to add
-     */
-    private void addFilteredItem(int index) {
-        final JPanel itemPanel = new JPanel(new BorderLayout());
-
-        // Use the existing radio button and description data
-        final JRadioButton radioButton = radioButtonList.get(index);
-        itemPanel.add(radioButton, BorderLayout.WEST);
-
-        final JLabel thumbnailLabel = new JLabel("Thumbnail");
-        itemPanel.add(thumbnailLabel, BorderLayout.CENTER);
-
-        final JPanel nameDescPanel = new JPanel(new GridLayout(2, 1));
-        nameDescPanel.add(new JLabel("Movie " + (index + 1)));
-        nameDescPanel.add(new JLabel(movieDescriptions.get(index)));
-        itemPanel.add(nameDescPanel, BorderLayout.EAST);
-
-        mediaListTable.add(itemPanel);
     }
 
     /**

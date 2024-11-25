@@ -1,6 +1,10 @@
 package use_case.filter_list.filter_strategies;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import entity.Movie;
 
@@ -9,56 +13,59 @@ import entity.Movie;
  */
 public class MovieFilterStrategy implements FilterStrategy {
 
+    // Assumes that the filter criteria are formatted as lowercase.
     @Override
-    public <T> boolean meetsCriteria(T media, Map<String, List<String>> filterCriteria) {
+    public <T> boolean meetsCriteria(T media, Map<String, Set<String>> filterCriteria) {
         boolean result = true;
         final Movie movie = (Movie) media;
-        // First compare keywords and ensure that all the keywords in
-        // the filter are present in the movie description.
-        // To ensure fair comparisons, the contents of all sets in the function are converted to lowercase.
-        final Set<String> movieKeywords = new HashSet<>(toLowercase(getKeywords(movie.getDescription())));
-        Set<String> keywordCriteria = new HashSet<>();
-        if (filterCriteria.get("keywords") != null) {
-            keywordCriteria = new HashSet<>(toLowercase(filterCriteria.get("keywords")));
-        }
-        if (!trulyEmpty(keywordCriteria) && !movieKeywords.containsAll(keywordCriteria)) {
+
+        final Set<String> movieKeywords = splitDescription(movie.getDescription());
+        // Calls on notEmpty() to exclude empty strings from being considered as keywords.
+        if (notEmpty(filterCriteria.get("keywords")) && !movieKeywords.containsAll(filterCriteria.get("keywords"))) {
             result = false;
         }
 
-        // Next, compare the genre and ensure that the movie genres match
-        // the filter genres.
         final Set<String> movieGenres = new HashSet<>(toLowercase(movie.getGenres()));
-        Set<String> genreCriteria = new HashSet<>();
-        if (filterCriteria.get("genres") != null) {
-            genreCriteria = new HashSet<>(toLowercase(filterCriteria.get("genres")));
-        }
-        if (!trulyEmpty(genreCriteria) && !movieGenres.containsAll(genreCriteria)) {
+        if (notEmpty(filterCriteria.get("genres")) && !movieGenres.containsAll(filterCriteria.get("genres"))) {
             result = false;
         }
 
-        // Finally, compare the actors and ensure that the movie actors match
-        // the filter actors.
         final Set<String> movieActors = new HashSet<>(toLowercase(movie.getCastMembers()));
-        Set<String> actorCriteria = new HashSet<>();
-        if (filterCriteria.get("actors") != null) {
-            actorCriteria = new HashSet<>(toLowercase(filterCriteria.get("actors")));
-        }
-        if (!trulyEmpty(actorCriteria) && !movieActors.containsAll(actorCriteria)) {
+        if (notEmpty(filterCriteria.get("actors")) && !movieActors.containsAll(filterCriteria.get("actors"))) {
             result = false;
         }
         return result;
     }
 
-    private List<String> getKeywords(String description) {
-        final String[] keywordArray = description.replaceAll("[\\p{Punct}]", "").split("\\s+");
-        return new ArrayList<>(Arrays.stream(keywordArray).toList());
+    /**
+     * Converts a list of strings to lowercase.
+     * @param list The list to convert.
+     * @return The list with all strings converted to lowercase.
+     */
+    private List<String> toLowercase(List<String> list) {
+        return list.stream().map(String::toLowerCase).toList();
     }
 
-    private List<String> toLowercase(List<String> strings) {
-        return strings.stream().map(String::toLowerCase).toList();
+    /**
+     * Splits the description into a set of lowercase words.
+     * @param description The description to split.
+     * @return The keywords.
+     */
+    private Set<String> splitDescription(String description) {
+        final List<String> keywordArray = Arrays.stream(description
+                .replaceAll("\\p{Punct}", "")
+                .toLowerCase()
+                .split("\\s+"))
+                .toList();
+        return new HashSet<>(keywordArray);
     }
 
-    private boolean trulyEmpty(Set s) {
-        return s == null || s.isEmpty() || (s.size() == 1 && s.contains(""));
+    /**
+     * Checks if a set is not empty, empty string excluded.
+     * @param set The set of strings to check
+     * @return whether the set is not empty.
+     */
+    private boolean notEmpty(Set<String> set) {
+        return !set.isEmpty() && (set.size() != 1 || !set.contains(""));
     }
 }

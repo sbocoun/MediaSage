@@ -1,13 +1,12 @@
 package view.filter_panels;
 
-import interface_adapter.filter_list.FilterViewModel;
-import interface_adapter.list.ListViewModel;
-
 import java.awt.CardLayout;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JPanel;
+
+import interface_adapter.filter_list.FilterViewModel;
 
 /**
  * Manages the filter panels for the different media types.
@@ -16,7 +15,8 @@ public class FilterPanelManager {
     private final JPanel filterPanelContainer = new JPanel(new CardLayout());
     private final CardLayout cardLayout = (CardLayout) filterPanelContainer.getLayout();
     private final Map<String, Filter> filterPanels = new HashMap<>();
-    private String displayedFilterPanel = "";
+    // Assigned a default value to prevent null pointer exceptions.
+    private String displayedFilterPanel = "entity.Movie";
 
     public FilterPanelManager(FilterViewModel filterViewModel) {
         this.addFilterPanel("entity.Movie", new MovieFilter(filterViewModel));

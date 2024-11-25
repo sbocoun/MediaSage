@@ -1,11 +1,14 @@
 package interface_adapter.filter_list;
 
-import interface_adapter.list.ListTableModel;
-import interface_adapter.list.ListViewModel;
-
-import javax.swing.*;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.RowFilter;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+
+import interface_adapter.list.ListViewModel;
+import use_case.filter_list.FilterListOutputBoundary;
+import use_case.filter_list.FilterListOutputData;
 
 /**
  * Presenter for the filter list.
@@ -33,7 +36,6 @@ public class FilterPresenter implements FilterListOutputBoundary {
             }
         };
         sorter.setRowFilter(rf);
-
     }
 
     /**
@@ -42,6 +44,6 @@ public class FilterPresenter implements FilterListOutputBoundary {
      * @param message The message to display.
      */
     public void prepareFailView(String message) {
-        new JOptionPane(message).setVisible(true);
+        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 }

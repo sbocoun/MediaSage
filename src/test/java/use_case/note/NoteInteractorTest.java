@@ -3,15 +3,16 @@ package use_case.note;
 import data_access.InMemoryUserDAO;
 import data_access.grade_api.UserRepository;
 import entity.User;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class NoteInteractorTest {
+class NoteInteractorTest {
     private UserRepository userRepo;
 
-    @Before
+    @BeforeEach
     public void setup() {
         userRepo = new InMemoryUserDAO();
         User user = new User("test", "test");
@@ -19,7 +20,7 @@ public class NoteInteractorTest {
     }
 
     @Test
-    public void testExecuteRefreshSuccess() {
+    void testExecuteRefreshSuccess() {
 
         NoteOutputBoundary noteOB = new NoteOutputBoundary() {
             @Override
@@ -38,7 +39,7 @@ public class NoteInteractorTest {
     }
 
     @Test
-    public void testSaveSuccess() {
+    void testSaveSuccess() {
         NoteOutputBoundary noteOB = new NoteOutputBoundary() {
             @Override
             public void prepareSuccessView(String message) {

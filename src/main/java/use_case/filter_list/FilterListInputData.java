@@ -1,22 +1,22 @@
 package use_case.filter_list;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Input data for the "filter list" use case.
  */
 public class FilterListInputData {
 
-    private Map<String, List<String>> filters;
+    private Map<String, Set<String>> filters;
     private String collectionType;
     private String collectionName;
 
-    public void setFilters(Map<String, List<String>> filterCriteria) {
+    public void setFilters(Map<String, Set<String>> filterCriteria) {
         this.filters = filterCriteria;
     }
 
-    public Map<String, List<String>> getFilters() {
+    public Map<String, Set<String>> getFilters() {
         return filters;
     }
 

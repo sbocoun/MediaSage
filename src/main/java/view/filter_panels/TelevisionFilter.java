@@ -1,34 +1,42 @@
 package view.filter_panels;
 
+import java.awt.Component;
+
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 import interface_adapter.filter_list.FilterState;
 import interface_adapter.filter_list.FilterViewModel;
 
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.*;
-
+/**
+ * Panel for filtering television shows.
+ */
 public class TelevisionFilter extends JPanel implements Filter {
 
     private static final String KEYWORDS = "keywords";
     private static final String GENRES = "genres";
     private static final String ACTORS = "actors";
-    private final JTextField keywordField = new JTextField(15);
-    private final JTextField genreField = new JTextField();
-    private final JTextField actorField = new JTextField();
+    // Text fields for the filter criteria. Set to empty by default to avoid null values.
+    private final JTextField keywordField = new JTextField("");
+    private final JTextField genreField = new JTextField("");
+    private final JTextField actorField = new JTextField("");
     private final FilterViewModel filterViewModel;
 
     public TelevisionFilter(FilterViewModel filterViewModel) {
-
         this.filterViewModel = filterViewModel;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
         createPanelHelper("Keywords", keywordField);
         createPanelHelper("Genres", genreField);
         createPanelHelper("Actors", actorField);
 
-        addKeywordListener();
-        addGenreListener();
-        addActorListener();
+        addListener(KEYWORDS, keywordField);
+        addListener(GENRES, genreField);
+        addListener(ACTORS, actorField);
     }
 
     private void createPanelHelper(String labelText, Component component) {
@@ -39,73 +47,30 @@ public class TelevisionFilter extends JPanel implements Filter {
         this.add(panel);
     }
 
-    private void addKeywordListener() {
-        keywordField.getDocument().addDocumentListener(new DocumentListener() {
+    private void addListener(String criteriaName, JTextField field) {
+        // Ensures the relevant field in the filter criteria is initialized.
+        documentListenerHelper(criteriaName, field);
+        field.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                documentListenerHelper(KEYWORDS, keywordField);
+                documentListenerHelper(criteriaName, field);
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                documentListenerHelper(KEYWORDS, keywordField);
+                documentListenerHelper(criteriaName, field);
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                documentListenerHelper(KEYWORDS, keywordField);
+                documentListenerHelper(criteriaName, field);
             }
         });
-    }
-
-    private void addGenreListener() {
-        genreField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                documentListenerHelper(GENRES, genreField);
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                documentListenerHelper(GENRES, genreField);
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                documentListenerHelper(GENRES, genreField);
-            }
-        });
-    }
-
-    private void addActorListener() {
-        actorField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                documentListenerHelper(ACTORS, actorField);
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                documentListenerHelper(ACTORS, actorField);
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                documentListenerHelper(ACTORS, actorField);
-            }
-        });
-    }
-
-    private String normalizeInput(String text) {
-        // Split the input string by spaces or commas
-        final String[] words = text.split("[,\\s]+");
-        // Join the array of words with commas
-        return String.join(",", words);
     }
 
     private void documentListenerHelper(String criteriaName, JTextField field) {
         final FilterState currentState = filterViewModel.getState();
-        currentState.setFilterCriteria(criteriaName, normalizeInput(field.getText()));
+        currentState.setFilterCriteria(criteriaName, field.getText());
         filterViewModel.setState(currentState);
     }
 
@@ -115,7 +80,13 @@ public class TelevisionFilter extends JPanel implements Filter {
         genreField.setText("");
         actorField.setText("");
         final FilterState currentState = filterViewModel.getState();
-        currentState.resetFilterCriteria();
+        currentState.clearFilterCriteria();
+        // Ensures the relevant fields in the filter criteria are initialized and
+        // prevents the filter interactor from throwing a null pointer exception
+        // if the user tries to filter without entering any criteria.
+        currentState.setFilterCriteria(KEYWORDS, "");
+        currentState.setFilterCriteria(GENRES, "");
+        currentState.setFilterCriteria(ACTORS, "");
         filterViewModel.setState(currentState);
     }
 }

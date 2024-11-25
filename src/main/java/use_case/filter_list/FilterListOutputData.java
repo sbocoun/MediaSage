@@ -1,4 +1,4 @@
-package interface_adapter.filter_list;
+package use_case.filter_list;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import java.util.List;
  * Output data for the filter list use case.
  */
 public class FilterListOutputData {
-    private List<String> filteredMediaNames;
+    private final List<String> filteredMediaNames;
 
     public FilterListOutputData(List<String> filteredMediaNames) {
         this.filteredMediaNames = filteredMediaNames;

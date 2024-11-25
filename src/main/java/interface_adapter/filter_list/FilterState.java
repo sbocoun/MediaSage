@@ -25,9 +25,9 @@ public class FilterState {
     }
 
     /**
-     * Resets the filter criteria.
+     * Clears the filter criteria.
      */
-    public void resetFilterCriteria() {
+    public void clearFilterCriteria() {
         filterCriteria.clear();
     }
 }
