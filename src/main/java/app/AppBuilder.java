@@ -38,6 +38,7 @@ import use_case.generate_recommendations.GenInteractor;
 import use_case.generate_recommendations.GenOutputBoundary;
 import use_case.list.ListInteractor;
 import use_case.list.ListOutputBoundary;
+import use_case.list.removeMedia.RemoveInteractor;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -67,6 +68,7 @@ public class AppBuilder {
     private NoteInteractor noteInteractor;
     private GenInteractor genInteractor;
     private ListInteractor listInteractor;
+    private RemoveInteractor removeInteractor;
     private final JTabbedPane tabPanel = new JTabbedPane();
     private final JPanel cardPanel = new JPanel();
     private final JPanel userPanel = new JPanel();
@@ -268,7 +270,8 @@ public class AppBuilder {
     public AppBuilder addListUseCase() {
         listPresenter = new ListPresenter(listViewModel);
         this.listInteractor = new ListInteractor(userDataAccessObject, listPresenter);
-        final ListController listController = new ListController(listInteractor);
+        this.removeInteractor = new RemoveInteractor(userDataAccessObject, listPresenter);
+        final ListController listController = new ListController(listInteractor, removeInteractor);
         listView.setListController(listController);
         return this;
     }

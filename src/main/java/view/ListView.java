@@ -52,7 +52,10 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     private GenController genController;
     private boolean isUserAction = true;
 
+    private final ListViewModel listViewModel;
+
     public ListView(ListViewModel listViewModel) {
+        this.listViewModel = listViewModel;
         listViewModel.addPropertyChangeListener(this);
         setLayout(new BorderLayout());
         final JPanel topPanel = new JPanel(new BorderLayout());
@@ -219,15 +222,12 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
      * Removes the selected movie from the list.
      */
     private void removeSelectedMovie() {
-        for (int i = 0; i < radioButtonList.size(); i++) {
-            if (radioButtonList.get(i).isSelected()) {
-                radioButtonList.remove(i);
-                movieDescriptions.remove(i);
-                mediaListTable.remove(i);
-                break;
-            }
+        final int selectedRow = mediaListTable.getSelectedRow();
+        if (selectedRow != -1) {
+            final ListState state = listViewModel.getState();
+            final Object value = mediaListTable.getValueAt(selectedRow, 0);
+            listController.removeMovie(state.getCurrentCollectionName(), value.toString());
         }
-
         revalidate();
         repaint();
     }

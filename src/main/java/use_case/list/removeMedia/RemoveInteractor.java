@@ -20,7 +20,7 @@ public final class RemoveInteractor implements RemoveInputBoundary {
     private final UserRepository userRepository;
     private final ListOutputBoundary listPresenter;
 
-    private RemoveInteractor(UserRepository userRepository, ListOutputBoundary presenter) {
+    public RemoveInteractor(UserRepository userRepository, ListOutputBoundary presenter) {
         this.userRepository = userRepository;
         this.listPresenter = presenter;
     }

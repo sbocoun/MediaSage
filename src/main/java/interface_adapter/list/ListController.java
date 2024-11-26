@@ -22,6 +22,7 @@ public class ListController {
         this.listInteractor = listInteractor;
         this.removeInteractor = removeInteractor;
     }
+
     /**
      * Executes the list display related Use Cases.
      *
