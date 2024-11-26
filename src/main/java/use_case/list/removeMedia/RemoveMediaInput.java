@@ -19,7 +19,7 @@ public class RemoveMediaInput {
         return mediaName;
     }
 
-    public void setMovieToRemove(String mediaName) {
-        this.mediaName = mediaName;
+    public void setMovieToRemove(String mName) {
+        this.mediaName = mName;
     }
 }

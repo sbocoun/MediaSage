@@ -54,7 +54,7 @@ public class MediaCollection<T extends AbstractMedia> implements Iterable<T> {
      * Remove a piece of media from the collection.
      * @param media the media to remove
      */
-    public void removeMedia(T media) {
+    public void removeMedia(AbstractMedia media) {
         mediaList.remove(media);
     }
 
