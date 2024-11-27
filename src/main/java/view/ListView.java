@@ -221,15 +221,30 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     /**
      * Removes the selected movie from the list.
      */
-    private void removeSelectedMovie() {
+    void removeSelectedMovie() {
         final int selectedRow = mediaListTable.getSelectedRow();
         if (selectedRow != -1) {
             final ListState state = listViewModel.getState();
-            final Object value = mediaListTable.getValueAt(selectedRow, 0);
-            listController.removeMovie(state.getCurrentCollectionName(), value.toString());
+            final String collectionName = state.getCurrentCollectionName();
+
+            // Check if the collection name is null
+            if (collectionName == null) {
+                System.err.println("Collection name is null. Cannot remove movie.");
+            }
+            else {
+                final Object value = mediaListTable.getValueAt(selectedRow, 0);
+                if (value != null) {
+                    listController.removeMovie(collectionName, value.toString());
+                }
+                else {
+                    System.err.println("No movie selected");
+                }
+            }
+
         }
-        revalidate();
-        repaint();
+        else {
+            System.err.println("No row selected");
+        }
     }
 
     /**
@@ -323,4 +338,9 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     public void setListController(ListController listController) {
         this.listController = listController;
     }
+
+    public JTable getMediaListTable() {
+        return mediaListTable;
+    }
+
 }
