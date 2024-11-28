@@ -40,7 +40,7 @@ public class ListUpdateInteractor implements ListUpdateInputBoundary {
         }
         catch (GradeDataAccessException ex) {
             final ListUpdateOutputData listUpdateOutputData = new ListUpdateOutputData();
-            listUpdateOutputData.setSuccessMessage("Error saving changes: " + ex.getMessage());
+            listUpdateOutputData.setErrorMessage("Error saving changes: " + ex.getMessage());
             listUpdatePresenter.prepareFailView(listUpdateOutputData);
         }
     }
