@@ -1,24 +1,20 @@
 package use_case.search;
 
-import entity.Movie;
-
-import java.util.List;
-
 /**
  * Output data class for search results.
  */
 public class SearchByCriteriaOutputData {
-    private List<Movie> movies;
+    private String movie;
 
-    public SearchByCriteriaOutputData(List<Movie> movies) {
-        this.movies = movies;
+    public SearchByCriteriaOutputData(String movie) {
+        this.movie = movie;
     }
 
-    public List<Movie> getMovies() {
-        return movies;
+    public String getMovie() {
+        return movie;
     }
 
-    public void setMovies(List<Movie> movies) {
-        this.movies = movies;
+    public void setMovie(String movie) {
+        this.movie = movie;
     }
 }

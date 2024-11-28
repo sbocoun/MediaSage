@@ -2,7 +2,9 @@ package app;
 
 import data_access.TasteDiveRecommendation;
 import data_access.grade_api.DBUserDataAccessObject;
+import data_access.movies.MovieDBDataAccessObject;
 import use_case.generate_recommendations.GenDataAccessInterface;
+import use_case.generate_recommendations.MovieDBDataAccessInterface;
 
 /**
  * An application where we can view and add to a note stored by a user.
@@ -56,10 +58,13 @@ public class Main {
         final DBUserDataAccessObject userDataAccessObject = new DBUserDataAccessObject();
         final GenDataAccessInterface genDataAccessInterface = new TasteDiveRecommendation();
         genDataAccessInterface.setApiKey(configurator.getTasteDiveApiKey());
+        final MovieDBDataAccessInterface movieDBDataAccess = new MovieDBDataAccessObject();
+        movieDBDataAccess.setApiKey(configurator.getTmdbApiKey());
 
         final AppBuilder builder = new AppBuilder(DEBUG);
         builder.addUserDAO(userDataAccessObject)
                 .addGenDAO(genDataAccessInterface)
+                .addMovieDAO(movieDBDataAccess)
                 .addBlankView()
                 .addLoginView()
                 .addSignupView()

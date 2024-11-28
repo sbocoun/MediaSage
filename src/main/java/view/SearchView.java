@@ -1,6 +1,9 @@
 package view;
 
+import data_access.movies.MovieDBDataAccessException;
+import interface_adapter.search.SearchController;
 import interface_adapter.search.SearchViewModel;
+import use_case.search.SearchByCriteriaInputData;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -27,6 +30,7 @@ public class SearchView extends JPanel implements PropertyChangeListener {
     private static final int MARGIN_SIZE = 5;
     private final String viewName = "search";
     private final SearchViewModel searchViewModel;
+    private final SearchController searchController;
 
     private final JComboBox<String> categoryDropdown;
     private final JTextField keywordField = new JTextField(20);
@@ -45,8 +49,9 @@ public class SearchView extends JPanel implements PropertyChangeListener {
     // List to store query filters
     private final List<String> queryFilters = new ArrayList<>();
 
-    public SearchView(SearchViewModel searchViewModel) {
+    public SearchView(SearchViewModel searchViewModel, SearchController searchController) {
         this.searchViewModel = searchViewModel;
+        this.searchController = searchController;
         this.searchViewModel.addPropertyChangeListener(this);
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -54,7 +59,7 @@ public class SearchView extends JPanel implements PropertyChangeListener {
         // Category selection panel
         final JPanel categoryPanel = new JPanel(new FlowLayout());
         categoryPanel.add(new JLabel("Category:"));
-        categoryDropdown = new JComboBox<>(new String[]{"Movie", "TV Show", "Documentary"});
+        categoryDropdown = new JComboBox<>(new String[]{"Movie", "TV Show"});
         categoryPanel.add(categoryDropdown);
         add(categoryPanel);
 
@@ -99,7 +104,7 @@ public class SearchView extends JPanel implements PropertyChangeListener {
         // Main search button
         add(mainSearchButton);
 
-        // Action listeners
+        // Action listeners for buttons
         genreAddButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -110,6 +115,51 @@ public class SearchView extends JPanel implements PropertyChangeListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 SearchView.this.addFilter("Cast", castField.getText());
+            }
+        });
+
+        // Action listener for keyword search button (search by name)
+        keywordSearchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final String keyword = keywordField.getText().trim();
+
+                if (keyword.isEmpty()) {
+                    showError("Please enter a movie name to search.");
+                }
+                else {
+                    clearError();
+                    try {
+                        searchController.execute(keyword);
+                    }
+                    catch (MovieDBDataAccessException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+        });
+
+        // Action listener for main search button
+        mainSearchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final String keyword = keywordField.getText().trim();
+                final List<String> genres = new ArrayList<>();
+                if (!genreField.getText().trim().isEmpty()) {
+                    genres.add(genreField.getText().trim());
+                }
+                final List<String> cast = new ArrayList<>();
+                if (!castField.getText().trim().isEmpty()) {
+                    cast.add(castField.getText().trim());
+                }
+
+                if (keyword.isEmpty() && genres.isEmpty() && cast.isEmpty()) {
+                    showError("At least one filter (Keyword, Genre, Cast) is required.");
+                }
+                else {
+                    clearError();
+                    searchViewModel.performSearch(keyword, genres, cast);
+                }
             }
         });
     }

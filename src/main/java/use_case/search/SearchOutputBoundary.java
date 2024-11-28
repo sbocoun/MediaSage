@@ -1,19 +1,17 @@
 package use_case.search;
 
+import data_access.movies.MovieDBDataAccessException;
+
 /**
- * Output Boundary for Search.
+ * Output boundary for the search by criteria use case.
  */
 public interface SearchOutputBoundary {
 
     /**
-     * Prepares the success view for Search.
-     * @param outputData the output data from the search
+     * Update the UI with the results of the search.
+     *
+     * @param outputData the search results to be displayed in the UI.
+     * @throws MovieDBDataAccessException if TMDB API is unsuccessfully called or no results are found.
      */
-    void prepareSuccessView(SearchOutputData outputData);
-
-    /**
-     * Prepares the failure view for Search.
-     * @param errorMessage the explanation of the failure
-     */
-    void prepareFailView(String errorMessage);
+    void displaySearchResults(SearchByCriteriaOutputData outputData) throws MovieDBDataAccessException;
 }

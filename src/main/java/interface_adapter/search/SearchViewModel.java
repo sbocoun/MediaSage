@@ -2,8 +2,10 @@ package interface_adapter.search;
 
 import interface_adapter.ViewModel;
 import interface_adapter.note.NoteState;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.List;
 
 /**
  * The ViewModel for the SearchView.
@@ -15,7 +17,7 @@ public class SearchViewModel extends ViewModel<NoteState> {
     private final PropertyChangeSupport propertyChangeSupport;
 
     public SearchViewModel() {
-        super("note");
+        super("search");
         this.setState(new NoteState());
         this.propertyChangeSupport = new PropertyChangeSupport(this);
     }
@@ -41,11 +43,36 @@ public class SearchViewModel extends ViewModel<NoteState> {
     }
 
     /**
-     * Gets the search results.
-     * @return the search results
+     * Simulates a search operation based on input data.
+     * @param keyword the keyword to search for
+     * @param genres the genres to filter by
+     * @param cast the cast members to filter by
      */
-    public String getSearchResults() {
-        return searchResults;
+    public void performSearch(String keyword, List<String> genres, List<String> cast) {
+        if ((keyword == null || keyword.isEmpty()) && genres.isEmpty() && cast.isEmpty()) {
+            setErrorMessage("At least one search criterion is required.");
+        }
+        else {
+            final StringBuilder results = new StringBuilder("Search Results:\n");
+            if (keyword != null && !keyword.isEmpty()) {
+                results.append("Keyword: ").append(keyword).append("\n");
+            }
+            if (!genres.isEmpty()) {
+                results.append("Genres: ").append(String.join(", ", genres)).append("\n");
+            }
+            if (!cast.isEmpty()) {
+                results.append("Cast: ").append(String.join(", ", cast)).append("\n");
+            }
+            setSearchResults(results.toString());
+            clearErrorMessage();
+        }
+    }
+
+    /**
+     * Clears the error message.
+     */
+    private void clearErrorMessage() {
+        setErrorMessage("");
     }
 
     /**
@@ -70,7 +97,6 @@ public class SearchViewModel extends ViewModel<NoteState> {
      * Adds a PropertyChangeListener to observe state changes.
      * @param listener the PropertyChangeListener to add
      */
-
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);

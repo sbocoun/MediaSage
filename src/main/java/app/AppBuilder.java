@@ -5,9 +5,11 @@ import java.awt.CardLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
 
 import data_access.grade_api.UserRepository;
+import data_access.movies.MovieDBDataAccessObject;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.ChangePasswordPresenter;
@@ -26,7 +28,9 @@ import interface_adapter.note.BlankViewModel;
 import interface_adapter.note.NoteController;
 import interface_adapter.note.NotePresenter;
 import interface_adapter.note.NoteViewModel;
+import interface_adapter.search.SearchPresenter;
 import interface_adapter.search.SearchViewModel;
+import interface_adapter.search.SearchController;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
@@ -36,6 +40,8 @@ import use_case.change_password.ChangePasswordOutputBoundary;
 import use_case.generate_recommendations.GenDataAccessInterface;
 import use_case.generate_recommendations.GenInteractor;
 import use_case.generate_recommendations.GenOutputBoundary;
+import use_case.generate_recommendations.MovieDBDataAccessInterface;
+import use_case.search.SearchInteractor;
 import use_case.list.ListInteractor;
 import use_case.list.ListOutputBoundary;
 import use_case.login.LoginInputBoundary;
@@ -100,6 +106,7 @@ public class AppBuilder {
     private ListView listView;
     private ListViewModel listViewModel;
     private ListOutputBoundary listPresenter;
+    private MovieDBDataAccessInterface movieDBDataAccessInterface;
 
     /**
      * Adds the initial tabs and card layout views.
@@ -138,6 +145,17 @@ public class AppBuilder {
      */
     public AppBuilder addGenDAO(GenDataAccessInterface genDAO) {
         this.genDataAccessInterface = genDAO;
+        return this;
+    }
+
+    /**
+     * Adds the MovieDB data access object.
+     *
+     * @param movieDAO the MovieDB data access interface to use
+     * @return this builder
+     */
+    public AppBuilder addMovieDAO(MovieDBDataAccessInterface movieDAO) {
+        this.movieDBDataAccessInterface = movieDAO;
         return this;
     }
 
@@ -353,7 +371,13 @@ public class AppBuilder {
     public AppBuilder addSearchView() {
         searchViewModel = new SearchViewModel();
 
-        searchView = new SearchView(searchViewModel);
+        final JTextArea resultTextArea = new JTextArea();
+        resultTextArea.setEditable(false);
+        resultTextArea.setRows(10);
+        resultTextArea.setColumns(30);
+
+        final SearchController searchController = new SearchController(new SearchInteractor(new MovieDBDataAccessObject()), new SearchPresenter(resultTextArea, searchViewModel));
+        searchView = new SearchView(searchViewModel, searchController);
         searchPanel.add(searchView, searchView.getViewName());
 
         return this;
