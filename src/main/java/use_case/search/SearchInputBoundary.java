@@ -1,14 +1,18 @@
 package use_case.search;
 
+import data_access.movies.MovieDBDataAccessException;
+
 /**
- * Input Boundary for actions related to searching media.
+ * Input boundary for the search by criteria use case.
  */
 public interface SearchInputBoundary {
 
     /**
-     * Executes the search use case with the provided input data.
+     * Execute the search by criteria use case.
      *
-     * @param inputData the input data for the search
+     * @param inputData the search criteria input data.
+     * @return the search results (output data).
+     * @throws MovieDBDataAccessException if there is an error during the search process.
      */
-    void execute(SearchInputData inputData);
+    SearchByCriteriaOutputData execute(SearchByCriteriaInputData inputData) throws MovieDBDataAccessException;
 }

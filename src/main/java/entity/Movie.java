@@ -10,6 +10,7 @@ public class Movie extends AbstractMedia {
     private List<String> castMembers;
     private int minuteRuntime;
 
+
     public Movie(String name,
                  List<String> genres,
                  Rating userRating,
@@ -45,5 +46,16 @@ public class Movie extends AbstractMedia {
 
     public void setMinuteRuntime(int minuteRuntime) {
         this.minuteRuntime = minuteRuntime;
+    }
+
+    @Override
+    public String toString() {
+        return "Title: " + getName() + "\n"
+                + "Description: " + description + "\n"
+                + "Runtime: " + minuteRuntime + " minutes\n"
+                + "Genres: " + String.join(", ", getGenres()) + "\n"
+                + "Cast: " + String.join(", ", castMembers) + "\n"
+                + "User Rating: " + getUserRating() + "\n"
+                + "External Rating: " + getExternalRating();
     }
 }

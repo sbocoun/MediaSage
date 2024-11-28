@@ -1,27 +1,17 @@
 package use_case.search;
 
-import entity.AbstractMedia;
-import use_case.note.DataAccessException;
+import entity.Movie;
 
 /**
- * Interface for the SearchDAO. It consists of methods for
- * performing a search and retrieving media data.
+ * Interface for search by criteria functionality.
  */
 public interface SearchDataAccessInterface {
     /**
-     * Searches for media based on the provided name.
+     * Fetches movie details based on the provided query.
      *
-     * @param name the name of the media to search for
-     * @return the media entity if found, or null if not found
-     * @throws DataAccessException if there is an issue accessing the data
+     * @param query The search query (i.e. movie title).
+     * @return A Movie object containing the details of the movie.
+     * @throws IllegalArgumentException if the query is null or empty.
      */
-
-    AbstractMedia searchByName(String name) throws DataAccessException;
-    /**
-     * Adds a media entity to the storage for testing purposes.
-     *
-     * @param media the media entity to add
-     */
-
-    void addMedia(AbstractMedia media);
+    Movie getMovieByQuery(String query);
 }

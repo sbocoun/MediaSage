@@ -7,7 +7,6 @@ import java.util.List;
  */
 public class SearchByCriteriaInputData {
     private final String category;
-    // i.e. Movie, TV Show
     private final List<String> keywords;
     private final List<String> genres;
     private List<String> cast;
