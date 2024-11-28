@@ -38,6 +38,7 @@ import use_case.generate_recommendations.GenInteractor;
 import use_case.generate_recommendations.GenOutputBoundary;
 import use_case.list.ListInteractor;
 import use_case.list.ListOutputBoundary;
+import use_case.list.removeMedia.RemoveController;
 import use_case.list.removeMedia.RemoveInteractor;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
@@ -271,8 +272,10 @@ public class AppBuilder {
         listPresenter = new ListPresenter(listViewModel);
         this.listInteractor = new ListInteractor(userDataAccessObject, listPresenter);
         this.removeInteractor = new RemoveInteractor(userDataAccessObject, listPresenter);
-        final ListController listController = new ListController(listInteractor, removeInteractor);
+        final ListController listController = new ListController(listInteractor);
+        final RemoveController removeController = new RemoveController(removeInteractor);
         listView.setListController(listController);
+        listView.setRemoveController(removeController);
         return this;
     }
 
