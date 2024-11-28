@@ -1,5 +1,8 @@
 package data_access.grade_api;
 
+import org.jetbrains.annotations.Nullable;
+
+import entity.User;
 import use_case.change_password.ChangePasswordUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
@@ -15,4 +18,11 @@ public interface UserRepository extends
         LoginUserDataAccessInterface,
         ChangePasswordUserDataAccessInterface,
         LogoutUserDataAccessInterface {
+
+    /**
+     * Get the currently logged-in user.
+     * @return the currently logged-in user
+     */
+    @Nullable
+    User getCurrentUser();
 }
