@@ -24,8 +24,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -35,6 +33,7 @@ import interface_adapter.list.ListState;
 import interface_adapter.list.ListTableModel;
 import interface_adapter.list.ListViewModel;
 import interface_adapter.list_update.ListUpdateController;
+import view.list.update.UserRatingUpdateListener;
 
 /**
  * View for each of the MediaCollections.
@@ -301,18 +300,24 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     }
 
     private void updateStatusLabel(PropertyChangeEvent evt, ListState state) {
+        final int delay = 3000;
         if ("update successful".equals(evt.getPropertyName())) {
-            setEphemeralLabel(state.getSuccessMessage());
+            setEphemeralLabel(state.getSuccessMessage(), delay);
         }
         else {
-            setEphemeralLabel(state.getErrorMessage());
+            setEphemeralLabel(state.getErrorMessage(), delay);
         }
     }
 
-    private void setEphemeralLabel(String message) {
+    /**
+     * Sets the status label with message, which disappears after @time in milliseconds.
+     *
+     * @param message                 the message to display
+     * @param messageTimeMilliseconds message will disappear after the set amount of milliseconds
+     */
+    public void setEphemeralLabel(String message, int messageTimeMilliseconds) {
         statusLabel.setText(message);
-        final int delay = 3000;
-        final Timer timer = new Timer(delay, evt -> statusLabel.setText(""));
+        final Timer timer = new Timer(messageTimeMilliseconds, evt -> statusLabel.setText(""));
         timer.setRepeats(false);
         timer.start();
     }
@@ -343,7 +348,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         else {
             SwingUtilities.invokeLater(() -> {
                 // add the anonymously defined RatingUpdateListener here whenever the TableModel gets replaced
-                newTableModel.addTableModelListener(new UserRatingUpdateListener());
+                newTableModel.addTableModelListener(new UserRatingUpdateListener(this));
                 mediaListTable.setModel(newTableModel);
                 newTableModel.fireTableDataChanged();
             });
@@ -364,64 +369,47 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     }
 
     /**
-     * A listener for rating column updates in the table.
+     * Return the JTable used to display media in collections.
+     * @return the JTable used to display media in collections
      */
-    class UserRatingUpdateListener implements TableModelListener {
-        @Override
-        public void tableChanged(TableModelEvent e) {
-            if (mediaListTable.getModel() instanceof ListTableModel listTableModel) {
-                if (listTableModel.getColumnNames().indexOf("user-rating") == e.getColumn() && isUserAction) {
-                    // assumption: only 1 user rating is updated at a time, which is consistent with the default editor
-                    final int row = e.getFirstRow();
-                    final int ratingCol = e.getColumn();
-                    if (validateRating(row, ratingCol)) {
-                        listUpdateController.executeUserRatingUpdate(
-                                (String) mediaCollectionSelector.getSelectedItem(),
-                                (String) mediaListTable.getModel().getValueAt(row, 0),
-                                (int) mediaListTable.getModel().getValueAt(row, ratingCol));
-                    }
-                    else {
-                        setEphemeralLabel("Invalid input.");
-                    }
-                }
-            }
-        }
+    public JTable getMediaListTable() {
+        return mediaListTable;
+    }
 
-        /**
-         * Check that the rating contained at row, col is a valid rating, and set it to -1 if not.
-         * @param row the row containing the updated rating
-         * @param col the col containing the updated rating
-         * @return if the rating is valid
-         */
-        private boolean validateRating(int row, int col) {
-            final Object ratingRaw = mediaListTable.getModel().getValueAt(row, col);
-            boolean result = false;
-            try {
-                final String ratingString = (String) ratingRaw;
-                if (ratingString.isBlank()) {
-                    clearRating(row, col);
-                }
-                else {
-                    convertToInt(ratingString, row, col);
-                }
-                result = true;
-            }
-            catch (NumberFormatException | ClassCastException ex) {
-                clearRating(row, col);
-            }
-            return result;
-        }
+    /**
+     * Return the ListUpdateController used to submit list update information to the interactor.
+     * @return the ListUpdateController
+     */
+    public ListUpdateController getListUpdateController() {
+        return listUpdateController;
+    }
 
-        private void clearRating(int row, int col) {
-            isUserAction = false;
-            mediaListTable.getModel().setValueAt(-1, row, col);
-            isUserAction = true;
-        }
+    /**
+     * Return the media collection selection JCombobox used to display the name of the current collection
+     * and switch collections.
+     * @return the media collection selection JCombobox
+     */
+    public JComboBox<String> getMediaCollectionSelector() {
+        return mediaCollectionSelector;
+    }
 
-        private void convertToInt(String ratingString, int row, int col) {
-            isUserAction = false;
-            mediaListTable.getModel().setValueAt(Integer.parseInt(ratingString), row, col);
-            isUserAction = true;
-        }
+    /**
+     * Return if the List View is modified by user action or as part of the program functions,
+     * to avoid triggering Listener loops.
+     * False means the modification comes from an automated process.
+     * @return if the list view is modified by a user or not
+     */
+    public boolean getIsUserAction() {
+        return isUserAction;
+    }
+
+    /**
+     * Sets if the List View is modified by user action or as part of the program functions,
+     * to avoid triggering Listener loops.
+     * False means the List View is being modified.
+     * @param isUserAction set to false if the List View is going to be modified by the program
+     */
+    public void setIsUserAction(boolean isUserAction) {
+        this.isUserAction = isUserAction;
     }
 }
