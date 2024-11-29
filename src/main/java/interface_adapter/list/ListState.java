@@ -1,6 +1,5 @@
 package interface_adapter.list;
 
-import javax.swing.*;
 import java.util.List;
 
 /**
@@ -11,7 +10,6 @@ public class ListState {
     private String currentCollectionName;
     private String currentCollectionType;
     private ListTableModel tableModel;
-    private JTable mediaTable;
     private String errorMessage;
     private String generatedRecommendations;
 
@@ -61,13 +59,5 @@ public class ListState {
 
     public void setGeneratedRecommendations(String generatedRecommendations) {
         this.generatedRecommendations = generatedRecommendations;
-    }
-
-    public JTable getMediaTable() {
-        return mediaTable;
-    }
-
-    public void setMediaTable(JTable mediaTable) {
-        this.mediaTable = mediaTable;
     }
 }

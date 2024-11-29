@@ -103,6 +103,7 @@ public class AppBuilder {
     private LoginView loginView;
     private ListView listView;
     private ListViewModel listViewModel;
+    private FilterViewModel filterViewModel;
     private ListOutputBoundary listPresenter;
 
     /**
@@ -245,7 +246,8 @@ public class AppBuilder {
      */
     public AppBuilder addListView() {
         listViewModel = new ListViewModel();
-        listView = new ListView(listViewModel, new FilterViewModel());
+        filterViewModel = new FilterViewModel();
+        listView = new ListView(listViewModel, filterViewModel);
         listPanel.add(listView);
         return this;
     }
@@ -280,9 +282,13 @@ public class AppBuilder {
     /**
      * Adds the Filter List Use Case to the application.
      * @return this builder
+     * @throws RuntimeException if this method is called before addListView
      */
     public AppBuilder addFilterListUseCase() {
-        final FilterPresenter filterPresenter = new FilterPresenter(listViewModel);
+        if (filterViewModel == null) {
+            throw new RuntimeException("addListView must be called before addFilterListUseCase");
+        }
+        final FilterPresenter filterPresenter = new FilterPresenter(filterViewModel);
         final FilterInteractor filterInteractor = new FilterInteractor(filterPresenter, userDataAccessObject);
         final FilterController filterController = new FilterController(filterInteractor);
         listView.setFilterController(filterController);

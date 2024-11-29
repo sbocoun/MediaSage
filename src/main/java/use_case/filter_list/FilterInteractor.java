@@ -8,7 +8,6 @@ import java.util.Map;
 import data_access.grade_api.UserRepository;
 import entity.AbstractMedia;
 import entity.MediaCollection;
-import interface_adapter.filter_list.FilterPresenter;
 import use_case.filter_list.filter_strategies.FilterStrategy;
 import use_case.filter_list.filter_strategies.MovieFilterStrategy;
 import use_case.filter_list.filter_strategies.TelevisionFilterStrategy;
@@ -22,13 +21,18 @@ public class FilterInteractor implements FilterInputBoundary {
     private final FilterListOutputBoundary filterPresenter;
     private final Map<String, FilterStrategy> strategies = new HashMap<>();
 
-    public FilterInteractor(FilterPresenter filterPresenter, UserRepository userDataAccessObject) {
+    public FilterInteractor(FilterListOutputBoundary filterPresenter, UserRepository userDataAccessObject) {
         this.filterPresenter = filterPresenter;
         this.userDAO = userDataAccessObject;
         strategies.put("entity.Movie", new MovieFilterStrategy());
         strategies.put("entity.Television", new TelevisionFilterStrategy());
     }
 
+    /**
+     * Executes the filter list use case.
+     *
+     * @param filterListInputData input data containing the collection name, type, and filters
+     */
     @Override
     public void execute(FilterListInputData filterListInputData) {
         final FilterStrategy strategy = strategies.get(filterListInputData.getCollectionType());

@@ -15,11 +15,13 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -82,10 +84,8 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         topPanel.add(collectionPanel, BorderLayout.WEST);
         add(topPanel, BorderLayout.NORTH);
 
-        final JPanel filterPanel = new JPanel();
-        buildFiltersPanel(filterPanel);
+        buildFiltersPanel();
 
-        listViewModel.getState().setMediaTable(mediaListTable);
         mediaListTable.setPreferredScrollableViewportSize(new Dimension(TABLE_WIDTH, TABLE_HEIGHT));
         final JScrollPane scrollPane = new JScrollPane(mediaListTable);
         add(scrollPane, BorderLayout.CENTER);
@@ -122,9 +122,9 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
 
     /**
      * Builds the filter panel on the right side of the view.
-     * @param filterPanel the panel to add the filter panel to
      */
-    private void buildFiltersPanel(JPanel filterPanel) {
+    private void buildFiltersPanel() {
+        final JPanel filterPanel = new JPanel();
         filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.Y_AXIS));
         filterPanel.add(filterPanelManager.getFilterPanelContainer());
         filterPanel.add(filterButton);
@@ -269,6 +269,37 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getSource() == listViewModel) {
+            handleListViewModelChange(evt);
+        }
+        else if (evt.getSource() == filterViewModel) {
+            handleFilterViewModelChange(evt);
+        }
+    }
+
+    /**
+     * Handles changes in the filter view model.
+     * @param evt the property change event
+     */
+    private void handleFilterViewModelChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals("filtered media")) {
+            final TableRowSorter<?> sorter = (TableRowSorter<?>) mediaListTable.getRowSorter();
+            final RowFilter<TableModel, Integer> rf = new RowFilter<>() {
+                @Override
+                public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
+                    final String name = (String) entry.getValue(0);
+                    return filterViewModel.getState().getFilteredMediaNames().contains(name);
+                }
+            };
+            sorter.setRowFilter(rf);
+        }
+        else if ("error".equals(evt.getPropertyName())) {
+            JOptionPane.showMessageDialog(null,
+                    filterViewModel.getState().getErrorMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void handleListViewModelChange(PropertyChangeEvent evt) {
         isUserAction = false;
         final ListState state = (ListState) evt.getNewValue();
         if ("logout".equals(evt.getPropertyName())) {
