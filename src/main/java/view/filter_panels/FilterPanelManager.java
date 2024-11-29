@@ -12,13 +12,15 @@ import interface_adapter.filter_list.FilterViewModel;
  * Manages the filter panels for the different media types.
  */
 public class FilterPanelManager {
-    private final JPanel filterPanelContainer = new JPanel(new CardLayout());
-    private final CardLayout cardLayout = (CardLayout) filterPanelContainer.getLayout();
+    private final JPanel filterPanelContainer = new JPanel();
+    private final CardLayout cardLayout;
     private final Map<String, Filter> filterPanels = new HashMap<>();
     // Assigned a default value to prevent null pointer exceptions.
     private String displayedFilterPanel = "entity.Movie";
 
     public FilterPanelManager(FilterViewModel filterViewModel) {
+        cardLayout = new CardLayout();
+        filterPanelContainer.setLayout(cardLayout);
         this.addFilterPanel("entity.Movie", new MovieFilter(filterViewModel));
         this.addFilterPanel("entity.Television", new TelevisionFilter(filterViewModel));
     }
