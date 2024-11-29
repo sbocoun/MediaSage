@@ -15,6 +15,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -252,32 +253,40 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
      * Moves selected movie to a different list.
      */
     private void moveSelectedMovie() {
-        if (mediaListTable == null || listViewModel == null || mediaCollectionSelector == null
-                || moveController == null) {
-            System.err.println("Initialization error. Required components are missing.");
+        final int selectedRow = mediaListTable.getSelectedRow();
+        if (selectedRow == -1) {
+            System.err.println("No movie selected. Cannot move.");
         }
         else {
-            final int selectedRow = mediaListTable.getSelectedRow();
-            if (selectedRow == -1) {
-                System.err.println("No movie selected. Cannot move.");
+            final ListState state = listViewModel.getState();
+            final String currentCollectionName = state.getCurrentCollectionName();
+            final Object movieNameObject = mediaListTable.getValueAt(selectedRow, 0);
+            if (movieNameObject == null) {
+                System.err.println("Movie name is null. Cannot move.");
             }
             else {
-                final ListState state = listViewModel.getState();
-                final String currentCollectionName = state.getCurrentCollectionName();
-                final Object movieNameObject = mediaListTable.getValueAt(selectedRow, 0);
-                if (movieNameObject == null) {
-                    System.err.println("Movie name is null. Cannot move.");
+                final String movieName = movieNameObject.toString();
+                final List<String> availableCollections = state.getAvailableCollections();
+                if (availableCollections.isEmpty()) {
+                    System.err.println("No available collections to move to.");
                 }
                 else {
-                    final String movieName = movieNameObject.toString();
-                    final String targetCollectionName = (String) mediaCollectionSelector.getSelectedItem();
-                    if (targetCollectionName == null || targetCollectionName.equals(currentCollectionName)) {
-                        System.err.println("Invalid collection choice. Cannot move.");
+                    final String targetCollectionName = (String) JOptionPane.showInputDialog(
+                            this,
+                            "Select a collection to move the movie to:",
+                            "Move Movie",
+                            JOptionPane.PLAIN_MESSAGE,
+                            null,
+                            availableCollections.toArray(),
+                            availableCollections.get(0)
+                    );
+                    if (targetCollectionName == null || targetCollectionName.isEmpty()) {
+                        System.err.println("No target collection selected. Cannot move.");
                     }
                     else {
                         moveController.moveMovie(currentCollectionName, targetCollectionName, movieName);
-                        System.out.println("Moved " + movieName + " from " + currentCollectionName
-                                + " to " + targetCollectionName);
+                        System.out.println("Moved " + movieName + " from "
+                                + currentCollectionName + " to " + targetCollectionName);
                     }
                 }
             }
