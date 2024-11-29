@@ -293,6 +293,9 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
             updateStatusLabel(evt, state);
         }
         else if ("error".equals(evt.getPropertyName())) {
+            if (state.getAvailableCollections() != null) {
+                repopulateMediaCollectionSelection(state.getAvailableCollections());
+            }
             JOptionPane.showMessageDialog(null,
                     state.getErrorMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }

@@ -14,6 +14,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 
@@ -75,12 +76,13 @@ public class ListInteractorTest {
 
             @Override
             public void prepareFailView(ListOutputData listOutputData) {
-                fail("Should not have been reached.");
+                assertEquals("Not currently logged-in.", listOutputData.getErrorMessage());
+                assertNull(listOutputData.getAvailableCollections());
             }
         };
         final ListInteractor listInteractor = new ListInteractor(emptyDAO, listOB);
         final ListInputData listInputData = new ListInputData();
-        assertThrows(RuntimeException.class, () -> listInteractor.execute(listInputData));
+        listInteractor.execute(listInputData);
     }
 
     @Test

@@ -41,6 +41,7 @@ public class ListPresenter implements ListOutputBoundary {
     public void prepareFailView(ListOutputData listOutputData) {
         final ListState listState = listViewModel.getState();
         listState.setErrorMessage(listOutputData.getErrorMessage());
+        listState.setAvailableCollections(listOutputData.getAvailableCollections());
         listViewModel.firePropertyChanged("error");
     }
 
