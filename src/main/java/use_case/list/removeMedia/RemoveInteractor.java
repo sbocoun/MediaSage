@@ -58,7 +58,6 @@ public final class RemoveInteractor implements RemoveInputBoundary {
                     getAvailableCollections(mediaCollections)
             ));
         }
-
     }
 
     /**

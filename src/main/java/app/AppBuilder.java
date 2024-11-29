@@ -38,6 +38,8 @@ import use_case.generate_recommendations.GenInteractor;
 import use_case.generate_recommendations.GenOutputBoundary;
 import use_case.list.ListInteractor;
 import use_case.list.ListOutputBoundary;
+import use_case.list.moveMedia.MoveController;
+import use_case.list.moveMedia.MoveInteractor;
 import use_case.list.removeMedia.RemoveController;
 import use_case.list.removeMedia.RemoveInteractor;
 import use_case.login.LoginInputBoundary;
@@ -70,6 +72,7 @@ public class AppBuilder {
     private GenInteractor genInteractor;
     private ListInteractor listInteractor;
     private RemoveInteractor removeInteractor;
+    private MoveInteractor moveInteractor;
     private final JTabbedPane tabPanel = new JTabbedPane();
     private final JPanel cardPanel = new JPanel();
     private final JPanel userPanel = new JPanel();
@@ -272,10 +275,13 @@ public class AppBuilder {
         listPresenter = new ListPresenter(listViewModel);
         this.listInteractor = new ListInteractor(userDataAccessObject, listPresenter);
         this.removeInteractor = new RemoveInteractor(userDataAccessObject, listPresenter);
+        this.moveInteractor = new MoveInteractor(userDataAccessObject, listPresenter);
         final ListController listController = new ListController(listInteractor);
         final RemoveController removeController = new RemoveController(removeInteractor);
+        final MoveController moveController = new MoveController(moveInteractor);
         listView.setListController(listController);
         listView.setRemoveController(removeController);
+        listView.setMoveController(moveController);
         return this;
     }
 

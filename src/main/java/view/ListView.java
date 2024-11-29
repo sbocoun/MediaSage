@@ -30,6 +30,8 @@ import interface_adapter.list.ListController;
 import interface_adapter.list.ListState;
 import interface_adapter.list.ListTableModel;
 import interface_adapter.list.ListViewModel;
+import use_case.list.moveMedia.MoveController;
+import use_case.list.removeMedia.RemoveController;
 
 /**
  * View for each of the MediaCollections.
@@ -49,6 +51,8 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     private final List<JRadioButton> radioButtonList = new ArrayList<>();
     private final List<String> movieDescriptions = new ArrayList<>();
     private ListController listController;
+    private MoveController moveController;
+    private RemoveController removeController;
     private GenController genController;
     private boolean isUserAction = true;
 
@@ -227,14 +231,13 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
             final ListState state = listViewModel.getState();
             final String collectionName = state.getCurrentCollectionName();
 
-            // Check if the collection name is null
             if (collectionName == null) {
                 System.err.println("Collection name is null. Cannot remove movie.");
             }
             else {
                 final Object value = mediaListTable.getValueAt(selectedRow, 0);
                 if (value != null) {
-                    listController.removeMovie(collectionName, value.toString());
+                    removeController.removeMovie(collectionName, value.toString());
                 }
                 else {
                     System.err.println("No movie selected");
@@ -251,14 +254,31 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
      * Moves selected movie to a different list.
      */
     private void moveSelectedMovie() {
-        for (int i = 0; i < radioButtonList.size(); i++) {
-            if (radioButtonList.get(i).isSelected()) {
-                final String movieName = "Movie " + (i + 1);
-                final String selectedList = (String) mediaCollectionSelector.getSelectedItem();
-                System.out.println("Moving " + movieName + " to " + selectedList);
-                break;
+        final int selectedRow = mediaListTable.getSelectedRow();
+        if (selectedRow == -1) {
+            System.err.println("No movie selected. Cannot move.");
+        }
+        else {
+            final ListState state = listViewModel.getState();
+            final String currentCollectionName = state.getCurrentCollectionName();
+            final Object movieNameObject = mediaListTable.getValueAt(selectedRow, 0);
+            if (movieNameObject == null) {
+                System.err.println("Movie name is null. Cannot move.");
+            }
+            else {
+                final String movieName = movieNameObject.toString();
+                final String targetCollectionName = (String) mediaCollectionSelector.getSelectedItem();
+                if (targetCollectionName == null || targetCollectionName.equals(currentCollectionName)) {
+                    System.err.println("Invalid collection choice. Cannot move.");
+                }
+                else {
+                    moveController.moveMovie(currentCollectionName, targetCollectionName, movieName);
+                    System.out.println("Moved " + movieName + " from "
+                            + currentCollectionName + " to " + targetCollectionName);
+                }
             }
         }
+
     }
 
     /**
@@ -337,6 +357,14 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
 
     public void setListController(ListController listController) {
         this.listController = listController;
+    }
+
+    public void setRemoveController(RemoveController removeController) {
+        this.removeController = removeController;
+    }
+
+    public void setMoveController(MoveController moveController) {
+        this.moveController = moveController;
     }
 
     public JTable getMediaListTable() {
