@@ -7,10 +7,11 @@ import interface_adapter.list.ListState;
 import javax.swing.table.DefaultTableModel;
 
 import junit.framework.TestCase;
+import use_case.list.removeMedia.RemoveController;
 
 public class ListViewTest extends TestCase {
     private ListView listView;
-    private MockListController mockListController;
+    private MockRemoveController mockRemoveController;
     private MockListViewModel mockListViewModel;
 
     @Override
@@ -18,12 +19,12 @@ public class ListViewTest extends TestCase {
         super.setUp();
 
         // Create mock implementations of ListController and ListViewModel
-        mockListController = new MockListController();
+        mockRemoveController = new MockRemoveController();
         mockListViewModel = new MockListViewModel();
 
         // Initialize ListView with mocks
         listView = new ListView(mockListViewModel);
-        listView.setListController(mockListController);
+        listView.setRemoveController(mockRemoveController);
 
         // Set up the table with sample data
         DefaultTableModel tableModel = new DefaultTableModel(
@@ -47,8 +48,8 @@ public class ListViewTest extends TestCase {
         listView.removeSelectedMovie();
 
         // Verify that the movie was removed
-        assertEquals("The Matrix", mockListController.removedMovie);
-        assertEquals("Movie Watchlist", mockListController.collectionName);
+        assertEquals("The Matrix", mockRemoveController.removedMovie);
+        assertEquals("Movie Watchlist", mockRemoveController.collectionName);
     }
 
     public void testRemoveSelectedMovieNoRowSelected() {
@@ -57,8 +58,8 @@ public class ListViewTest extends TestCase {
         listView.removeSelectedMovie();
 
         // Verify that no movie was removed
-        assertNull(mockListController.removedMovie);
-        assertNull(mockListController.collectionName);
+        assertNull(mockRemoveController.removedMovie);
+        assertNull(mockRemoveController.collectionName);
     }
 
     public void testRemoveSelectedMovie_NullCollectionName() {
@@ -70,17 +71,16 @@ public class ListViewTest extends TestCase {
         listView.removeSelectedMovie();
 
         // Verify that no movie was removed
-        assertNull("No movie should be removed when collection name is null", mockListController.removedMovie);
-        assertNull("No collection should be processed when collection name is null", mockListController.collectionName);
+        assertNull("No movie should be removed when collection name is null", mockRemoveController.removedMovie);
+        assertNull("No collection should be processed when collection name is null", mockRemoveController.collectionName);
     }
 
-    // Mock classes to simulate ListController and ListViewModel behavior
-    private static class MockListController extends ListController {
+    private static class MockRemoveController extends RemoveController {
         public String removedMovie = null;
         public String collectionName = null;
 
-        public MockListController() {
-            super(null, null); // Pass null since we won't use interactors in this mock
+        public MockRemoveController() {
+            super(null);
         }
 
         @Override
@@ -89,6 +89,7 @@ public class ListViewTest extends TestCase {
             this.removedMovie = movieName;
         }
     }
+
 
     private static class MockListViewModel extends ListViewModel {
         private String currentCollectionName;

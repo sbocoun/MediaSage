@@ -194,7 +194,6 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
                 addFilteredItem(i);
             }
         }
-
         revalidate();
         repaint();
     }
@@ -243,7 +242,6 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
                     System.err.println("No movie selected");
                 }
             }
-
         }
         else {
             System.err.println("No row selected");
@@ -254,31 +252,36 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
      * Moves selected movie to a different list.
      */
     private void moveSelectedMovie() {
-        final int selectedRow = mediaListTable.getSelectedRow();
-        if (selectedRow == -1) {
-            System.err.println("No movie selected. Cannot move.");
+        if (mediaListTable == null || listViewModel == null || mediaCollectionSelector == null
+                || moveController == null) {
+            System.err.println("Initialization error. Required components are missing.");
         }
         else {
-            final ListState state = listViewModel.getState();
-            final String currentCollectionName = state.getCurrentCollectionName();
-            final Object movieNameObject = mediaListTable.getValueAt(selectedRow, 0);
-            if (movieNameObject == null) {
-                System.err.println("Movie name is null. Cannot move.");
+            final int selectedRow = mediaListTable.getSelectedRow();
+            if (selectedRow == -1) {
+                System.err.println("No movie selected. Cannot move.");
             }
             else {
-                final String movieName = movieNameObject.toString();
-                final String targetCollectionName = (String) mediaCollectionSelector.getSelectedItem();
-                if (targetCollectionName == null || targetCollectionName.equals(currentCollectionName)) {
-                    System.err.println("Invalid collection choice. Cannot move.");
+                final ListState state = listViewModel.getState();
+                final String currentCollectionName = state.getCurrentCollectionName();
+                final Object movieNameObject = mediaListTable.getValueAt(selectedRow, 0);
+                if (movieNameObject == null) {
+                    System.err.println("Movie name is null. Cannot move.");
                 }
                 else {
-                    moveController.moveMovie(currentCollectionName, targetCollectionName, movieName);
-                    System.out.println("Moved " + movieName + " from "
-                            + currentCollectionName + " to " + targetCollectionName);
+                    final String movieName = movieNameObject.toString();
+                    final String targetCollectionName = (String) mediaCollectionSelector.getSelectedItem();
+                    if (targetCollectionName == null || targetCollectionName.equals(currentCollectionName)) {
+                        System.err.println("Invalid collection choice. Cannot move.");
+                    }
+                    else {
+                        moveController.moveMovie(currentCollectionName, targetCollectionName, movieName);
+                        System.out.println("Moved " + movieName + " from " + currentCollectionName
+                                + " to " + targetCollectionName);
+                    }
                 }
             }
         }
-
     }
 
     /**

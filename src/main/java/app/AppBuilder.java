@@ -273,15 +273,19 @@ public class AppBuilder {
      */
     public AppBuilder addListUseCase() {
         listPresenter = new ListPresenter(listViewModel);
+
         this.listInteractor = new ListInteractor(userDataAccessObject, listPresenter);
         this.removeInteractor = new RemoveInteractor(userDataAccessObject, listPresenter);
         this.moveInteractor = new MoveInteractor(userDataAccessObject, listPresenter);
+
         final ListController listController = new ListController(listInteractor);
         final RemoveController removeController = new RemoveController(removeInteractor);
         final MoveController moveController = new MoveController(moveInteractor);
+
         listView.setListController(listController);
         listView.setRemoveController(removeController);
         listView.setMoveController(moveController);
+
         return this;
     }
 

@@ -35,7 +35,6 @@ public final class RemoveInteractor implements RemoveInputBoundary {
         final List<MediaCollection<? extends AbstractMedia>> mediaCollections = user.getAllMediaCollections();
         final MediaCollection<? extends AbstractMedia> collection = findCollectionWithName(
                 mediaCollections, input.getCollectionName());
-        final AbstractMedia mediaToRemove = findMediaByName(collection, input.getMediaName());
 
         if (collection == null) {
             listPresenter.prepareFailView(new ListOutputData(
@@ -43,20 +42,23 @@ public final class RemoveInteractor implements RemoveInputBoundary {
                     getAvailableCollections(mediaCollections)
             ));
         }
-        else if (mediaToRemove == null) {
-            listPresenter.prepareFailView(new ListOutputData(
-                    "Media with the name " + input.getMediaName() + " not found in the collection.",
-                    getAvailableCollections(mediaCollections)
-            ));
-        }
         else {
-            collection.removeMedia(mediaToRemove);
-            listPresenter.prepareSuccessView(new ListOutputData(
-                    collectionsToTableRowData(collection),
-                    collection.getName(),
-                    collection.getCollectionType(),
-                    getAvailableCollections(mediaCollections)
-            ));
+            final AbstractMedia mediaToRemove = findMediaByName(collection, input.getMediaName());
+            if (mediaToRemove == null) {
+                listPresenter.prepareFailView(new ListOutputData(
+                        "Media with the name " + input.getMediaName() + " not found in the collection.",
+                        getAvailableCollections(mediaCollections)
+                ));
+            }
+            else {
+                collection.removeMedia(mediaToRemove);
+                listPresenter.prepareSuccessView(new ListOutputData(
+                        collectionsToTableRowData(collection),
+                        collection.getName(),
+                        collection.getMediaType().getName(),
+                        getAvailableCollections(mediaCollections)
+                ));
+            }
         }
     }
 
