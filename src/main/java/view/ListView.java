@@ -15,6 +15,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -292,6 +293,10 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         else if (evt.getPropertyName().contains("update")) {
             updateStatusLabel(evt, state);
         }
+        else if ("error".equals(evt.getPropertyName())) {
+            JOptionPane.showMessageDialog(null,
+                    state.getErrorMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
         isUserAction = true;
     }
 
@@ -316,7 +321,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
      * Repopulate the list of media collections.
      * @param collectionNames the list of media collection names
      */
-    public void repopulateMediaCollectionSelection(List<String> collectionNames) {
+    private void repopulateMediaCollectionSelection(List<String> collectionNames) {
         mediaCollectionSelector.removeAllItems();
         for (String name : collectionNames) {
             mediaCollectionSelector.addItem(name);
@@ -328,7 +333,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
      *
      * @param state the new state containing the list of media to use to populate the table
      */
-    public void refreshTable(ListState state) {
+    private void refreshTable(ListState state) {
         final TableModel currentTableModel = mediaListTable.getModel();
         final ListTableModel newTableModel = state.getTableModel();
         if (currentTableModel instanceof ListTableModel castedCurrentTableModel
@@ -348,7 +353,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     /**
      * Clear the table.
      */
-    public void clearTable() {
+    private void clearTable() {
         SwingUtilities.invokeLater(() -> mediaListTable.setModel(new DefaultTableModel()));
         mediaCollectionSelector.removeAllItems();
     }

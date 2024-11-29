@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
 import data_access.grade_api.UserRepository;
@@ -112,6 +113,7 @@ public class InMemoryUserDAO implements UserRepository {
     }
 
     @Override
+    @Nullable
     public User getCurrentUser() {
         return currentUser;
     }
