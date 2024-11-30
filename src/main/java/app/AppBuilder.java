@@ -274,17 +274,49 @@ public class AppBuilder {
     public AppBuilder addListUseCase() {
         listPresenter = new ListPresenter(listViewModel);
 
-        this.listInteractor = new ListInteractor(userDataAccessObject, listPresenter);
-        this.removeInteractor = new RemoveInteractor(userDataAccessObject, listPresenter);
-        this.moveInteractor = new MoveInteractor(userDataAccessObject, listPresenter);
-
+        final ListInteractor listInteractor = new ListInteractor(userDataAccessObject, listPresenter);
         final ListController listController = new ListController(listInteractor);
-        final RemoveController removeController = new RemoveController(removeInteractor);
-        final MoveController moveController = new MoveController(moveInteractor);
-
         listView.setListController(listController);
-        listView.setRemoveController(removeController);
+        
+        return this;
+    }    
+   
+    /**
+     * Adds the Move Media Use Case to the application, allowing users to move a piece of media from one collection
+     * to another.
+     * @return this builder
+     */
+    public AppBuilder addMoveMediaUseCase() {
+        if (listView == null) {
+            throw new RuntimeException("addListView must be called before addMoveMediaUseCase");
+        }
+        if (listPresenter == null) {
+            throw new RuntimeException("addListUsecase must be called before addMoveMediaUseCase");
+        }
+     
+        final MoveInteractor moveInteractor = new MoveInteractor(userDataAccessObject, listPresenter);
+        final MoveController moveController = new MoveController(moveInteractor);
         listView.setMoveController(moveController);
+        
+        return this;
+    }
+    
+    /**
+     * Adds the Remove Media Use Case to the application, allowing users to remove a piece of media from the 
+     * selected collection.
+     * @return this builder
+     */
+    public AppBuilder addRemoveMediaUseCase() {
+        if (listView == null) {
+            throw new RuntimeException("addListView must be called before addRemoveMediaUseCase");
+        }
+        if (listPresenter == null) {
+            throw new RuntimeException("addListUsecase must be called before addRemoveMediaUseCase");
+        }
+     
+        final RemoveInteractor removeInteractor = new RemoveInteractor(userDataAccessObject, listPresenter);
+        final RemoveController removeController = new RemoveController(removeInteractor);
+        listView.setRemoveController(removeController);
 
         return this;
     }
