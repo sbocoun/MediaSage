@@ -33,7 +33,7 @@ public class MovieDBDataAccessObjectTest {
 
     @Test
     public void testHasRating() {
-        assertEquals(82, movieDetails.getExternalRating().getScore());
+        assertEquals(82, movieDetails.getExternalRating());
     }
 
     @Test

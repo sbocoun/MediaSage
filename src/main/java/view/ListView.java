@@ -15,60 +15,76 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
+import interface_adapter.filter_list.FilterController;
+import interface_adapter.filter_list.FilterViewModel;
 import interface_adapter.generate_recommendations.GenController;
 import interface_adapter.list.ListController;
 import interface_adapter.list.ListState;
 import interface_adapter.list.ListTableModel;
 import interface_adapter.list.ListViewModel;
+import view.filter_panels.FilterPanelManager;
 
 /**
  * View for each of the MediaCollections.
  */
 public class ListView extends JPanel implements ActionListener, PropertyChangeListener {
 
-    private static final int TABLE_WIDTH = 500;
+    private static final int TABLE_WIDTH = 800;
     private static final int TABLE_HEIGHT = 200;
     private final JComboBox<String> mediaCollectionSelector = new JComboBox<>();
-    private final JButton filterButton = new JButton("Filter");
     private final JButton removeButton = new JButton("Remove");
     private final JButton moveToButton = new JButton("Move to");
     private final JButton recommendButton = new JButton("Generate Recommendation");
     private final JTextArea recommendBox = new JTextArea();
-    private final JTextField filterField = new JTextField(10);
     private final JTable mediaListTable = new JTable();
     private final List<JRadioButton> radioButtonList = new ArrayList<>();
     private final List<String> movieDescriptions = new ArrayList<>();
+
+    // Use case controllers
     private ListController listController;
     private GenController genController;
+    private FilterController filterController;
+
+    // View Models
+    private final ListViewModel listViewModel;
+    private final FilterViewModel filterViewModel;
+
     private boolean isUserAction = true;
 
-    public ListView(ListViewModel listViewModel) {
+    // Filter panel
+    private final FilterPanelManager filterPanelManager;
+    private final JButton filterButton = new JButton("Apply Filters");
+    private final JButton clearButton = new JButton("Clear Filters");
+
+    public ListView(ListViewModel listViewModel, FilterViewModel filterViewModel) {
         listViewModel.addPropertyChangeListener(this);
+        filterViewModel.addPropertyChangeListener(this);
+        this.listViewModel = listViewModel;
+        this.filterViewModel = filterViewModel;
+        filterPanelManager = new FilterPanelManager(filterViewModel);
+
         setLayout(new BorderLayout());
         final JPanel topPanel = new JPanel(new BorderLayout());
 
         final JPanel collectionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         collectionPanel.add(mediaCollectionSelector);
 
-        final JPanel filterPanel = new JPanel();
-        filterPanel.add(new JLabel("Filter by description:"));
-        filterPanel.add(filterField);
-        filterPanel.add(filterButton);
-
         topPanel.add(collectionPanel, BorderLayout.WEST);
-        topPanel.add(filterPanel, BorderLayout.EAST);
-
         add(topPanel, BorderLayout.NORTH);
+
+        buildFiltersPanel();
 
         mediaListTable.setPreferredScrollableViewportSize(new Dimension(TABLE_WIDTH, TABLE_HEIGHT));
         final JScrollPane scrollPane = new JScrollPane(mediaListTable);
@@ -105,13 +121,26 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     }
 
     /**
+     * Builds the filter panel on the right side of the view.
+     */
+    private void buildFiltersPanel() {
+        final JPanel filterPanel = new JPanel();
+        filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.Y_AXIS));
+        filterPanel.add(filterPanelManager.getFilterPanelContainer());
+        filterPanel.add(filterButton);
+        filterPanel.add(clearButton);
+        this.add(filterPanel, BorderLayout.EAST);
+    }
+
+    /**
      * Builds all the action listeners for buttons in the View.
      */
     private void buildActionListeners() {
-        filterButton.addActionListener(this);
         removeButton.addActionListener(this);
         moveToButton.addActionListener(this);
         mediaCollectionSelector.addActionListener(this);
+        filterButton.addActionListener(this);
+        clearButton.addActionListener(this);
 
         recommendButton.addActionListener(
                 evt -> {
@@ -125,6 +154,30 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
                 evt -> {
                     if (evt.getSource().equals(mediaCollectionSelector) && isUserAction) {
                         listController.executeCollectionSwitch((String) mediaCollectionSelector.getSelectedItem());
+                    }
+                }
+        );
+
+        filterButton.addActionListener(
+                evt -> {
+                    if (evt.getSource().equals(filterButton)) {
+                        filterController.execute(
+                                filterViewModel.getState().getFilterCriteria(),
+                                listViewModel.getState().getCurrentCollectionType(),
+                                listViewModel.getState().getCurrentCollectionName()
+                        );
+                    }
+                }
+        );
+
+        clearButton.addActionListener(
+                evt -> {
+                    if (evt.getSource().equals(clearButton)) {
+                        // clears the input for the currently displayed filter panel
+                        filterPanelManager.clearFilterPanel();
+                        // clears the filter criteria in the filter view model
+                        filterViewModel.getState().setFilteredMediaNames(null);
+                        filterViewModel.firePropertyChanged("filtered media");
                     }
                 }
         );
@@ -161,58 +214,12 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == filterButton) {
-            final String filterText = filterField.getText().toLowerCase();
-            filterMoviesByDescription(filterText);
-        }
-        else if (e.getSource() == removeButton) {
+        if (e.getSource() == removeButton) {
             removeSelectedMovie();
         }
         else if (e.getSource() == moveToButton) {
             moveSelectedMovie();
         }
-    }
-
-    /**
-     * Filters the movie list based on the given description text.
-     *
-     * @param filterText The text to filter descriptions by
-     */
-    private void filterMoviesByDescription(String filterText) {
-        mediaListTable.removeAll();
-
-        for (int i = 0; i < movieDescriptions.size(); i++) {
-            final String description = movieDescriptions.get(i).toLowerCase();
-            if (description.contains(filterText)) {
-                addFilteredItem(i);
-            }
-        }
-
-        revalidate();
-        repaint();
-    }
-
-    /**
-     * Adds a filtered item to the itemListPanel.
-     *
-     * @param index The index of the item to add
-     */
-    private void addFilteredItem(int index) {
-        final JPanel itemPanel = new JPanel(new BorderLayout());
-
-        // Use the existing radio button and description data
-        final JRadioButton radioButton = radioButtonList.get(index);
-        itemPanel.add(radioButton, BorderLayout.WEST);
-
-        final JLabel thumbnailLabel = new JLabel("Thumbnail");
-        itemPanel.add(thumbnailLabel, BorderLayout.CENTER);
-
-        final JPanel nameDescPanel = new JPanel(new GridLayout(2, 1));
-        nameDescPanel.add(new JLabel("Movie " + (index + 1)));
-        nameDescPanel.add(new JLabel(movieDescriptions.get(index)));
-        itemPanel.add(nameDescPanel, BorderLayout.EAST);
-
-        mediaListTable.add(itemPanel);
     }
 
     /**
@@ -261,6 +268,44 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getSource() == listViewModel) {
+            handleListViewModelChange(evt);
+        }
+        else if (evt.getSource() == filterViewModel) {
+            handleFilterViewModelChange(evt);
+        }
+    }
+
+    /**
+     * Handles changes in the filter view model.
+     * @param evt the property change event
+     */
+    private void handleFilterViewModelChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals("filtered media")) {
+            final TableRowSorter<?> sorter = (TableRowSorter<?>) mediaListTable.getRowSorter();
+            // Checks if the filter criteria is null, if so, sets the row filter to null to display all media
+            // Otherwise, sets the row filter to only display media that matches the filter criteria
+            if (filterViewModel.getState().getFilteredMediaNames() == null) {
+                sorter.setRowFilter(null);
+            }
+            else {
+                final RowFilter<TableModel, Integer> rf = new RowFilter<>() {
+                    @Override
+                    public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
+                        final String name = (String) entry.getValue(0);
+                        return filterViewModel.getState().getFilteredMediaNames().contains(name);
+                    }
+                };
+                sorter.setRowFilter(rf);
+            }
+        }
+        else if ("error".equals(evt.getPropertyName())) {
+            JOptionPane.showMessageDialog(null,
+                    filterViewModel.getState().getErrorMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void handleListViewModelChange(PropertyChangeEvent evt) {
         isUserAction = false;
         final ListState state = (ListState) evt.getNewValue();
         if ("logout".equals(evt.getPropertyName())) {
@@ -269,6 +314,8 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         else if ("display data".equals(evt.getPropertyName())) {
             repopulateMediaCollectionSelection(state.getAvailableCollections());
             mediaCollectionSelector.setSelectedItem(state.getCurrentCollectionName());
+            filterPanelManager.updateFilterPanel(state.getCurrentCollectionType());
+            filterPanelManager.clearFilterPanel();
             refreshTable(state);
         }
         else if ("recommendation".equals(evt.getPropertyName())) {
@@ -303,6 +350,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         else {
             SwingUtilities.invokeLater(() -> {
                 mediaListTable.setModel(newTableModel);
+                mediaListTable.setRowSorter(new TableRowSorter<>(newTableModel));
                 newTableModel.fireTableDataChanged();
             });
         }
@@ -322,5 +370,9 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
 
     public void setListController(ListController listController) {
         this.listController = listController;
+    }
+
+    public void setFilterController(FilterController filterController) {
+        this.filterController = filterController;
     }
 }
