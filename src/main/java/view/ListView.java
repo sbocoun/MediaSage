@@ -250,29 +250,51 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     }
 
     /**
-     * Moves selected movie to a different list.
+     * Moves the selected movie to a different list.
+     *
+     * @throws IllegalStateException if the required components are missing.
      */
     private void moveSelectedMovie() {
+        if (mediaListTable == null || listViewModel == null
+                || mediaCollectionSelector == null || moveController == null) {
+            throw new IllegalStateException("Initialization error: One or more required components are missing.");
+        }
+
         final int selectedRow = mediaListTable.getSelectedRow();
         if (selectedRow == -1) {
-            System.err.println("No movie selected. Cannot move.");
+            JOptionPane.showMessageDialog(
+                    null,
+                    "No movie selected. Please select a movie to move.",
+                    "Selection Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
         else {
             final ListState state = listViewModel.getState();
             final String currentCollectionName = state.getCurrentCollectionName();
             final Object movieNameObject = mediaListTable.getValueAt(selectedRow, 0);
             if (movieNameObject == null) {
-                System.err.println("Movie name is null. Cannot move.");
+                JOptionPane.showMessageDialog(
+                        null,
+                        "The selected movie has no name. Cannot move.",
+                        "Media Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
             }
             else {
                 final String movieName = movieNameObject.toString();
                 final List<String> availableCollections = state.getAvailableCollections();
                 if (availableCollections.isEmpty()) {
-                    System.err.println("No available collections to move to.");
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "No available collections to move the movie to.",
+                            "Collection Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
                 else {
                     final String targetCollectionName = (String) JOptionPane.showInputDialog(
-                            this,
+                            null,
                             "Select a collection to move the movie to:",
                             "Move Movie",
                             JOptionPane.PLAIN_MESSAGE,
@@ -281,16 +303,27 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
                             availableCollections.get(0)
                     );
                     if (targetCollectionName == null || targetCollectionName.isEmpty()) {
-                        System.err.println("No target collection selected. Cannot move.");
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "No target collection selected. Cannot move.",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
                     }
                     else {
                         moveController.moveMovie(currentCollectionName, targetCollectionName, movieName);
-                        System.out.println("Moved " + movieName + " from "
-                                + currentCollectionName + " to " + targetCollectionName);
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Successfully moved \"" + movieName + "\" from \""
+                                        + currentCollectionName + "\" to \"" + targetCollectionName + "\".",
+                                "Success",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
                     }
                 }
             }
         }
+
     }
 
     /**
