@@ -28,12 +28,4 @@ public class ListController {
         listInputData.setNameOfDesiredCollection(desiredCollectionName);
         listInteractor.execute(listInputData);
     }
-
-    /**
-     * Filters current list based on recommendations.
-     *
-     * @param filter the key we want to filter for
-     */
-    public void filterMoviesByDescription(String filter) {
-    }
 }
