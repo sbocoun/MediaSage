@@ -36,12 +36,12 @@ public class FormattingHelpers {
     }
 
     /**
-     * Checks if a set is not empty, empty string excluded.
+     * Checks if a set is not empty by checking if it contains an empty string.
      *
      * @param set The set of strings to check
      * @return whether the set is not empty.
      */
     boolean notEmpty(Set<String> set) {
-        return !set.isEmpty() && !set.contains("");
+        return !set.contains("");
     }
 }
