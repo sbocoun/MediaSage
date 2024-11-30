@@ -42,6 +42,6 @@ public class FormattingHelpers {
      * @return whether the set is not empty.
      */
     boolean notEmpty(Set<String> set) {
-        return !set.isEmpty() && (set.size() != 1 || !set.contains(""));
+        return !set.isEmpty() && !set.contains("");
     }
 }
