@@ -67,7 +67,7 @@ class TelevisionStrategyTest {
 
    @Test
        void testTelevisionFilterJustActors() {
-        testTelevisionStrategy(Map.of("genres", Set.of(""), "actors", Set.of("actor 1"), "keywords", Set.of("")), List.of("Test Show"));
+        testTelevisionStrategy(Map.of("genres", Set.of(""), "actors", Set.of("actor", "1"), "keywords", Set.of("")), List.of("Test Show"));
     }
 
     @Test
@@ -82,7 +82,7 @@ class TelevisionStrategyTest {
 
     @Test
     void testTelevisionFilterMultipleGenres() {
-        testTelevisionStrategy(Map.of("genres", Set.of("action"), "actors", Set.of("actor 1"), "keywords", Set.of("description")), List.of("Test Show"));
+        testTelevisionStrategy(Map.of("genres", Set.of("action"), "actors", Set.of("actor", "1"), "keywords", Set.of("description")), List.of("Test Show"));
     }
 
     @Test
