@@ -173,11 +173,12 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         clearButton.addActionListener(
                 evt -> {
                     if (evt.getSource().equals(clearButton)) {
-                        // clears the input for the currently displayed filter panel
+                        // clears the input of the currently displayed filter panel,
+                        // then executes the filter controller with the cleared filter criteria.
                         filterPanelManager.clearFilterPanel();
-                        // clears the filter criteria in the filter view model
-                        filterViewModel.getState().setFilteredMediaNames(null);
-                        filterViewModel.firePropertyChanged("filtered media");
+                        filterController.execute(filterViewModel.getState().getFilterCriteria(),
+                                listViewModel.getState().getCurrentCollectionType(),
+                                listViewModel.getState().getCurrentCollectionName());
                     }
                 }
         );
@@ -283,8 +284,12 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     private void handleFilterViewModelChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("filtered media")) {
             final TableRowSorter<?> sorter = (TableRowSorter<?>) mediaListTable.getRowSorter();
-            // Checks if the filter criteria is null, if so, sets the row filter to null to display all media
-            // Otherwise, sets the row filter to only display media that matches the filter criteria
+            // Checks if the filter criteria is null, if so, sets the row filter to null to display all media.
+            // Otherwise, sets the row filter to only display media that matches the filter criteria.
+            // Also checks if the mediaListTable has a row sorter, if not, sets the row filter to null.
+            if (mediaListTable.getRowSorter() == null) {
+                mediaListTable.setRowSorter(new TableRowSorter<>(mediaListTable.getModel()));
+            }
             if (filterViewModel.getState().getFilteredMediaNames() == null) {
                 sorter.setRowFilter(null);
             }
