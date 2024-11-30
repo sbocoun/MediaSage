@@ -19,24 +19,28 @@ public class TelevisionFilterStrategy implements FilterStrategy {
         boolean result = true;
         final Television show = (Television) media;
 
+        // Splits the description into a set of keywords.
         final Set<String> showKeywords =
-                formattingHelper.splitDescription(show.getDescription());
-        // Calls on notEmpty() to exclude empty strings from being considered as keywords.
-        // Assumes the filter controller formats each keyword to lowercase.
+                formattingHelper.splitString(show.getDescription());
+        // Calls on notEmpty() to exclude empty strings from being considered as keywords,
+        // then checks if the movie's keywords contain all the filter criteria keywords.
         if (formattingHelper.notEmpty(filterCriteria.get("keywords"))
                 && !showKeywords.containsAll(filterCriteria.get("keywords"))) {
             result = false;
         }
 
         final Set<String> showGenres = new HashSet<>(
-                formattingHelper.toLowercase(show.getGenres()));
+                formattingHelper.listToLowercase(show.getGenres()));
         if (formattingHelper.notEmpty(filterCriteria.get("genres"))
                 && !showGenres.containsAll(filterCriteria.get("genres"))) {
             result = false;
         }
 
-        final Set<String> showActors = new HashSet<>(
-                formattingHelper.toLowercase(show.getCastMembers()));
+        final Set<String> showActors = new HashSet<>();
+        // Splits the actors' full names into a set of keywords.
+        for (String actor : show.getCastMembers()) {
+            showActors.addAll(formattingHelper.splitString(actor));
+        }
         if (formattingHelper.notEmpty(filterCriteria.get("actors"))
                 && !showActors.containsAll(filterCriteria.get("actors"))) {
             result = false;
