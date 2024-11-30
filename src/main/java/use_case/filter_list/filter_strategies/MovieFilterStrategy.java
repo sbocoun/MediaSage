@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import entity.AbstractMedia;
 import entity.Movie;
 
 /**
@@ -15,7 +16,7 @@ public class MovieFilterStrategy implements FilterStrategy {
 
     // Assumes that the filter criteria are formatted as lowercase.
     @Override
-    public <T> boolean meetsCriteria(T media, Map<String, Set<String>> filterCriteria) {
+    public <T extends AbstractMedia> boolean meetsCriteria(T media, Map<String, Set<String>> filterCriteria) {
         boolean result = true;
         final Movie movie = (Movie) media;
 

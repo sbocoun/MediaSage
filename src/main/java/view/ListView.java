@@ -173,12 +173,11 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         clearButton.addActionListener(
                 evt -> {
                     if (evt.getSource().equals(clearButton)) {
+                        // clears the input for the currently displayed filter panel
                         filterPanelManager.clearFilterPanel();
-                        filterController.execute(
-                                filterViewModel.getState().getFilterCriteria(),
-                                listViewModel.getState().getCurrentCollectionType(),
-                                listViewModel.getState().getCurrentCollectionName()
-                        );
+                        // clears the filter criteria in the filter view model
+                        filterViewModel.getState().setFilteredMediaNames(null);
+                        filterViewModel.firePropertyChanged("filtered media");
                     }
                 }
         );
@@ -284,14 +283,21 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     private void handleFilterViewModelChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("filtered media")) {
             final TableRowSorter<?> sorter = (TableRowSorter<?>) mediaListTable.getRowSorter();
-            final RowFilter<TableModel, Integer> rf = new RowFilter<>() {
-                @Override
-                public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
-                    final String name = (String) entry.getValue(0);
-                    return filterViewModel.getState().getFilteredMediaNames().contains(name);
-                }
-            };
-            sorter.setRowFilter(rf);
+            // Checks if the filter criteria is null, if so, sets the row filter to null to display all media
+            // Otherwise, sets the row filter to only display media that matches the filter criteria
+            if (filterViewModel.getState().getFilteredMediaNames() == null) {
+                sorter.setRowFilter(null);
+            }
+            else {
+                final RowFilter<TableModel, Integer> rf = new RowFilter<>() {
+                    @Override
+                    public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
+                        final String name = (String) entry.getValue(0);
+                        return filterViewModel.getState().getFilteredMediaNames().contains(name);
+                    }
+                };
+                sorter.setRowFilter(rf);
+            }
         }
         else if ("error".equals(evt.getPropertyName())) {
             JOptionPane.showMessageDialog(null,

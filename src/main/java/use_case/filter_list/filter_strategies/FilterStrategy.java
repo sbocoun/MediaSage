@@ -3,6 +3,8 @@ package use_case.filter_list.filter_strategies;
 import java.util.Map;
 import java.util.Set;
 
+import entity.AbstractMedia;
+
 /**
  * Interface for the filter strategies.
  */
@@ -17,6 +19,6 @@ public interface FilterStrategy {
      * @throws IllegalArgumentException if the media is not an instance of the expected type.
      * @return True if the media meets the criteria, false otherwise.
      */
-    <T> boolean meetsCriteria(T media, Map<String, Set<String>> filterCriteria);
+    <T extends AbstractMedia> boolean meetsCriteria(T media, Map<String, Set<String>> filterCriteria);
 
 }

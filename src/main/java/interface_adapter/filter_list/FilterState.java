@@ -5,13 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * The ViewModel for the FilterView.
  */
 public class FilterState {
 
     private final Map<String, String> filterCriteria = new HashMap<>();
-    private final List<String> filteredMediaNames = new ArrayList<>();
+    private List<String> filteredMediaNames = new ArrayList<>();
     private String errorMessage = "";
 
     /**
@@ -40,18 +42,24 @@ public class FilterState {
      * displayed.
      * @return The list of media names.
      */
+    @Nullable
     public List<String> getFilteredMediaNames() {
-        return new ArrayList<>(filteredMediaNames);
+        return filteredMediaNames;
     }
 
     /**
      * Sets the list of media names meant to be passed to the list panel and
      * displayed.
-     * @param filteredMediaNames The list of media names.
+     * @param filteredMediaNames The list of media names, can be null to
+     *                           signify no media should be filtered.
      */
     public void setFilteredMediaNames(List<String> filteredMediaNames) {
-        this.filteredMediaNames.clear();
-        this.filteredMediaNames.addAll(filteredMediaNames);
+        if (filteredMediaNames != null) {
+            this.filteredMediaNames = new ArrayList<>(filteredMediaNames);
+        }
+        else {
+            this.filteredMediaNames = null;
+        }
     }
 
     /**

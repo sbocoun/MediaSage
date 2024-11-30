@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import entity.AbstractMedia;
 import entity.Television;
 
 /**
@@ -14,7 +15,7 @@ public class TelevisionFilterStrategy implements FilterStrategy {
     private final FormattingHelpers formattingHelper = new FormattingHelpers();
 
     @Override
-    public <T> boolean meetsCriteria(T media, Map<String, Set<String>> filterCriteria) {
+    public <T extends AbstractMedia> boolean meetsCriteria(T media, Map<String, Set<String>> filterCriteria) {
         boolean result = true;
         final Television show = (Television) media;
 
