@@ -274,10 +274,10 @@ public class AppBuilder {
     public AppBuilder addListUseCase() {
         listPresenter = new ListPresenter(listViewModel);
 
-        final ListInteractor listInteractor = new ListInteractor(userDataAccessObject, listPresenter);
+        this.listInteractor = new ListInteractor(userDataAccessObject, listPresenter);
         final ListController listController = new ListController(listInteractor);
         listView.setListController(listController);
-        
+
         return this;
     }
 
@@ -299,7 +299,7 @@ public class AppBuilder {
                 new MoveInteractor(userDataAccessObject, listPresenter)));
         return this;
     }
-    
+
     /**
      * Adds the Remove Media Use Case to the application, allowing users to remove a piece of media from the
      * selected collection.
