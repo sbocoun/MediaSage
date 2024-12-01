@@ -19,7 +19,7 @@ public class RemoveController {
     public void removeMovie(String desiredCollectionName, String movieName) {
         final RemoveMediaInput removeMediaInput = new RemoveMediaInput();
         removeMediaInput.setCollectionName(desiredCollectionName);
-        removeMediaInput.setMovieToRemove(movieName);
+        removeMediaInput.setMediaToRemove(movieName);
         removeInteractor.execute(removeMediaInput);
     }
 }

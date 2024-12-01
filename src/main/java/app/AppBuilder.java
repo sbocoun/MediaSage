@@ -279,12 +279,13 @@ public class AppBuilder {
         listView.setListController(listController);
         
         return this;
-    }    
-   
+    }
+
     /**
      * Adds the Move Media Use Case to the application, allowing users to move a piece of media from one collection
      * to another.
      * @return this builder
+     * @throws RuntimeException if prerequisites are not met (e.g., listView or listPresenter is null)
      */
     public AppBuilder addMoveMediaUseCase() {
         if (listView == null) {
@@ -293,18 +294,17 @@ public class AppBuilder {
         if (listPresenter == null) {
             throw new RuntimeException("addListUsecase must be called before addMoveMediaUseCase");
         }
-     
-        final MoveInteractor moveInteractor = new MoveInteractor(userDataAccessObject, listPresenter);
-        final MoveController moveController = new MoveController(moveInteractor);
-        listView.setMoveController(moveController);
-        
+
+        listView.setMoveController(new MoveController(
+                new MoveInteractor(userDataAccessObject, listPresenter)));
         return this;
     }
     
     /**
-     * Adds the Remove Media Use Case to the application, allowing users to remove a piece of media from the 
+     * Adds the Remove Media Use Case to the application, allowing users to remove a piece of media from the
      * selected collection.
      * @return this builder
+     * @throws RuntimeException if prerequisites are not met (e.g., listView or listPresenter is null)
      */
     public AppBuilder addRemoveMediaUseCase() {
         if (listView == null) {
@@ -313,11 +313,9 @@ public class AppBuilder {
         if (listPresenter == null) {
             throw new RuntimeException("addListUsecase must be called before addRemoveMediaUseCase");
         }
-     
-        final RemoveInteractor removeInteractor = new RemoveInteractor(userDataAccessObject, listPresenter);
-        final RemoveController removeController = new RemoveController(removeInteractor);
-        listView.setRemoveController(removeController);
 
+        listView.setRemoveController(new RemoveController(
+                new RemoveInteractor(userDataAccessObject, listPresenter)));
         return this;
     }
 
