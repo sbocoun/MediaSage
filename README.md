@@ -31,10 +31,7 @@ Currently, only movies and tv shows are supported as media types.
 ## Project Features
 - **User Authentication**: Users can create an account, log in, log out, and change their password.
 
-<video width="640" height="360" controls>
-<source src="resources/MediaSage_User_Functionality_Demo.mp4" type="video/mp4">
-Your browser does not support the video tag.
-</video>
+https://github.com/sbocoun/MediaSage/blob/readme-changes/resources/MediaSage_User_Functionality_Demo.mp4
 
 - **Media Search**: Users can search for movies and tv shows by title.
 - **Media Filtering**: Users can filter media by genre, rating, and release year.
