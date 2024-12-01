@@ -6,7 +6,7 @@ package use_case.list.moveMedia;
 public class MoveInputData {
     private String sourceCollectionName;
     private String targetCollectionName;
-    private String movieName;
+    private String mediaName;
 
     public String getSourceCollectionName() {
         return sourceCollectionName;
@@ -24,11 +24,11 @@ public class MoveInputData {
         this.targetCollectionName = targetCollectionName;
     }
 
-    public String getMovieName() {
-        return movieName;
+    public String getMediaName() {
+        return mediaName;
     }
 
-    public void setMovieName(String movieName) {
-        this.movieName = movieName;
+    public void setMediaName(String mediaName) {
+        this.mediaName = mediaName;
     }
 }
