@@ -1,18 +1,19 @@
-<img src="resources/MediaSage_Icon.jpeg" alt="icon" width="200" style="right;"/>
-
 # MediaSage
 
 ## Table of contents
+<img align="right" src="resources/MediaSage_Icon.jpeg" alt="icon" width="200"/>
+
 - [Introduction](#mediasage)
 - [Project Details](#project-details)
 - [Project Features](#project-features)
 - [Installation Instructions](#installation-instructions)
-- [Contributors](#contributors)
+- [Contributors](#Contributors (Group #74))
 - [Feedback](#feedback)
 - [Acknowledgements](#acknowledgments)
 - [Contributing to the project](#contributing)
 - [Assigned Use Cases](#assigned-use-cases)
 - [Software License](#software-license)
+
 
 ## Introduction
 MediaSage is a project developed as part of an assignment for CSC207; a course on Software Design offered by the University of Toronto.
