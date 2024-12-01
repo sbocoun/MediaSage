@@ -2,6 +2,7 @@ package view;
 
 import interface_adapter.list.ListState;
 import interface_adapter.list.ListViewModel;
+import interface_adapter.filter_list.FilterViewModel;
 import junit.framework.TestCase;
 import use_case.list.moveMedia.MoveController;
 
@@ -13,6 +14,7 @@ public class ListViewMoveButtonTest extends TestCase {
     private ListView listView;
     private MockMoveController mockMoveController;
     private MockListViewModel mockListViewModel;
+    private FilterViewModel mockFilterViewModel;
 
     @Override
     protected void setUp() throws Exception {
@@ -20,8 +22,9 @@ public class ListViewMoveButtonTest extends TestCase {
 
         mockMoveController = new MockMoveController();
         mockListViewModel = new MockListViewModel();
+        mockFilterViewModel = new FilterViewModel();
 
-        listView = new ListView(mockListViewModel);
+        listView = new ListView(mockListViewModel, mockFilterViewModel);
         // Set up mock move controller
         listView.setMoveController(mockMoveController);
 

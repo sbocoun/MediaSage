@@ -66,11 +66,6 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     private final FilterViewModel filterViewModel;
 
     private boolean isUserAction = true;
-  
-    private final ListViewModel listViewModel;
-
-    public ListView(ListViewModel listViewModel) {
-        this.listViewModel = listViewModel;
 
     private final FilterPanelManager filterPanelManager;
     private final JButton filterButton = new JButton("Apply Filters");
@@ -107,12 +102,6 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         bottomPanel.add(scrollRecommendBox);
 
         add(bottomPanel, BorderLayout.SOUTH);
-
-        // Test
-        addItem("Movie 1", "Test1");
-        addItem("Movie 2", "Test2");
-        addItem("Movie 3", "Test3");
-
         buildActionListeners();
     }
 
@@ -301,7 +290,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
                     JOptionPane.showMessageDialog(
                             null,
                             "The selected movie has no name or is invalid. Cannot remove.",
-                            "Error",
+                            "Media Error",
                             JOptionPane.ERROR_MESSAGE
                     );
                 }
