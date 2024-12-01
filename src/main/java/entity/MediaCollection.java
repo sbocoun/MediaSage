@@ -1,5 +1,6 @@
 package entity;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -70,5 +71,25 @@ public class MediaCollection<T extends AbstractMedia> implements Iterable<T> {
     @Override
     public Iterator<T> iterator() {
         return mediaList.iterator();
+    }
+
+    /**
+     * Return the list of media in the collection.
+     * @return the list of media in the collection
+     */
+    public List<T> getMediaList() {
+        return new ArrayList<>(mediaList);
+    }
+
+    /**
+     * Return the names of the media in the collection.
+     * @return the names of the media in the collection
+     */
+    public List<String> getMediaNames() {
+        final List<String> mediaNames = new ArrayList<>();
+        for (T media : mediaList) {
+            mediaNames.add(media.getName());
+        }
+        return mediaNames;
     }
 }

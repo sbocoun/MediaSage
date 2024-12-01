@@ -2,20 +2,20 @@ package app;
 
 import data_access.InMemoryUserDAO;
 import data_access.grade_api.UserRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
 import java.awt.*;
 
 import static java.lang.Thread.sleep;
-import static org.junit.Assert.*;
 
-public class MainNoteApplicationTest {
+class MainNoteApplicationTest {
 
     private JFrame app;
 
-    @Before
+    @BeforeEach
     public void setUp() {
 
         // create the data access and inject it into our builder!
@@ -38,14 +38,14 @@ public class MainNoteApplicationTest {
      * You can run the test to visually see what happens.
      */
     @Test
-    public void testEndToEnd() {
+    void testEndToEnd() {
 
         Component[] components =  ((JPanel)app.getRootPane().getContentPane().getComponents()[0]).getComponents();
         JTextArea textArea = null;
         for (Component component : components) {
             if (component instanceof JTextArea) {
                 textArea = (JTextArea) component;
-                assertEquals("test", textArea.getText());
+                Assertions.assertEquals("test", textArea.getText());
 
             }
         }
@@ -71,7 +71,7 @@ public class MainNoteApplicationTest {
         }
 
         save.doClick();
-        assertEquals("test test", textArea.getText());
+        Assertions.assertEquals("test test", textArea.getText());
         textArea.setText("");
 
         System.out.println("cleared text; about to refresh...");
@@ -83,7 +83,7 @@ public class MainNoteApplicationTest {
         }
 
         load.doClick();
-        assertEquals("test test", textArea.getText());
+        Assertions.assertEquals("test test", textArea.getText());
 
         System.out.println("after refresh!");
 

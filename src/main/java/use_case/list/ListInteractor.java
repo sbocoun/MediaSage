@@ -30,7 +30,10 @@ public class ListInteractor implements ListInputBoundary {
      */
     @Override
     public void execute(ListInputData listInputData) {
-        final User user = userDataAccessObject.get(userDataAccessObject.getCurrentUsername());
+        final User user = userDataAccessObject.getCurrentUser();
+        if (user == null) {
+            throw new RuntimeException("Not currently logged-in.");
+        }
         final List<MediaCollection<? extends AbstractMedia>> mediaCollections = user.getAllMediaCollections();
         final MediaCollection<? extends AbstractMedia> desiredCollection = findCollectionWithName(mediaCollections,
                 listInputData.getNameOfDesiredCollection());

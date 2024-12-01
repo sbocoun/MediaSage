@@ -39,7 +39,8 @@ public class User {
 
     /**
      * Return a (mutable) list of media collections.
-     * @param <T> the type of media stored in the collection
+     *
+     * @param <T>       the type of media stored in the collection
      * @param mediaType the type of media stored in the collection
      * @return a list of media collections
      */
@@ -56,9 +57,30 @@ public class User {
 
     /**
      * Return a (mutable) list of all media collections.
+     *
      * @return a list of all media collections
      */
     public List<MediaCollection<? extends AbstractMedia>> getAllMediaCollections() {
         return mediaCollections;
+    }
+
+    /**
+     * Get the media collection with the specified name.
+     *
+     * @param collectionName the name of the desired media collection.
+     * @param <T> the type of media stored in the collection.
+     * @param mediaType the type of media stored in the collection.
+     * @return the media collection with the specified name.
+     * @throws RuntimeException if the media collection is not found.
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends AbstractMedia> MediaCollection<T> getNamedCollection(String collectionName, String mediaType) {
+        final List<MediaCollection<? extends AbstractMedia>> allCollections = getAllMediaCollections();
+        for (MediaCollection<? extends AbstractMedia> collection : allCollections) {
+            if (collection.getName().equals(collectionName) && collection.getMediaType().getName().equals(mediaType)) {
+                return (MediaCollection<T>) collection;
+            }
+        }
+        throw new RuntimeException("Media collection not found: " + collectionName);
     }
 }

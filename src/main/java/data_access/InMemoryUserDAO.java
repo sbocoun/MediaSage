@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,9 @@ public class InMemoryUserDAO implements UserRepository {
     @Override
     public User get(String username) {
         this.currentUser = users.get(username);
+        if (currentUser.getAllMediaCollections() == null) {
+            currentUser.setMediaCollections(new ArrayList<>());
+        }
         return currentUser;
     }
 
@@ -103,5 +107,18 @@ public class InMemoryUserDAO implements UserRepository {
             System.out.println("Reading user sample response failed. Check if "
                     + "both src/main/resources/" + userFilename + " exist.");
         }
+    }
+
+    @Override
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    @Override
+    public <T extends AbstractMedia> MediaCollection<T> getNamedCollection(String collectionName, String mediaType) {
+        if (currentUser == null) {
+            throw new NullPointerException("User not found.");
+        }
+        return currentUser.getNamedCollection(collectionName, mediaType);
     }
 }

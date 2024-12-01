@@ -12,6 +12,9 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.ChangePasswordPresenter;
 import interface_adapter.change_password.LoggedInViewModel;
+import interface_adapter.filter_list.FilterController;
+import interface_adapter.filter_list.FilterPresenter;
+import interface_adapter.filter_list.FilterViewModel;
 import interface_adapter.generate_recommendations.GenController;
 import interface_adapter.generate_recommendations.GenPresenter;
 import interface_adapter.list.ListController;
@@ -33,6 +36,7 @@ import interface_adapter.signup.SignupViewModel;
 import use_case.change_password.ChangePasswordInputBoundary;
 import use_case.change_password.ChangePasswordInteractor;
 import use_case.change_password.ChangePasswordOutputBoundary;
+import use_case.filter_list.FilterInteractor;
 import use_case.generate_recommendations.GenDataAccessInterface;
 import use_case.generate_recommendations.GenInteractor;
 import use_case.generate_recommendations.GenOutputBoundary;
@@ -105,6 +109,7 @@ public class AppBuilder {
     private LoginView loginView;
     private ListView listView;
     private ListViewModel listViewModel;
+    private FilterViewModel filterViewModel;
     private ListOutputBoundary listPresenter;
 
     /**
@@ -247,7 +252,8 @@ public class AppBuilder {
      */
     public AppBuilder addListView() {
         listViewModel = new ListViewModel();
-        listView = new ListView(listViewModel);
+        filterViewModel = new FilterViewModel();
+        listView = new ListView(listViewModel, filterViewModel);
         listPanel.add(listView);
         return this;
     }
@@ -316,6 +322,22 @@ public class AppBuilder {
 
         listView.setRemoveController(new RemoveController(
                 new RemoveInteractor(userDataAccessObject, listPresenter)));
+        return this;
+    }
+
+    /**
+     * Adds the Filter List Use Case to the application.
+     * @return this builder
+     * @throws RuntimeException if this method is called before addListView
+     */
+    public AppBuilder addFilterListUseCase() {
+        if (filterViewModel == null) {
+            throw new RuntimeException("addListView must be called before addFilterListUseCase");
+        }
+        final FilterPresenter filterPresenter = new FilterPresenter(filterViewModel);
+        final FilterInteractor filterInteractor = new FilterInteractor(filterPresenter, userDataAccessObject);
+        final FilterController filterController = new FilterController(filterInteractor);
+        listView.setFilterController(filterController);
         return this;
     }
 
