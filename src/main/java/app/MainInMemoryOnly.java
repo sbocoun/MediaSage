@@ -34,6 +34,7 @@ public class MainInMemoryOnly {
                 .addNoteUseCase()
                 .addListUseCase()
                 .addListUpdateUseCase()
+                .addFilterListUseCase()
                 .addGenUseCase()
                 .addSignupUseCase()
                 .addLoginUseCase()

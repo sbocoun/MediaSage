@@ -37,6 +37,7 @@ public class Main {
                 .addNoteUseCase()
                 .addListUseCase()
                 .addListUpdateUseCase()
+                .addFilterListUseCase()
                 .addGenUseCase()
                 .addSignupUseCase()
                 .addLoginUseCase()
