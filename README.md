@@ -1,4 +1,4 @@
-<img src="resources/MediaSage_Icon.jpeg" alt="icon" width="200" style="float: right; margin-left: 10px;"/>
+<img src="resources/MediaSage_Icon.jpeg" alt="icon" width="200" style="right;"/>
 
 # MediaSage
 
@@ -31,13 +31,23 @@ Currently, only movies and tv shows are supported as media types.
 ## Project Features
 - **User Authentication**: Users can create an account, log in, log out, and change their password.
 
-https://github.com/sbocoun/MediaSage/blob/readme-changes/resources/MediaSage_User_Functionality_Demo.mp4
+https://github.com/user-attachments/assets/85d28a46-6da6-4cce-baf8-10d7d631a7b7
 
 - **Media Search**: Users can search for movies and tv shows by title.
+
+https://github.com/user-attachments/assets/f4719a97-558a-4e8f-8661-be9fb0f278ff
+
 - **Media Filtering**: Users can filter media by genre, rating, and release year.
+
+https://github.com/user-attachments/assets/7fc550d3-53f1-44b6-b9ad-3ed727260c14
+
 - **Media Recommendations**: Users can get recommendations based on their preferences.
+
+https://github.com/user-attachments/assets/1c5aaa09-2689-4b75-b8a0-eadb2d7aa4f2
+
 - **Media Rating**: Users can rate media they have watched.
-[<img src="resources/main-view.png">](https://link-to-your-URL/)
+
+https://github.com/user-attachments/assets/fe6d19f3-0cf3-462d-b54e-fc74ee5439a4
 
 ## Installation Instructions
 Navigate to `src/main/resources/input_apikeys.yaml`, make a copy of the file as `apikeys.yaml`,
