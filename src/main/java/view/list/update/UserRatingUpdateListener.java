@@ -35,6 +35,9 @@ public class UserRatingUpdateListener implements TableModelListener {
                 }
             }
         }
+        else {
+            throw new RuntimeException("A ListTableModel is expected in the media list table.");
+        }
     }
 
     /**
