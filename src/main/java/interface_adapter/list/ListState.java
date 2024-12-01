@@ -8,6 +8,7 @@ import java.util.List;
 public class ListState {
     private List<String> availableCollections;
     private String currentCollectionName;
+    private String currentMediaType;
     private ListTableModel tableModel;
     private String errorMessage;
     private String successMessage;
@@ -59,5 +60,13 @@ public class ListState {
 
     public void setSuccessMessage(String successMessage) {
         this.successMessage = successMessage;
+    }
+
+    public String getCurrentMediaType() {
+        return currentMediaType;
+    }
+
+    public void setCurrentMediaType(String currentMediaType) {
+        this.currentMediaType = currentMediaType;
     }
 }

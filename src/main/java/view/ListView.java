@@ -21,7 +21,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -36,8 +35,8 @@ import interface_adapter.list.ListController;
 import interface_adapter.list.ListState;
 import interface_adapter.list.ListTableModel;
 import interface_adapter.list.ListViewModel;
-import view.filter_panels.FilterPanelManager;
 import interface_adapter.list_update.ListUpdateController;
+import view.filter_panels.FilterPanelManager;
 import view.list.update.UserRatingUpdateListener;
 
 /**
@@ -170,7 +169,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
                     if (evt.getSource().equals(filterButton)) {
                         filterController.execute(
                                 filterViewModel.getState().getFilterCriteria(),
-                                listViewModel.getState().getCurrentCollectionType(),
+                                listViewModel.getState().getCurrentMediaType(),
                                 listViewModel.getState().getCurrentCollectionName()
                         );
                     }
@@ -329,7 +328,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         else if ("display data".equals(evt.getPropertyName())) {
             repopulateMediaCollectionSelection(state.getAvailableCollections());
             mediaCollectionSelector.setSelectedItem(state.getCurrentCollectionName());
-            filterPanelManager.updateFilterPanel(state.get());
+            filterPanelManager.updateFilterPanel(state.getCurrentMediaType());
             filterPanelManager.clearFilterPanel();
             refreshTable(state);
         }
