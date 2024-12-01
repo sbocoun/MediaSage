@@ -227,25 +227,61 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
      */
     void removeSelectedMovie() {
         final int selectedRow = mediaListTable.getSelectedRow();
-        if (selectedRow != -1) {
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "No movie selected. Please select a movie to remove.",
+                    "Selection Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+        else {
             final ListState state = listViewModel.getState();
             final String collectionName = state.getCurrentCollectionName();
-
             if (collectionName == null) {
-                System.err.println("Collection name is null. Cannot remove movie.");
+                JOptionPane.showMessageDialog(
+                        null,
+                        "The collection name is null. Cannot remove the movie.",
+                        "Collection Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
             }
             else {
                 final Object value = mediaListTable.getValueAt(selectedRow, 0);
-                if (value != null) {
-                    removeController.removeMovie(collectionName, value.toString());
+                if (value == null) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "The selected movie has no name or is invalid. Cannot remove.",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
                 else {
-                    System.err.println("No movie selected");
+                    final int confirmation = JOptionPane.showConfirmDialog(
+                            null,
+                            "Are you sure you want to remove \"" + value + "\" from the collection?",
+                            "Confirm Removal",
+                            JOptionPane.YES_NO_OPTION
+                    );
+                    if (confirmation == JOptionPane.YES_OPTION) {
+                        removeController.removeMovie(collectionName, value.toString());
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "\"" + value + "\" has been successfully removed from the collection.",
+                                "Success",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Movie removal canceled.",
+                                "Cancel",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
+                    }
                 }
             }
-        }
-        else {
-            System.err.println("No row selected");
         }
     }
 
