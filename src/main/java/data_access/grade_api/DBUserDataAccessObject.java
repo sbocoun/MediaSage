@@ -128,6 +128,15 @@ public class DBUserDataAccessObject implements UserRepository {
     }
 
     @Override
+    public <T extends AbstractMedia> MediaCollection<T>
+        getNamedCollection(String collectionName, String mediaType) {
+        if (currentUser == null) {
+            throw new NullPointerException("User not found.");
+        }
+        return currentUser.getNamedCollection(collectionName, mediaType);
+    }
+
+    @Override
     public List<MediaCollection<? extends AbstractMedia>> saveMediaCollections(
             List<MediaCollection<? extends AbstractMedia>> mediaCollectionsList) throws GradeDataAccessException {
         // POST METHOD
@@ -222,5 +231,10 @@ public class DBUserDataAccessObject implements UserRepository {
         catch (IOException ex) {
             throw new GradeDataAccessException(ex.getMessage());
         }
+    }
+
+    @Override
+    public User getCurrentUser() {
+        return currentUser;
     }
 }

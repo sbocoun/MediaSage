@@ -69,6 +69,7 @@ public class Main {
                 .addListView()
                 .addNoteUseCase()
                 .addListUseCase()
+                .addFilterListUseCase()
                 .addGenUseCase()
                 .addSignupUseCase()
                 .addLoginUseCase()
