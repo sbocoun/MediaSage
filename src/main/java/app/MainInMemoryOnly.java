@@ -38,6 +38,8 @@ public class MainInMemoryOnly {
                 .addLoginUseCase()
                 .addChangePasswordUseCase()
                 .addLogoutUseCase()
+                .addMoveMediaUseCase()
+                .addRemoveMediaUseCase()
                 .build().setVisible(true);
     }
 }
