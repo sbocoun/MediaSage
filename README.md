@@ -29,7 +29,7 @@ media content (e.g. books, movies, tv shows) in one single place.
 Also, regardless of the media type, MediaSage allows users to discover more content they might like based on their interests.
 Currently, only movies and tv shows are supported as media types.
 
-## Project Features
+## Project Features / Usage Guide
 - **User Authentication**: Users can create an account, log in, log out, and change their password.
 
 https://github.com/user-attachments/assets/85d28a46-6da6-4cce-baf8-10d7d631a7b7
@@ -51,8 +51,57 @@ https://github.com/user-attachments/assets/1c5aaa09-2689-4b75-b8a0-eadb2d7aa4f2
 https://github.com/user-attachments/assets/fe6d19f3-0cf3-462d-b54e-fc74ee5439a4
 
 ## Installation Instructions
-Navigate to `src/main/resources/input_apikeys.yaml`, make a copy of the file as `apikeys.yaml`,
-then input the respective API keys.
+
+1. **Clone the Repository**:
+   ```sh
+   git clone https://github.com/sbocoun/MediaSage.git
+   cd MediaSage
+3. **Ensure you have Java Development Kit (JDK) 16 or higher installed.**
+4. **Set Up API Keys:**
+
+a. Navigate to src/main/resources/input_apikeys.yaml.
+b. Make a copy of the file and name it apikeys.yaml.
+c. Open apikeys.yaml and input the respective API keys required for the project.
+
+
+Build the Project:
+Use Maven to install dependencies and build the project. Run the following commands:
+
+mvn clean install
+Run the Application:
+After the build is complete, you can run the application using:
+
+mvn exec:java -Dexec.mainClass="com.yourpackage.Main"
+Access the Application:
+Follow the instructions provided in the command line to access the application in your web browser or through the provided interface.
+
+Dependencies
+Ensure your pom.xml includes the following dependencies:
+
+<dependencies>
+    <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>20240303</version>
+    </dependency>
+    <dependency>
+        <groupId>com.squareup.okhttp3</groupId>
+        <artifactId>okhttp</artifactId>
+        <version>4.12.0</version>
+    </dependency>
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.13.1</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>2.3</version>
+    </dependency>
+</dependencies>
+
 
 ## Feedback
 // TODO
