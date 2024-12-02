@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import data_access.grade_api.UserRepository;
 import entity.AbstractMedia;
 import entity.MediaCollection;
 import use_case.filter_list.filter_strategies.FilterStrategy;
@@ -17,11 +16,11 @@ import use_case.filter_list.filter_strategies.TelevisionFilterStrategy;
  */
 public class FilterInteractor implements FilterInputBoundary {
 
-    private final UserRepository userDAO;
+    private final FilterDataAccessInterface userDAO;
     private final FilterListOutputBoundary filterPresenter;
     private final Map<String, FilterStrategy> strategies = new HashMap<>();
 
-    public FilterInteractor(FilterListOutputBoundary filterPresenter, UserRepository userDataAccessObject) {
+    public FilterInteractor(FilterListOutputBoundary filterPresenter, FilterDataAccessInterface userDataAccessObject) {
         this.filterPresenter = filterPresenter;
         this.userDAO = userDataAccessObject;
         strategies.put("entity.Movie", new MovieFilterStrategy());

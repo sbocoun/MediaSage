@@ -68,7 +68,7 @@ class MovieStrategyTest {
 
     @Test
     void testMovieFilterJustActors() {
-        testMovieStrategy(Map.of("genres", Set.of(""), "actors", Set.of("actor 1"), "keywords", Set.of("")), List.of("Test Movie"));
+        testMovieStrategy(Map.of("genres", Set.of(""), "actors", Set.of("actor", "1"), "keywords", Set.of("")), List.of("Test Movie"));
     }
 
     @Test
@@ -83,7 +83,7 @@ class MovieStrategyTest {
 
     @Test
     void testMovieFilterAll() {
-        testMovieStrategy(Map.of("genres", Set.of("action"), "actors", Set.of("actor 1"), "keywords", Set.of("description")), List.of("Test Movie"));
+        testMovieStrategy(Map.of("genres", Set.of("action"), "actors", Set.of("actor", "1"), "keywords", Set.of("description")), List.of("Test Movie"));
     }
 
     @Test

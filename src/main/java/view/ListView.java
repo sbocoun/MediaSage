@@ -171,11 +171,12 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         clearButton.addActionListener(
                 evt -> {
                     if (evt.getSource().equals(clearButton)) {
-                        // clears the input for the currently displayed filter panel
+                        // Clears the input of the currently displayed filter panel,
+                        // then executes the filter controller with the cleared filter criteria.
                         filterPanelManager.clearFilterPanel();
-                        // clears the filter criteria in the filter view model
-                        filterViewModel.getState().setFilteredMediaNames(null);
-                        filterViewModel.firePropertyChanged("filtered media");
+                        filterController.execute(filterViewModel.getState().getFilterCriteria(),
+                                listViewModel.getState().getCurrentCollectionType(),
+                                listViewModel.getState().getCurrentCollectionName());
                     }
                 }
         );
@@ -368,22 +369,17 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
      */
     private void handleFilterViewModelChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("filtered media")) {
+            // Updates the RowFilter to filter out anything not in the filteredMediaNames list
             final TableRowSorter<?> sorter = (TableRowSorter<?>) mediaListTable.getRowSorter();
-            // Checks if the filter criteria is null, if so, sets the row filter to null to display all media
-            // Otherwise, sets the row filter to only display media that matches the filter criteria
-            if (filterViewModel.getState().getFilteredMediaNames() == null) {
-                sorter.setRowFilter(null);
-            }
-            else {
-                final RowFilter<TableModel, Integer> rf = new RowFilter<>() {
-                    @Override
-                    public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
-                        final String name = (String) entry.getValue(0);
-                        return filterViewModel.getState().getFilteredMediaNames().contains(name);
-                    }
-                };
-                sorter.setRowFilter(rf);
-            }
+            final RowFilter<TableModel, Integer> rf = new RowFilter<>() {
+                @Override
+                public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
+                    // Assumes the first column of the table is the name of the media
+                    final String name = (String) entry.getValue(0);
+                    return filterViewModel.getState().getFilteredMediaNames().contains(name);
+                }
+            };
+            sorter.setRowFilter(rf);
         }
         else if ("error".equals(evt.getPropertyName())) {
             JOptionPane.showMessageDialog(null,
@@ -471,6 +467,8 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
                 // add the anonymously defined RatingUpdateListener here whenever the TableModel gets replaced
                 newTableModel.addTableModelListener(new UserRatingUpdateListener(this));
                 mediaListTable.setModel(newTableModel);
+                // Necessary to update the row sorter in case the number of columns has changed
+                // (e.g. when switching between different types of media collections)
                 mediaListTable.setRowSorter(new TableRowSorter<>(newTableModel));
                 newTableModel.fireTableDataChanged();
             });

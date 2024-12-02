@@ -18,4 +18,10 @@ public interface FilterDataAccessInterface {
      * @return the named collection of media
      */
     <T extends AbstractMedia> MediaCollection<T> getNamedCollection(String collectionName, String mediaType);
+
+    /**
+     * Retrieve the current username.
+     * @return the current username
+     */
+    String getCurrentUsername();
 }

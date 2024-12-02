@@ -11,37 +11,37 @@ import java.util.Set;
 public class FormattingHelpers {
 
     /**
-     * Converts a list of strings to lowercase.
+     * Converts the contents of a list of strings to lowercase.
      *
      * @param list The list to convert.
      * @return The list with all strings converted to lowercase.
      */
-    List<String> toLowercase(List<String> list) {
+    List<String> listToLowercase(List<String> list) {
         return list.stream().map(String::toLowerCase).toList();
     }
 
     /**
-     * Splits the description into a set of lowercase words.
+     * Splits the input string into a set of lowercase words.
      *
-     * @param description The description to split.
+     * @param input The description to split.
      * @return The keywords.
      */
-    Set<String> splitDescription(String description) {
-        final List<String> keywordArray = Arrays.stream(description
+    Set<String> splitString(String input) {
+        final List<String> result = Arrays.stream(input
                         .replaceAll("\\p{Punct}", "")
                         .toLowerCase()
                         .split("\\s+"))
                 .toList();
-        return new HashSet<>(keywordArray);
+        return new HashSet<>(result);
     }
 
     /**
-     * Checks if a set is not empty, empty string excluded.
+     * Checks if a set is not empty by checking if it contains an empty string.
      *
      * @param set The set of strings to check
      * @return whether the set is not empty.
      */
     boolean notEmpty(Set<String> set) {
-        return !set.isEmpty() && (set.size() != 1 || !set.contains(""));
+        return !set.contains("");
     }
 }
