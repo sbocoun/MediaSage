@@ -47,15 +47,15 @@ public class MediaCollection<T extends AbstractMedia> implements Iterable<T> {
      * Add a piece of media to the collection.
      * @param media the media to add
      */
-    public void addMedia(T media) {
-        mediaList.add(media);
+    public void addMedia(AbstractMedia media) {
+        mediaList.add((T) media);
     }
 
     /**
      * Remove a piece of media from the collection.
      * @param media the media to remove
      */
-    public void removeMedia(T media) {
+    public void removeMedia(AbstractMedia media) {
         mediaList.remove(media);
     }
 

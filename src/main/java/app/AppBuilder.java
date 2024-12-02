@@ -20,6 +20,7 @@ import interface_adapter.generate_recommendations.GenPresenter;
 import interface_adapter.list.ListController;
 import interface_adapter.list.ListPresenter;
 import interface_adapter.list.ListViewModel;
+import interface_adapter.list.remove_media.RemoveController;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
@@ -42,6 +43,10 @@ import use_case.generate_recommendations.GenInteractor;
 import use_case.generate_recommendations.GenOutputBoundary;
 import use_case.list.ListInteractor;
 import use_case.list.ListOutputBoundary;
+import use_case.list.moveMedia.MoveController;
+import use_case.list.moveMedia.MoveInteractor;
+import use_case.list.removeMedia.RemoveInteractor;
+import use_case.list.removeMedia.RemoveOutputBoundary;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -71,6 +76,8 @@ public class AppBuilder {
     private NoteInteractor noteInteractor;
     private GenInteractor genInteractor;
     private ListInteractor listInteractor;
+    private RemoveInteractor removeInteractor;
+    private MoveInteractor moveInteractor;
     private final JTabbedPane tabPanel = new JTabbedPane();
     private final JPanel cardPanel = new JPanel();
     private final JPanel userPanel = new JPanel();
@@ -273,9 +280,49 @@ public class AppBuilder {
      */
     public AppBuilder addListUseCase() {
         listPresenter = new ListPresenter(listViewModel);
+
         this.listInteractor = new ListInteractor(userDataAccessObject, listPresenter);
         final ListController listController = new ListController(listInteractor);
         listView.setListController(listController);
+
+        return this;
+    }
+
+    /**
+     * Adds the Move Media Use Case to the application, allowing users to move a piece of media from one collection
+     * to another.
+     * @return this builder
+     * @throws RuntimeException if prerequisites are not met (e.g., listView or listPresenter is null)
+     */
+    public AppBuilder addMoveMediaUseCase() {
+        if (listView == null) {
+            throw new RuntimeException("addListView must be called before addMoveMediaUseCase");
+        }
+        if (listPresenter == null) {
+            throw new RuntimeException("addListUsecase must be called before addMoveMediaUseCase");
+        }
+
+        listView.setMoveController(new MoveController(
+                new MoveInteractor(userDataAccessObject, listPresenter)));
+        return this;
+    }
+
+    /**
+     * Adds the Remove Media Use Case to the application, allowing users to remove a piece of media from the
+     * selected collection.
+     * @return this builder
+     * @throws RuntimeException if prerequisites are not met (e.g., listView or listPresenter is null)
+     */
+    public AppBuilder addRemoveMediaUseCase() {
+        if (listView == null) {
+            throw new RuntimeException("addListView must be called before addRemoveMediaUseCase");
+        }
+        if (listPresenter == null) {
+            throw new RuntimeException("addListUsecase must be called before addRemoveMediaUseCase");
+        }
+
+        listView.setRemoveController(new RemoveController(
+                new RemoveInteractor(userDataAccessObject, (RemoveOutputBoundary) listPresenter)));
         return this;
     }
 

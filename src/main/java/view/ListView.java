@@ -34,6 +34,8 @@ import interface_adapter.list.ListController;
 import interface_adapter.list.ListState;
 import interface_adapter.list.ListTableModel;
 import interface_adapter.list.ListViewModel;
+import interface_adapter.list.remove_media.RemoveController;
+import use_case.list.moveMedia.MoveController;
 import view.filter_panels.FilterPanelManager;
 
 /**
@@ -54,6 +56,8 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
 
     // Use case controllers
     private ListController listController;
+    private MoveController moveController;
+    private RemoveController removeController;
     private GenController genController;
     private FilterController filterController;
 
@@ -63,7 +67,6 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
 
     private boolean isUserAction = true;
 
-    // Filter panel
     private final FilterPanelManager filterPanelManager;
     private final JButton filterButton = new JButton("Apply Filters");
     private final JButton clearButton = new JButton("Clear Filters");
@@ -99,12 +102,6 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         bottomPanel.add(scrollRecommendBox);
 
         add(bottomPanel, BorderLayout.SOUTH);
-
-        // Test
-        addItem("Movie 1", "Test1");
-        addItem("Movie 2", "Test2");
-        addItem("Movie 3", "Test3");
-
         buildActionListeners();
     }
 
@@ -223,34 +220,184 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     }
 
     /**
-     * Removes the selected movie from the list.
+     * Filters the movie list based on the given description text.
+     *
+     * @param filterText The text to filter descriptions by
      */
-    private void removeSelectedMovie() {
-        for (int i = 0; i < radioButtonList.size(); i++) {
-            if (radioButtonList.get(i).isSelected()) {
-                radioButtonList.remove(i);
-                movieDescriptions.remove(i);
-                mediaListTable.remove(i);
-                break;
+    private void filterMoviesByDescription(String filterText) {
+        mediaListTable.removeAll();
+
+        for (int i = 0; i < movieDescriptions.size(); i++) {
+            final String description = movieDescriptions.get(i).toLowerCase();
+            if (description.contains(filterText)) {
+                addFilteredItem(i);
             }
         }
-
         revalidate();
         repaint();
     }
 
     /**
-     * Moves selected movie to a different list.
+     * Adds a filtered item to the itemListPanel.
+     *
+     * @param index The index of the item to add
      */
-    private void moveSelectedMovie() {
-        for (int i = 0; i < radioButtonList.size(); i++) {
-            if (radioButtonList.get(i).isSelected()) {
-                final String movieName = "Movie " + (i + 1);
-                final String selectedList = (String) mediaCollectionSelector.getSelectedItem();
-                System.out.println("Moving " + movieName + " to " + selectedList);
-                break;
+    private void addFilteredItem(int index) {
+        final JPanel itemPanel = new JPanel(new BorderLayout());
+
+        // Use the existing radio button and description data
+        final JRadioButton radioButton = radioButtonList.get(index);
+        itemPanel.add(radioButton, BorderLayout.WEST);
+
+        final JLabel thumbnailLabel = new JLabel("Thumbnail");
+        itemPanel.add(thumbnailLabel, BorderLayout.CENTER);
+
+        final JPanel nameDescPanel = new JPanel(new GridLayout(2, 1));
+        nameDescPanel.add(new JLabel("Movie " + (index + 1)));
+        nameDescPanel.add(new JLabel(movieDescriptions.get(index)));
+        itemPanel.add(nameDescPanel, BorderLayout.EAST);
+
+        mediaListTable.add(itemPanel);
+    }
+
+    /**
+     * Removes the selected movie from the list.
+     */
+    void removeSelectedMovie() {
+        final int selectedRow = mediaListTable.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "No movie selected. Please select a movie to remove.",
+                    "Selection Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+        else {
+            final ListState state = listViewModel.getState();
+            final String collectionName = state.getCurrentCollectionName();
+            if (collectionName == null) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "The collection name is null. Cannot remove the movie.",
+                        "Collection Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+            else {
+                final Object value = mediaListTable.getValueAt(selectedRow, 0);
+                if (value == null) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "The selected movie has no name or is invalid. Cannot remove.",
+                            "Media Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+                else {
+                    final int confirmation = JOptionPane.showConfirmDialog(
+                            null,
+                            "Are you sure you want to remove \"" + value + "\" from the collection?",
+                            "Confirm Removal",
+                            JOptionPane.YES_NO_OPTION
+                    );
+                    if (confirmation == JOptionPane.YES_OPTION) {
+                        removeController.removeMovie(collectionName, value.toString());
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "\"" + value + "\" has been successfully removed from the collection.",
+                                "Success",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Movie removal canceled.",
+                                "Cancel",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
+                    }
+                }
             }
         }
+    }
+
+    /**
+     * Moves the selected movie to a different list.
+     *
+     * @throws IllegalStateException if the required components are missing.
+     */
+    private void moveSelectedMovie() {
+        if (mediaListTable == null || listViewModel == null
+                || mediaCollectionSelector == null || moveController == null) {
+            throw new IllegalStateException("Initialization error: One or more required components are missing.");
+        }
+
+        final int selectedRow = mediaListTable.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "No movie selected. Please select a movie to move.",
+                    "Selection Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+        else {
+            final ListState state = listViewModel.getState();
+            final String currentCollectionName = state.getCurrentCollectionName();
+            final Object movieNameObject = mediaListTable.getValueAt(selectedRow, 0);
+            if (movieNameObject == null) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "The selected movie has no name. Cannot move.",
+                        "Media Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+            else {
+                final String movieName = movieNameObject.toString();
+                final List<String> availableCollections = state.getAvailableCollections();
+                if (availableCollections.isEmpty()) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "No available collections to move the movie to.",
+                            "Collection Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+                else {
+                    final String targetCollectionName = (String) JOptionPane.showInputDialog(
+                            null,
+                            "Select a collection to move the movie to:",
+                            "Move Movie",
+                            JOptionPane.PLAIN_MESSAGE,
+                            null,
+                            availableCollections.toArray(),
+                            availableCollections.get(0)
+                    );
+                    if (targetCollectionName == null || targetCollectionName.isEmpty()) {
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "No target collection selected. Cannot move.",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                    }
+                    else {
+                        moveController.moveMovie(currentCollectionName, targetCollectionName, movieName);
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Successfully moved \"" + movieName + "\" from \""
+                                        + currentCollectionName + "\" to \"" + targetCollectionName + "\".",
+                                "Success",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
+                    }
+                }
+            }
+        }
+
     }
 
     /**
@@ -370,6 +517,18 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
 
     public void setListController(ListController listController) {
         this.listController = listController;
+    }
+
+    public void setRemoveController(RemoveController removeController) {
+        this.removeController = removeController;
+    }
+
+    public void setMoveController(MoveController moveController) {
+        this.moveController = moveController;
+    }
+
+    public JTable getMediaListTable() {
+        return mediaListTable;
     }
 
     public void setFilterController(FilterController filterController) {
