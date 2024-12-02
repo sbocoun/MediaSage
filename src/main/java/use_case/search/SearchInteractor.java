@@ -41,10 +41,8 @@ public class SearchInteractor implements SearchInputBoundary {
             }
 
         }
-        catch (MovieDBDataAccessException e) {
+        catch (MovieDBDataAccessException ex) {
             movieDetails = "Error: Could not retrieve movie details.";
-            outputBoundary.displaySearchResults(new SearchByCriteriaOutputData(movieDetails));
-            return;
         }
 
         outputBoundary.displaySearchResults(new SearchByCriteriaOutputData(movieDetails));
