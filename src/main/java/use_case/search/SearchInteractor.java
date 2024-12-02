@@ -25,11 +25,12 @@ public class SearchInteractor implements SearchInputBoundary {
         if (inputData.getKeywords().isEmpty() || inputData.getKeywords().get(0).trim().isEmpty()) {
             movieDetails = "Error: Please provide a valid movie title.";
             outputBoundary.displaySearchResults(new SearchByCriteriaOutputData(movieDetails));
+            // make it prepare a fail view with this error rather than just outputting it as a regular result
         }
         else {
             try {
-                // Ensure category is set to Movie
-                if ("movie".equalsIgnoreCase(inputData.getCategory())) {
+                // Validate the category (Movie/TV show)
+                if (validateCategory(inputData.getCategory())) {
                     final String searchKeyword = inputData.getKeywords().get(0).trim();
 
                     // Call DAO to search for the movie if a valid keyword is provided
@@ -53,5 +54,23 @@ public class SearchInteractor implements SearchInputBoundary {
 
             outputBoundary.displaySearchResults(new SearchByCriteriaOutputData(movieDetails));
         }
+    }
+
+    /**
+     * Validates the category provided in the input data.
+     * Currently, only "movie" is implemented.
+     *
+     * @param category The category to validate.
+     * @return true if the category is valid, false otherwise.
+     */
+    private boolean validateCategory(String category) {
+        if ("movie".equalsIgnoreCase(category)) {
+            return true;
+        }
+        if ("tv show".equalsIgnoreCase(category)) {
+            // Placeholder for future implementation
+            return false;
+        }
+        return false;
     }
 }
