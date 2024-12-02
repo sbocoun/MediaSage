@@ -1,4 +1,7 @@
-package use_case.list.moveMedia;
+package interface_adapter.list.move_media;
+
+import use_case.list.moveMedia.MoveInputBoundary;
+import use_case.list.moveMedia.MoveInputData;
 
 /**
  * Controller for move button.

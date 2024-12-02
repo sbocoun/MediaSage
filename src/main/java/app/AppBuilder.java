@@ -20,6 +20,7 @@ import interface_adapter.generate_recommendations.GenPresenter;
 import interface_adapter.list.ListController;
 import interface_adapter.list.ListPresenter;
 import interface_adapter.list.ListViewModel;
+import interface_adapter.list.move_media.MoveController;
 import interface_adapter.list_update.ListUpdateController;
 import interface_adapter.list_update.ListUpdatePresenter;
 import interface_adapter.list.remove_media.RemoveController;
@@ -327,7 +328,7 @@ public class AppBuilder {
 
         final RemoveViewModel removeViewModel = new RemoveViewModel();
         final RemovePresenter removePresenter = new RemovePresenter(removeViewModel);
-        final RemoveInteractor removeInteractor = new RemoveInteractor(userDataAccessObject, removePresenter);
+        this.removeInteractor = new RemoveInteractor(userDataAccessObject, removePresenter);
         final RemoveController removeController = new RemoveController(removeInteractor);
 
         listView.setRemoveController(removeController);

@@ -32,9 +32,9 @@ import interface_adapter.list.ListController;
 import interface_adapter.list.ListState;
 import interface_adapter.list.ListTableModel;
 import interface_adapter.list.ListViewModel;
-import interface_adapter.list.remove_media.RemoveController;
+import interface_adapter.list.move_media.MoveController;
 import interface_adapter.list_update.ListUpdateController;
-import use_case.list.moveMedia.MoveController;
+import interface_adapter.list.remove_media.RemoveController;
 import view.filter_panels.FilterPanelManager;
 import view.list.update.UserRatingUpdateListener;
 

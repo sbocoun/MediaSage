@@ -2,6 +2,7 @@ package use_case.list.moveMedia;
 
 import interface_adapter.list.ListState;
 import interface_adapter.list.ListViewModel;
+import interface_adapter.list.move_media.MoveController;
 import junit.framework.TestCase;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

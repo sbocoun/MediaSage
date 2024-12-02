@@ -12,7 +12,7 @@ import entity.User;
 import use_case.list.TableRowDataBuilder;
 
 /**
- * The list display Interactor.
+ * The removed list display Interactor.
  */
 public final class RemoveInteractor implements RemoveInputBoundary {
     private final UserRepository userRepository;
