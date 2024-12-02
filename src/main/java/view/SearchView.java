@@ -1,9 +1,7 @@
 package view;
 
-import data_access.movies.MovieDBDataAccessException;
 import interface_adapter.search.SearchController;
 import interface_adapter.search.SearchViewModel;
-import use_case.search.SearchByCriteriaInputData;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
