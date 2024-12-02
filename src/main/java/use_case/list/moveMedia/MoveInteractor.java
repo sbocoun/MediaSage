@@ -42,7 +42,7 @@ public class MoveInteractor implements MoveInputBoundary {
             throw new IllegalArgumentException("Source or target collection not found.");
         }
 
-        final AbstractMedia movieToMove = findMediaByName(sourceCollection, input.getMovieName());
+        final AbstractMedia movieToMove = findMediaByName(sourceCollection, input.getMediaName());
         if (movieToMove == null) {
             throw new IllegalArgumentException("Movie not found in source collection.");
         }
