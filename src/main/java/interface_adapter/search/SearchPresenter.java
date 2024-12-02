@@ -21,6 +21,6 @@ public class SearchPresenter implements SearchOutputBoundary {
      */
     @Override
     public void displaySearchResults(SearchByCriteriaOutputData outputData) {
-        searchViewModel.setSearchResults(outputData.getMovie());
+        searchViewModel.setSearchResults(outputData.getSearchResults());
     }
 }
