@@ -9,8 +9,6 @@ import data_access.grade_api.UserRepository;
 import entity.AbstractMedia;
 import entity.MediaCollection;
 import entity.User;
-import use_case.list.ListOutputBoundary;
-import use_case.list.ListOutputData;
 import use_case.list.TableRowDataBuilder;
 
 /**
@@ -18,11 +16,11 @@ import use_case.list.TableRowDataBuilder;
  */
 public final class RemoveInteractor implements RemoveInputBoundary {
     private final UserRepository userRepository;
-    private final ListOutputBoundary listPresenter;
+    private final RemoveOutputBoundary removePresenter;
 
-    public RemoveInteractor(UserRepository userRepository, ListOutputBoundary presenter) {
+    public RemoveInteractor(UserRepository userRepository, RemoveOutputBoundary presenter) {
         this.userRepository = userRepository;
-        this.listPresenter = presenter;
+        this.removePresenter = presenter;
     }
 
     /**
@@ -37,22 +35,22 @@ public final class RemoveInteractor implements RemoveInputBoundary {
                 mediaCollections, input.getCollectionName());
 
         if (collection == null) {
-            listPresenter.prepareFailView(new ListOutputData(
+            removePresenter.prepareFailView(String.valueOf(new RemoveOutputData(
                     "Collection " + input.getCollectionName() + " not found.",
                     getAvailableCollections(mediaCollections)
-            ));
+            )));
         }
         else {
             final AbstractMedia mediaToRemove = findMediaByName(collection, input.getMediaName());
             if (mediaToRemove == null) {
-                listPresenter.prepareFailView(new ListOutputData(
+                removePresenter.prepareFailView(String.valueOf(new RemoveOutputData(
                         "Media with the name " + input.getMediaName() + " not found in the collection.",
                         getAvailableCollections(mediaCollections)
-                ));
+                )));
             }
             else {
                 collection.removeMedia(mediaToRemove);
-                listPresenter.prepareSuccessView(new ListOutputData(
+                removePresenter.prepareSuccessView(new RemoveOutputData(
                         collectionsToTableRowData(collection),
                         collection.getName(),
                         collection.getMediaType().getName(),

@@ -34,8 +34,8 @@ import interface_adapter.list.ListController;
 import interface_adapter.list.ListState;
 import interface_adapter.list.ListTableModel;
 import interface_adapter.list.ListViewModel;
+import interface_adapter.list.remove_media.RemoveController;
 import use_case.list.moveMedia.MoveController;
-import use_case.list.removeMedia.RemoveController;
 import view.filter_panels.FilterPanelManager;
 
 /**

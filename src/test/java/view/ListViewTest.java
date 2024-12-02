@@ -1,18 +1,19 @@
 package view;
 
-import interface_adapter.list.ListController;
+import interface_adapter.filter_list.FilterViewModel;
 import interface_adapter.list.ListViewModel;
 import interface_adapter.list.ListState;
 
 import javax.swing.table.DefaultTableModel;
 
 import junit.framework.TestCase;
-import use_case.list.removeMedia.RemoveController;
+import interface_adapter.list.remove_media.RemoveController;
 
 public class ListViewTest extends TestCase {
     private ListView listView;
     private MockRemoveController mockRemoveController;
     private MockListViewModel mockListViewModel;
+    private FilterViewModel mockFilterViewModel;
 
     @Override
     protected void setUp() throws Exception {
@@ -21,9 +22,10 @@ public class ListViewTest extends TestCase {
         // Create mock implementations of ListController and ListViewModel
         mockRemoveController = new MockRemoveController();
         mockListViewModel = new MockListViewModel();
+        mockFilterViewModel = new FilterViewModel();
 
         // Initialize ListView with mocks
-        listView = new ListView(mockListViewModel);
+        listView = new ListView(mockListViewModel, mockFilterViewModel);
         listView.setRemoveController(mockRemoveController);
 
         // Set up the table with sample data

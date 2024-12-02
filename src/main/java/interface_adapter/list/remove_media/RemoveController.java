@@ -1,4 +1,7 @@
-package use_case.list.removeMedia;
+package interface_adapter.list.remove_media;
+
+import use_case.list.removeMedia.RemoveInputBoundary;
+import use_case.list.removeMedia.RemoveMediaInput;
 
 /**
  * Controller for remove button.

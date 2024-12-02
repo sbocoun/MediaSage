@@ -20,6 +20,7 @@ import interface_adapter.generate_recommendations.GenPresenter;
 import interface_adapter.list.ListController;
 import interface_adapter.list.ListPresenter;
 import interface_adapter.list.ListViewModel;
+import interface_adapter.list.remove_media.RemoveController;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
@@ -44,8 +45,8 @@ import use_case.list.ListInteractor;
 import use_case.list.ListOutputBoundary;
 import use_case.list.moveMedia.MoveController;
 import use_case.list.moveMedia.MoveInteractor;
-import use_case.list.removeMedia.RemoveController;
 import use_case.list.removeMedia.RemoveInteractor;
+import use_case.list.removeMedia.RemoveOutputBoundary;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -321,7 +322,7 @@ public class AppBuilder {
         }
 
         listView.setRemoveController(new RemoveController(
-                new RemoveInteractor(userDataAccessObject, listPresenter)));
+                new RemoveInteractor(userDataAccessObject, (RemoveOutputBoundary) listPresenter)));
         return this;
     }
 

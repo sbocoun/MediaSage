@@ -1,25 +1,21 @@
 package use_case.list.removeMedia;
 
-import use_case.list.ListOutputData;
-
 /**
- * Output boundary for the remove media Use Case.
+ * The output boundary for the removed list use case.
  */
 public interface RemoveOutputBoundary {
     /**
-     * Prepares the success view for the media collection list display.
-     * @param outputData the output data
+     * Prepares the success view for the removed list related Use Cases.
+     *
+     * @param removeOutputData output data containing the data used to update the display
      */
-    void prepareSuccessView(ListOutputData outputData);
+    void prepareSuccessView(RemoveOutputData removeOutputData);
 
     /**
-     * Prepares the logout view for the media collection list display Use Case.
+     * Prepares the fail view for the removed list related Use Cases.
+     *
+     * @param errorMessage output data containing the data used to update the display
      */
-    void prepareLogoutView();
+    void prepareFailView(String errorMessage);
 
-    /**
-     * Prepares the fail view for the media collection list display Use Case.
-     * @param listOutputData the output data
-     */
-    void prepareFailView(ListOutputData listOutputData);
 }
