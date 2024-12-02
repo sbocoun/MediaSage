@@ -12,7 +12,7 @@ import entity.Movie;
 import entity.User;
 
 /**
- * The list display Interactor.
+ * The list display Interactor after removing media.
  */
 public class ListInteractor implements ListInputBoundary {
     private final UserRepository userDataAccessObject;

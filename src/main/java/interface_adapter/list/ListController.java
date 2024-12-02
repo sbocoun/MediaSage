@@ -9,6 +9,11 @@ import use_case.list.ListInputData;
 public class ListController {
     private final ListInputBoundary listInteractor;
 
+    /**
+     * Constructor for ListController.
+     *
+     * @param listInteractor the interactor for list-related use cases
+     */
     public ListController(ListInputBoundary listInteractor) {
         this.listInteractor = listInteractor;
     }
