@@ -21,6 +21,8 @@ import interface_adapter.list.ListController;
 import interface_adapter.list.ListPresenter;
 import interface_adapter.list.ListViewModel;
 import interface_adapter.list.move_media.MoveController;
+import interface_adapter.list_update.ListUpdateController;
+import interface_adapter.list_update.ListUpdatePresenter;
 import interface_adapter.list.remove_media.RemoveController;
 import interface_adapter.list.remove_media.RemovePresenter;
 import interface_adapter.list.remove_media.RemoveViewModel;
@@ -46,6 +48,8 @@ import use_case.generate_recommendations.GenInteractor;
 import use_case.generate_recommendations.GenOutputBoundary;
 import use_case.list.ListInteractor;
 import use_case.list.ListOutputBoundary;
+import use_case.list_update.ListUpdateInteractor;
+import use_case.list.moveMedia.MoveController;
 import use_case.list.moveMedia.MoveInteractor;
 import use_case.list.removeMedia.RemoveInteractor;
 import use_case.login.LoginInputBoundary;
@@ -72,8 +76,8 @@ import view.ViewManager;
  * Builder for the Note Application.
  */
 public class AppBuilder {
-    public static final int HEIGHT = 450;
-    public static final int WIDTH = 800;
+    public static final int HEIGHT = 600;
+    public static final int WIDTH = 1000;
     private NoteInteractor noteInteractor;
     private GenInteractor genInteractor;
     private ListInteractor listInteractor;
@@ -329,6 +333,22 @@ public class AppBuilder {
 
         listView.setRemoveController(removeController);
 
+        return this;
+    }
+
+    /**
+     * Adds the List Update Use Case to the application.
+     * @return this builder
+     * @throws RuntimeException if this method is called before addListUsecase
+     */
+    public AppBuilder addListUpdateUseCase() {
+        if (listPresenter == null) {
+            throw new RuntimeException("addListUsecase must be called before addListUpdateUseCase");
+        }
+        final ListUpdateInteractor listUpdateInteractor =
+                new ListUpdateInteractor(userDataAccessObject, new ListUpdatePresenter(listViewModel));
+        final ListUpdateController listUpdateController = new ListUpdateController(listUpdateInteractor);
+        listView.setListUpdateController(listUpdateController);
         return this;
     }
 

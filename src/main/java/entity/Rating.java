@@ -20,7 +20,10 @@ public class Rating {
      */
     public void setScore(int score) {
         final int maxScore = 100;
-        if (score < 0) {
+        if (score == -1) {
+            this.score = -1;
+        }
+        else if (score < 0) {
             this.score = 0;
         }
         else {

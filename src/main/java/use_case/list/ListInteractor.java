@@ -18,9 +18,9 @@ public class ListInteractor implements ListInputBoundary {
     private final UserRepository userDataAccessObject;
     private final ListOutputBoundary listPresenter;
 
-    public ListInteractor(UserRepository signupDataAccessInterface,
+    public ListInteractor(UserRepository userDataAccessObject,
                           ListOutputBoundary listOutputBoundary) {
-        this.userDataAccessObject = signupDataAccessInterface;
+        this.userDataAccessObject = userDataAccessObject;
         this.listPresenter = listOutputBoundary;
     }
 
@@ -32,24 +32,26 @@ public class ListInteractor implements ListInputBoundary {
     public void execute(ListInputData listInputData) {
         final User user = userDataAccessObject.getCurrentUser();
         if (user == null) {
-            throw new RuntimeException("Not currently logged-in.");
-        }
-        final List<MediaCollection<? extends AbstractMedia>> mediaCollections = user.getAllMediaCollections();
-        final MediaCollection<? extends AbstractMedia> desiredCollection = findCollectionWithName(mediaCollections,
-                listInputData.getNameOfDesiredCollection());
-        if (desiredCollection == null) {
-            final ListOutputData listOutputData = new ListOutputData(
-                    "Collection with the name " + listInputData.getNameOfDesiredCollection() + " not found.",
-                    getAvailableCollections(mediaCollections));
-            listPresenter.prepareFailView(listOutputData);
+            listPresenter.prepareFailView(new ListOutputData("Not currently logged-in.", null));
         }
         else {
-            final ListOutputData listOutputData = new ListOutputData(
-                    collectionsToTableRowData(desiredCollection),
-                    desiredCollection.getName(),
-                    desiredCollection.getMediaType().getName(),
-                    getAvailableCollections(mediaCollections));
-            listPresenter.prepareSuccessView(listOutputData);
+            final List<MediaCollection<? extends AbstractMedia>> mediaCollections = user.getAllMediaCollections();
+            final MediaCollection<? extends AbstractMedia> desiredCollection = findCollectionWithName(mediaCollections,
+                    listInputData.getNameOfDesiredCollection());
+            if (desiredCollection == null) {
+                final ListOutputData listOutputData = new ListOutputData(
+                        "Collection with the name " + listInputData.getNameOfDesiredCollection() + " not found.",
+                        getAvailableCollections(mediaCollections));
+                listPresenter.prepareFailView(listOutputData);
+            }
+            else {
+                final ListOutputData listOutputData = new ListOutputData(
+                        collectionsToTableRowData(desiredCollection),
+                        desiredCollection.getName(),
+                        desiredCollection.getMediaType().getName(),
+                        getAvailableCollections(mediaCollections));
+                listPresenter.prepareSuccessView(listOutputData);
+            }
         }
     }
 
@@ -106,7 +108,7 @@ public class ListInteractor implements ListInputBoundary {
             List<MediaCollection<? extends AbstractMedia>> mediaCollections) {
         if (mediaCollections.isEmpty()) {
             final MediaCollection<? extends AbstractMedia> newCollection = new MediaCollection<>(
-                    "movie night", "to-watch", Movie.class, new ArrayList<>());
+                    "Default Collection", "watched", Movie.class, new ArrayList<>());
             mediaCollections.add(newCollection);
         }
         return mediaCollections;
