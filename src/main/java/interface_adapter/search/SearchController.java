@@ -2,7 +2,6 @@ package interface_adapter.search;
 
 import java.util.Collections;
 
-import data_access.movies.MovieDBDataAccessException;
 import use_case.search.SearchByCriteriaInputData;
 import use_case.search.SearchByCriteriaOutputData;
 import use_case.search.SearchInputBoundary;
