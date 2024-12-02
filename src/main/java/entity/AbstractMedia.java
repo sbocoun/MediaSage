@@ -11,7 +11,7 @@ public abstract class AbstractMedia {
     private final Rating userRating;
     private final Rating externalRating;
 
-    AbstractMedia(String name, List<String> genres, Rating userRating, Rating externalRating) {
+    protected AbstractMedia(String name, List<String> genres, Rating userRating, Rating externalRating) {
         this.name = name;
         this.genres = genres;
         this.userRating = userRating;
