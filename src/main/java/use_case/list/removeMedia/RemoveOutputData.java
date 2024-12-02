@@ -3,37 +3,44 @@ package use_case.list.removeMedia;
 import java.util.List;
 
 /**
- * Output Data for the media collection list display Use Case.
+ * Output Data for the Remove Use Case.
  */
 public class RemoveOutputData {
-    private String collectionName = "";
+    private final String collectionName;
+    private final List<List<Object>> collectionData;
+    private final String collectionType;
     private final List<String> availableCollections;
-    private String errorMessage = "";
+    private final String errorMessage;
 
     /**
-     * Success output data for the List Output Boundary.
+     * Constructor for success output data.
      *
-     * @param collectionToDisplay  the media collection to display
-     * @param collectionName       the name of the media collection to display
-     * @param collectionType       the type of the media collection to display
+     * @param collectionData       the updated media collection data to display
+     * @param collectionName       the name of the updated media collection
+     * @param collectionType       the type of the updated media collection
      * @param availableCollections all media collections stored in the user
      */
-    public RemoveOutputData(List<List<Object>> collectionToDisplay,
-                          String collectionName,
-                          String collectionType,
-                          List<String> availableCollections) {
+    public RemoveOutputData(List<List<Object>> collectionData, String collectionName,
+                            String collectionType, List<String> availableCollections) {
+        this.collectionData = collectionData;
         this.collectionName = collectionName;
+        this.collectionType = collectionType;
         this.availableCollections = availableCollections;
+        this.errorMessage = "";
     }
 
     /**
-     * Fail output data for the List Output Boundary.
-     * @param errorMessage the error message
-     * @param availableCollections all movie collections stored in the user
+     * Constructor for failure output data.
+     *
+     * @param errorMessage         the error message
+     * @param availableCollections all media collections stored in the user
      */
     public RemoveOutputData(String errorMessage, List<String> availableCollections) {
-        this.errorMessage = errorMessage;
+        this.collectionData = null;
+        this.collectionName = "";
+        this.collectionType = "";
         this.availableCollections = availableCollections;
+        this.errorMessage = errorMessage;
     }
 
     public String getCollectionName() {
@@ -46,5 +53,14 @@ public class RemoveOutputData {
 
     public String getErrorMessage() {
         return errorMessage;
+    }
+
+    /**
+     * Checks if the output represents a successful operation.
+     *
+     * @return true if there is no error message, false otherwise
+     */
+    public boolean isSuccess() {
+        return errorMessage == null || errorMessage.isEmpty();
     }
 }
