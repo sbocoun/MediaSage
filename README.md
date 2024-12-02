@@ -189,4 +189,4 @@ This project incorporates concepts and code from the following repositories, bot
   - Referenced for features like user data handling and user authentication.
 
 ## Software License
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
