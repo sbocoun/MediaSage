@@ -5,7 +5,7 @@ import entity.Movie;
 import use_case.generate_recommendations.MovieDBDataAccessInterface;
 
 /**
- * Interactor for the search by criteria use case.
+ * Interactor for the search by title use case.
  */
 public class SearchInteractor implements SearchInputBoundary {
     private final MovieDBDataAccessInterface movieDBDataAccess;
@@ -18,58 +18,47 @@ public class SearchInteractor implements SearchInputBoundary {
 
     @Override
     public void execute(SearchByCriteriaInputData inputData) {
-        Movie matchingMovie = null;
         String movieDetails;
 
-        // Check if the list of keywords is empty or if the first keyword is empty or contains only whitespace
-        if (inputData.getKeywords().isEmpty() || inputData.getKeywords().get(0).trim().isEmpty()) {
+        // Check if search input is empty
+        if (inputData.getKeywords().isEmpty()) {
             movieDetails = "Error: Please provide a valid movie title.";
             outputBoundary.prepareFailView(new SearchByCriteriaOutputData(movieDetails));
         }
-        else {
-            try {
-                // Validate the category (Movie/TV show)
-                if (validateCategory(inputData.getCategory())) {
-                    final String searchKeyword = inputData.getKeywords().get(0).trim();
 
-                    // Call DAO to search for the movie if a valid keyword is provided
-                    if (!searchKeyword.isEmpty()) {
-                        matchingMovie = movieDBDataAccess.getMovie(searchKeyword);
-                    }
-                }
-
-                // Convert result to output data
-                if (matchingMovie != null) {
-                    movieDetails = matchingMovie.toString();
-                }
-                else {
-                    movieDetails = "No results found for the keyword: " + inputData.getKeywords().get(0);
-                }
-
+        try {
+            if ("movie".equalsIgnoreCase(inputData.getCategory())) {
+                movieDetails = searchMovie(inputData.getKeywords().get(0).trim());
             }
-            catch (MovieDBDataAccessException exception) {
-                movieDetails = "Error: Could not retrieve movie details.";
+            else if ("tv show".equalsIgnoreCase(inputData.getCategory())) {
+                throw new UnsupportedOperationException("Search by TV show title is not currently supported.");
             }
-
-            outputBoundary.displaySearchResults(new SearchByCriteriaOutputData(movieDetails));
+            else {
+                throw new UnsupportedOperationException("This category is not currently supported.");
+            }
         }
+        catch (UnsupportedOperationException ex) {
+            movieDetails = "Error: " + ex.getMessage();
+        }
+        catch (MovieDBDataAccessException ex) {
+            movieDetails = "Error: Could not retrieve movie details.";
+        }
+
+        outputBoundary.displaySearchResults(new SearchByCriteriaOutputData(movieDetails));
     }
 
-    /**
-     * Validates the category provided in the input data.
-     * Currently, only "movie" is implemented.
-     *
-     * @param category The category to validate.
-     * @return true if the category is valid, false otherwise.
-     */
-    private boolean validateCategory(String category) {
-        if ("movie".equalsIgnoreCase(category)) {
-            return true;
+    // Helper method for searching movies
+    private String searchMovie(String searchKeyword) throws MovieDBDataAccessException {
+        final String result;
+        final Movie matchingMovie = movieDBDataAccess.getMovie(searchKeyword);
+
+        if (matchingMovie != null) {
+            result = matchingMovie.toString();
         }
-        if ("tv show".equalsIgnoreCase(category)) {
-            // Placeholder for future implementation
-            return false;
+        else {
+            result = "No results found for the keyword: " + searchKeyword;
         }
-        return false;
+
+        return result;
     }
 }
