@@ -21,6 +21,8 @@ import interface_adapter.list.ListController;
 import interface_adapter.list.ListPresenter;
 import interface_adapter.list.ListViewModel;
 import interface_adapter.list.remove_media.RemoveController;
+import interface_adapter.list.remove_media.RemovePresenter;
+import interface_adapter.list.remove_media.RemoveViewModel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
@@ -46,7 +48,6 @@ import use_case.list.ListOutputBoundary;
 import use_case.list.moveMedia.MoveController;
 import use_case.list.moveMedia.MoveInteractor;
 import use_case.list.removeMedia.RemoveInteractor;
-import use_case.list.removeMedia.RemoveOutputBoundary;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -311,7 +312,7 @@ public class AppBuilder {
      * Adds the Remove Media Use Case to the application, allowing users to remove a piece of media from the
      * selected collection.
      * @return this builder
-     * @throws RuntimeException if prerequisites are not met (e.g., listView or listPresenter is null)
+     * @throws RuntimeException if prerequisites are not met (e.g., listView is null)
      */
     public AppBuilder addRemoveMediaUseCase() {
         if (listView == null) {
@@ -321,8 +322,13 @@ public class AppBuilder {
             throw new RuntimeException("addListUsecase must be called before addRemoveMediaUseCase");
         }
 
-        listView.setRemoveController(new RemoveController(
-                new RemoveInteractor(userDataAccessObject, (RemoveOutputBoundary) listPresenter)));
+        final RemoveViewModel removeViewModel = new RemoveViewModel();
+        final RemovePresenter removePresenter = new RemovePresenter(removeViewModel);
+        final RemoveInteractor removeInteractor = new RemoveInteractor(userDataAccessObject, removePresenter);
+        final RemoveController removeController = new RemoveController(removeInteractor);
+
+        listView.setRemoveController(removeController);
+
         return this;
     }
 
