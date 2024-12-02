@@ -9,7 +9,6 @@ import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
 
 import data_access.grade_api.UserRepository;
-import data_access.movies.MovieDBDataAccessObject;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.ChangePasswordPresenter;
