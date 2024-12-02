@@ -1,11 +1,11 @@
 package interface_adapter.search;
 
-import interface_adapter.ViewModel;
-import interface_adapter.note.NoteState;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
+
+import interface_adapter.ViewModel;
+import interface_adapter.note.NoteState;
 
 /**
  * The ViewModel for the SearchView.
