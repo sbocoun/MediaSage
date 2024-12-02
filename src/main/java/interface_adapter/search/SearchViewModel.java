@@ -55,7 +55,7 @@ public class SearchViewModel extends ViewModel<NoteState> {
         else {
             final StringBuilder results = new StringBuilder("Search Results:\n");
             if (keyword != null && !keyword.isEmpty()) {
-                results.append("Keyword: ").append(keyword).append("\n");
+                results.append("Keyword: ").append(keyword).append('\n');
             }
             if (!genres.isEmpty()) {
                 results.append("Genres: ").append(String.join(", ", genres)).append("\n");
@@ -100,13 +100,5 @@ public class SearchViewModel extends ViewModel<NoteState> {
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-
-    /**
-     * Removes a PropertyChangeListener.
-     * @param listener the PropertyChangeListener to remove
-     */
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(listener);
     }
 }

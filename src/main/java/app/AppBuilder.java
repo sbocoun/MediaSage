@@ -5,7 +5,6 @@ import java.awt.CardLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
 
 import data_access.grade_api.UserRepository;
@@ -36,9 +35,9 @@ import interface_adapter.note.BlankViewModel;
 import interface_adapter.note.NoteController;
 import interface_adapter.note.NotePresenter;
 import interface_adapter.note.NoteViewModel;
+import interface_adapter.search.SearchController;
 import interface_adapter.search.SearchPresenter;
 import interface_adapter.search.SearchViewModel;
-import interface_adapter.search.SearchController;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
@@ -100,7 +99,6 @@ public class AppBuilder {
     // observers that listen for when the view should change
     private final ViewManager userViewManager = new ViewManager(userPanel, cardLayout, userViewManagerModel);
     private final ViewManager mediaViewManager = new ViewManager(mediaPanel, cardLayout, mediaViewManagerModel);
-    private final ViewManager searchViewManager = new ViewManager(searchPanel, cardLayout, searchViewManagerModel);
     // thought question: is the hard dependency below a problem?
     private UserRepository userDataAccessObject;
     private GenDataAccessInterface genDataAccessInterface;
@@ -465,8 +463,7 @@ public class AppBuilder {
         searchViewModel = new SearchViewModel();
 
         final SearchController searchController = new SearchController(
-                new SearchInteractor(movieDBDataAccessInterface, new SearchPresenter(searchViewModel)),
-                new SearchPresenter(searchViewModel)
+                new SearchInteractor(movieDBDataAccessInterface, new SearchPresenter(searchViewModel))
         );
         searchView = new SearchView(searchViewModel, searchController);
         searchPanel.add(searchView, searchView.getViewName());
