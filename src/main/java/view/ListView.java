@@ -3,12 +3,10 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BoxLayout;
@@ -17,7 +15,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -35,8 +32,8 @@ import interface_adapter.list.ListController;
 import interface_adapter.list.ListState;
 import interface_adapter.list.ListTableModel;
 import interface_adapter.list.ListViewModel;
-import interface_adapter.list_update.ListUpdateController;
 import interface_adapter.list.remove_media.RemoveController;
+import interface_adapter.list_update.ListUpdateController;
 import use_case.list.moveMedia.MoveController;
 import view.filter_panels.FilterPanelManager;
 import view.list.update.UserRatingUpdateListener;
@@ -55,8 +52,6 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     private final JLabel statusLabel = new JLabel();
     private final JTextArea recommendBox = new JTextArea();
     private final JTable mediaListTable = new JTable();
-    private final List<JRadioButton> radioButtonList = new ArrayList<>();
-    private final List<String> movieDescriptions = new ArrayList<>();
 
     // Use case controllers
     private ListController listController;
@@ -186,35 +181,6 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         );
     }
 
-    /**
-     * Adds an item to the list with a thumbnail, name, and description.
-     *
-     * @param name        Name of the movie
-     * @param description Description of the movie
-     */
-    private void addItem(String name, String description) {
-        final JPanel itemPanel = new JPanel(new BorderLayout());
-
-        // select item
-        final JRadioButton radioButton = new JRadioButton();
-        radioButtonList.add(radioButton);
-        itemPanel.add(radioButton, BorderLayout.WEST);
-
-        final JLabel thumbnailLabel = new JLabel("Thumbnail");
-        itemPanel.add(thumbnailLabel, BorderLayout.CENTER);
-
-        final JPanel nameDescPanel = new JPanel(new GridLayout(2, 1));
-        nameDescPanel.add(new JLabel(name));
-        nameDescPanel.add(new JLabel(description));
-        itemPanel.add(nameDescPanel, BorderLayout.EAST);
-
-        mediaListTable.add(itemPanel);
-        movieDescriptions.add(description);
-
-        revalidate();
-        repaint();
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == removeButton) {
@@ -223,47 +189,6 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         else if (e.getSource() == moveToButton) {
             moveSelectedMovie();
         }
-    }
-
-    /**
-     * Filters the movie list based on the given description text.
-     *
-     * @param filterText The text to filter descriptions by
-     */
-    private void filterMoviesByDescription(String filterText) {
-        mediaListTable.removeAll();
-
-        for (int i = 0; i < movieDescriptions.size(); i++) {
-            final String description = movieDescriptions.get(i).toLowerCase();
-            if (description.contains(filterText)) {
-                addFilteredItem(i);
-            }
-        }
-        revalidate();
-        repaint();
-    }
-
-    /**
-     * Adds a filtered item to the itemListPanel.
-     *
-     * @param index The index of the item to add
-     */
-    private void addFilteredItem(int index) {
-        final JPanel itemPanel = new JPanel(new BorderLayout());
-
-        // Use the existing radio button and description data
-        final JRadioButton radioButton = radioButtonList.get(index);
-        itemPanel.add(radioButton, BorderLayout.WEST);
-
-        final JLabel thumbnailLabel = new JLabel("Thumbnail");
-        itemPanel.add(thumbnailLabel, BorderLayout.CENTER);
-
-        final JPanel nameDescPanel = new JPanel(new GridLayout(2, 1));
-        nameDescPanel.add(new JLabel("Movie " + (index + 1)));
-        nameDescPanel.add(new JLabel(movieDescriptions.get(index)));
-        itemPanel.add(nameDescPanel, BorderLayout.EAST);
-
-        mediaListTable.add(itemPanel);
     }
 
     /**
@@ -616,10 +541,6 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
 
     public void setMoveController(MoveController moveController) {
         this.moveController = moveController;
-    }
-
-    public JTable getMediaListTable() {
-        return mediaListTable;
     }
 
     public void setFilterController(FilterController filterController) {
