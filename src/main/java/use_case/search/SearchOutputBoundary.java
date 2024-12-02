@@ -11,4 +11,10 @@ public interface SearchOutputBoundary {
      * @param outputData the search results to be displayed in the UI.
      */
     void displaySearchResults(SearchByCriteriaOutputData outputData);
+
+    /**
+     * Prepares the fail view for the search by movie title use case.
+     * @param outputData the output data
+     */
+    void prepareFailView(SearchByCriteriaOutputData outputData);
 }

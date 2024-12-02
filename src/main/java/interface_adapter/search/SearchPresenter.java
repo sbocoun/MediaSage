@@ -23,4 +23,13 @@ public class SearchPresenter implements SearchOutputBoundary {
     public void displaySearchResults(SearchByCriteriaOutputData outputData) {
         searchViewModel.setSearchResults(outputData.getSearchResults());
     }
+
+    /**
+     * Prepares the fail view by displaying an error message in the view model.
+     * @param outputData the output data containing the error message.
+     */
+    @Override
+    public void prepareFailView(SearchByCriteriaOutputData outputData) {
+        searchViewModel.setErrorMessage(outputData.getSearchResults());
+    }
 }

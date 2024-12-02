@@ -24,8 +24,7 @@ public class SearchInteractor implements SearchInputBoundary {
         // Check if the list of keywords is empty or if the first keyword is empty or contains only whitespace
         if (inputData.getKeywords().isEmpty() || inputData.getKeywords().get(0).trim().isEmpty()) {
             movieDetails = "Error: Please provide a valid movie title.";
-            outputBoundary.displaySearchResults(new SearchByCriteriaOutputData(movieDetails));
-            // make it prepare a fail view with this error rather than just outputting it as a regular result
+            outputBoundary.prepareFailView(new SearchByCriteriaOutputData(movieDetails));
         }
         else {
             try {
