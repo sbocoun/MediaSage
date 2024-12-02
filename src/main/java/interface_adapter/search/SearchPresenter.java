@@ -25,16 +25,12 @@ public class SearchPresenter implements SearchOutputBoundary {
     @Override
     public void displaySearchResults(SearchByCriteriaOutputData outputData) throws MovieDBDataAccessException {
         // Clear previous results
-        resultTextArea.setText("");
-
         // Display the movie result
         final String movieDetails = outputData.getMovie();
         if (movieDetails == null || movieDetails.isEmpty()) {
-            resultTextArea.setText("No results found.");
             searchViewModel.setSearchResults("No results found.");
         }
         else {
-            resultTextArea.setText(movieDetails);
             searchViewModel.setSearchResults(movieDetails);
         }
         searchViewModel.firePropertyChanged("searchResults");
