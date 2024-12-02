@@ -22,12 +22,12 @@ public class ListPresenter implements ListOutputBoundary {
     public void prepareSuccessView(ListOutputData listOutputData) {
         final ListTableModelFactory listTableModelFactory = new ListTableModelFactory();
         final ListTableModel tableModel = listTableModelFactory
-                .createListTableModel(listOutputData.getCollectionType(), listOutputData.getCollectionData());
+                .createListTableModel(listOutputData.getMediaType(), listOutputData.getCollectionData());
         final ListState listState = listViewModel.getState();
         listState.setErrorMessage("");
         listState.setCurrentCollectionName(listOutputData.getCollectionName());
+        listState.setCurrentMediaType(listOutputData.getMediaType());
         listState.setAvailableCollections(listOutputData.getAvailableCollections());
-        listState.setCurrentCollectionType(listOutputData.getCollectionType());
         listState.setTableModel(tableModel);
         listViewModel.setState(listState);
         listViewModel.firePropertyChanged("display data");
@@ -42,6 +42,7 @@ public class ListPresenter implements ListOutputBoundary {
     public void prepareFailView(ListOutputData listOutputData) {
         final ListState listState = listViewModel.getState();
         listState.setErrorMessage(listOutputData.getErrorMessage());
+        listState.setAvailableCollections(listOutputData.getAvailableCollections());
         listViewModel.firePropertyChanged("error");
     }
 

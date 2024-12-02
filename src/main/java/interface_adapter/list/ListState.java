@@ -8,9 +8,10 @@ import java.util.List;
 public class ListState {
     private List<String> availableCollections;
     private String currentCollectionName;
-    private String currentCollectionType;
+    private String currentMediaType;
     private ListTableModel tableModel;
     private String errorMessage;
+    private String successMessage;
     private String generatedRecommendations;
 
     public List<String> getAvailableCollections() {
@@ -27,14 +28,6 @@ public class ListState {
 
     public void setCurrentCollectionName(String currentCollectionName) {
         this.currentCollectionName = currentCollectionName;
-    }
-
-    public String getCurrentCollectionType() {
-        return currentCollectionType;
-    }
-
-    public void setCurrentCollectionType(String currentCollectionType) {
-        this.currentCollectionType = currentCollectionType;
     }
 
     public ListTableModel getTableModel() {
@@ -59,5 +52,21 @@ public class ListState {
 
     public void setGeneratedRecommendations(String generatedRecommendations) {
         this.generatedRecommendations = generatedRecommendations;
+    }
+
+    public String getSuccessMessage() {
+        return successMessage;
+    }
+
+    public void setSuccessMessage(String successMessage) {
+        this.successMessage = successMessage;
+    }
+
+    public String getCurrentMediaType() {
+        return currentMediaType;
+    }
+
+    public void setCurrentMediaType(String currentMediaType) {
+        this.currentMediaType = currentMediaType;
     }
 }

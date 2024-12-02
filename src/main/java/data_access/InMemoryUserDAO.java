@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
 import data_access.grade_api.UserRepository;
@@ -70,12 +71,14 @@ public class InMemoryUserDAO implements UserRepository {
     @Override
     public List<MediaCollection<? extends AbstractMedia>> saveMediaCollections(
             List<MediaCollection<? extends AbstractMedia>> mediaCollectionsList) {
-        throw new UnsupportedOperationException(UNSUPPORTED);
+        currentUser.setMediaCollections(mediaCollectionsList);
+        save(currentUser);
+        return get(currentUser.getName()).getAllMediaCollections();
     }
 
     @Override
     public List<MediaCollection<? extends AbstractMedia>> loadMediaCollections() {
-        throw new UnsupportedOperationException(UNSUPPORTED);
+        return currentUser.getAllMediaCollections();
     }
 
     @Override
@@ -110,6 +113,7 @@ public class InMemoryUserDAO implements UserRepository {
     }
 
     @Override
+    @Nullable
     public User getCurrentUser() {
         return currentUser;
     }

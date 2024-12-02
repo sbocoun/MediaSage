@@ -23,6 +23,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -34,9 +35,11 @@ import interface_adapter.list.ListController;
 import interface_adapter.list.ListState;
 import interface_adapter.list.ListTableModel;
 import interface_adapter.list.ListViewModel;
+import interface_adapter.list_update.ListUpdateController;
 import interface_adapter.list.remove_media.RemoveController;
 import use_case.list.moveMedia.MoveController;
 import view.filter_panels.FilterPanelManager;
+import view.list.update.UserRatingUpdateListener;
 
 /**
  * View for each of the MediaCollections.
@@ -49,6 +52,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     private final JButton removeButton = new JButton("Remove");
     private final JButton moveToButton = new JButton("Move to");
     private final JButton recommendButton = new JButton("Generate Recommendation");
+    private final JLabel statusLabel = new JLabel();
     private final JTextArea recommendBox = new JTextArea();
     private final JTable mediaListTable = new JTable();
     private final List<JRadioButton> radioButtonList = new ArrayList<>();
@@ -56,6 +60,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
 
     // Use case controllers
     private ListController listController;
+    private ListUpdateController listUpdateController;
     private MoveController moveController;
     private RemoveController removeController;
     private GenController genController;
@@ -98,8 +103,9 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         buildButtonsPanel(bottomPanel);
 
         final JScrollPane scrollRecommendBox = new JScrollPane(recommendBox);
-        scrollRecommendBox.setSize(TABLE_WIDTH, TABLE_HEIGHT / 2);
+        scrollRecommendBox.setPreferredSize(new Dimension(TABLE_WIDTH, TABLE_HEIGHT / 2));
         bottomPanel.add(scrollRecommendBox);
+        bottomPanel.add(statusLabel);
 
         add(bottomPanel, BorderLayout.SOUTH);
         buildActionListeners();
@@ -160,7 +166,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
                     if (evt.getSource().equals(filterButton)) {
                         filterController.execute(
                                 filterViewModel.getState().getFilterCriteria(),
-                                listViewModel.getState().getCurrentCollectionType(),
+                                listViewModel.getState().getCurrentMediaType(),
                                 listViewModel.getState().getCurrentCollectionName()
                         );
                     }
@@ -408,6 +414,14 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         this.genController = genController;
     }
 
+    public void setListController(ListController listController) {
+        this.listController = listController;
+    }
+
+    public void setListUpdateController(ListUpdateController listUpdateController) {
+        this.listUpdateController = listUpdateController;
+    }
+
     /**
      * Update the view.
      * @param evt A PropertyChangeEvent object describing the event source
@@ -461,21 +475,54 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         else if ("display data".equals(evt.getPropertyName())) {
             repopulateMediaCollectionSelection(state.getAvailableCollections());
             mediaCollectionSelector.setSelectedItem(state.getCurrentCollectionName());
-            filterPanelManager.updateFilterPanel(state.getCurrentCollectionType());
+            filterPanelManager.updateFilterPanel(state.getCurrentMediaType());
             filterPanelManager.clearFilterPanel();
             refreshTable(state);
         }
         else if ("recommendation".equals(evt.getPropertyName())) {
             setRecommendationFields(state);
         }
+        else if (evt.getPropertyName().contains("update")) {
+            updateStatusLabel(evt, state);
+        }
+        else if ("error".equals(evt.getPropertyName())) {
+            if (state.getAvailableCollections() != null) {
+                repopulateMediaCollectionSelection(state.getAvailableCollections());
+            }
+            JOptionPane.showMessageDialog(null,
+                    state.getErrorMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
         isUserAction = true;
+    }
+
+    private void updateStatusLabel(PropertyChangeEvent evt, ListState state) {
+        final int delay = 3000;
+        if ("update successful".equals(evt.getPropertyName())) {
+            setEphemeralLabel(state.getSuccessMessage(), delay);
+        }
+        else {
+            setEphemeralLabel(state.getErrorMessage(), delay);
+        }
+    }
+
+    /**
+     * Sets the status label with message, which disappears after @time in milliseconds.
+     *
+     * @param message                 the message to display
+     * @param messageTimeMilliseconds message will disappear after the set amount of milliseconds
+     */
+    public void setEphemeralLabel(String message, int messageTimeMilliseconds) {
+        statusLabel.setText(message);
+        final Timer timer = new Timer(messageTimeMilliseconds, evt -> statusLabel.setText(""));
+        timer.setRepeats(false);
+        timer.start();
     }
 
     /**
      * Repopulate the list of media collections.
      * @param collectionNames the list of media collection names
      */
-    public void repopulateMediaCollectionSelection(List<String> collectionNames) {
+    private void repopulateMediaCollectionSelection(List<String> collectionNames) {
         mediaCollectionSelector.removeAllItems();
         for (String name : collectionNames) {
             mediaCollectionSelector.addItem(name);
@@ -487,7 +534,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
      *
      * @param state the new state containing the list of media to use to populate the table
      */
-    public void refreshTable(ListState state) {
+    private void refreshTable(ListState state) {
         final TableModel currentTableModel = mediaListTable.getModel();
         final ListTableModel newTableModel = state.getTableModel();
         if (currentTableModel instanceof ListTableModel castedCurrentTableModel
@@ -496,6 +543,8 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
         }
         else {
             SwingUtilities.invokeLater(() -> {
+                // add the anonymously defined RatingUpdateListener here whenever the TableModel gets replaced
+                newTableModel.addTableModelListener(new UserRatingUpdateListener(this));
                 mediaListTable.setModel(newTableModel);
                 mediaListTable.setRowSorter(new TableRowSorter<>(newTableModel));
                 newTableModel.fireTableDataChanged();
@@ -506,17 +555,59 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
     /**
      * Clear the table.
      */
-    public void clearTable() {
+    private void clearTable() {
         SwingUtilities.invokeLater(() -> mediaListTable.setModel(new DefaultTableModel()));
         mediaCollectionSelector.removeAllItems();
     }
 
     private void setRecommendationFields(ListState state) {
         recommendBox.setText(state.getGeneratedRecommendations());
+        recommendBox.updateUI();
     }
 
-    public void setListController(ListController listController) {
-        this.listController = listController;
+    /**
+     * Return the JTable used to display media in collections.
+     * @return the JTable used to display media in collections
+     */
+    public JTable getMediaListTable() {
+        return mediaListTable;
+    }
+
+    /**
+     * Return the ListUpdateController used to submit list update information to the interactor.
+     * @return the ListUpdateController
+     */
+    public ListUpdateController getListUpdateController() {
+        return listUpdateController;
+    }
+
+    /**
+     * Return the media collection selection JCombobox used to display the name of the current collection
+     * and switch collections.
+     * @return the media collection selection JCombobox
+     */
+    public JComboBox<String> getMediaCollectionSelector() {
+        return mediaCollectionSelector;
+    }
+
+    /**
+     * Return if the List View is modified by user action or as part of the program functions,
+     * to avoid triggering Listener loops.
+     * False means the modification comes from an automated process.
+     * @return if the list view is modified by a user or not
+     */
+    public boolean getIsUserAction() {
+        return isUserAction;
+    }
+
+    /**
+     * Sets if the List View is modified by user action or as part of the program functions,
+     * to avoid triggering Listener loops.
+     * False means the List View is being modified.
+     * @param isUserAction set to false if the List View is going to be modified by the program
+     */
+    public void setIsUserAction(boolean isUserAction) {
+        this.isUserAction = isUserAction;
     }
 
     public void setRemoveController(RemoveController removeController) {
