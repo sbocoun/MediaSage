@@ -464,11 +464,6 @@ public class AppBuilder {
     public AppBuilder addSearchView() {
         searchViewModel = new SearchViewModel();
 
-        final JTextArea resultTextArea = new JTextArea();
-        resultTextArea.setEditable(false);
-        resultTextArea.setRows(10);
-        resultTextArea.setColumns(30);
-
         final SearchController searchController = new SearchController(
                 new SearchInteractor(movieDBDataAccessInterface, new SearchPresenter(searchViewModel)),
                 new SearchPresenter(searchViewModel)
