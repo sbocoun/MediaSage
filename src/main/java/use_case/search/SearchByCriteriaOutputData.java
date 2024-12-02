@@ -4,17 +4,17 @@ package use_case.search;
  * Output data class for search results.
  */
 public class SearchByCriteriaOutputData {
-    private String movie;
+    private String searchResults;
 
-    public SearchByCriteriaOutputData(String movie) {
-        this.movie = movie;
+    public SearchByCriteriaOutputData(String searchResults) {
+        this.searchResults = searchResults;
     }
 
-    public String getMovie() {
-        return movie;
+    public String getSearchResults() {
+        return searchResults;
     }
 
-    public void setMovie(String movie) {
-        this.movie = movie;
+    public void setSearchResults(String searchResults) {
+        this.searchResults = searchResults;
     }
 }
