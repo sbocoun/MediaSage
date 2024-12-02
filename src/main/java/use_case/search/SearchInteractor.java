@@ -4,50 +4,49 @@ import data_access.movies.MovieDBDataAccessException;
 import entity.Movie;
 import use_case.generate_recommendations.MovieDBDataAccessInterface;
 
-
 /**
  * Interactor for the search by criteria use case.
  */
 public class SearchInteractor implements SearchInputBoundary {
-
     private final MovieDBDataAccessInterface movieDBDataAccess;
+    private final SearchOutputBoundary outputBoundary;
 
-    public SearchInteractor(MovieDBDataAccessInterface movieDBDataAccess) {
+    public SearchInteractor(MovieDBDataAccessInterface movieDBDataAccess, SearchOutputBoundary outputBoundary) {
         this.movieDBDataAccess = movieDBDataAccess;
+        this.outputBoundary = outputBoundary;
     }
 
-    /**
-     * Execute the search by criteria use case.
-     *
-     * @param inputData the input data containing search criteria.
-     * @return SearchByCriteriaOutputData containing the search result.
-     * @throws MovieDBDataAccessException if an error occurs during the search.
-     */
     @Override
-    public SearchByCriteriaOutputData execute(SearchByCriteriaInputData inputData) throws MovieDBDataAccessException {
+    public void execute(SearchByCriteriaInputData inputData) {
         Movie matchingMovie = null;
+        String movieDetails = "";
 
-        // Ensure category is set to Movie
-        if ("movie".equalsIgnoreCase(inputData.getCategory())) {
-            // Retrieve keyword
-            String searchKeyword = null;
-            if (!inputData.getKeywords().isEmpty()) {
-                searchKeyword = inputData.getKeywords().get(0);
+        try {
+            // Ensure category is set to Movie
+            if ("movie".equalsIgnoreCase(inputData.getCategory())) {
+                String searchKeyword = null;
+                if (!inputData.getKeywords().isEmpty()) {
+                    searchKeyword = inputData.getKeywords().get(0);
+                }
+
+                if (searchKeyword != null && !searchKeyword.isEmpty()) {
+                    // Call DAO to search for the movie
+                    matchingMovie = movieDBDataAccess.getMovie(searchKeyword);
+                }
             }
-            // If a keyword is provided, call DAO to search for the movie
-            if (searchKeyword != null && !searchKeyword.isEmpty()) {
-                matchingMovie = movieDBDataAccess.getMovie(searchKeyword);
+
+            // Convert result to output data
+            if (matchingMovie != null) {
+                movieDetails = matchingMovie.toString();
             }
+
+        }
+        catch (MovieDBDataAccessException e) {
+            movieDetails = "Error: Could not retrieve movie details.";
+            outputBoundary.displaySearchResults(new SearchByCriteriaOutputData(movieDetails));
+            return;
         }
 
-        // Convert result to output data
-        final String movieDetails;
-        if (matchingMovie != null) {
-            movieDetails = matchingMovie.toString();
-        }
-        else {
-            movieDetails = "";
-        }
-        return new SearchByCriteriaOutputData(movieDetails);
+        outputBoundary.displaySearchResults(new SearchByCriteriaOutputData(movieDetails));
     }
 }
