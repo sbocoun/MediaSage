@@ -25,7 +25,7 @@ public class SearchController {
      *
      * @param keyword the movie name to search for.
      */
-    public void execute(String keyword){
+    public void execute(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             outputBoundary.displaySearchResults(new SearchByCriteriaOutputData(keyword));
             return;
