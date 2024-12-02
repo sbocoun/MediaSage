@@ -470,8 +470,8 @@ public class AppBuilder {
         resultTextArea.setColumns(30);
 
         final SearchController searchController = new SearchController(
-                new SearchInteractor(movieDBDataAccessInterface),
-                new SearchPresenter(resultTextArea, searchViewModel)
+                new SearchInteractor(movieDBDataAccessInterface, new SearchPresenter(searchViewModel)),
+                new SearchPresenter(searchViewModel)
         );
         searchView = new SearchView(searchViewModel, searchController);
         searchPanel.add(searchView, searchView.getViewName());

@@ -10,7 +10,6 @@ public class Movie extends AbstractMedia {
     private List<String> castMembers;
     private int minuteRuntime;
 
-
     public Movie(String name,
                  List<String> genres,
                  Rating userRating,

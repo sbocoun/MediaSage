@@ -25,9 +25,8 @@ public class SearchController {
      * Executes the search use case based on a keyword (movie name).
      *
      * @param keyword the movie name to search for.
-     * @throws MovieDBDataAccessException if TMDB API is unsuccessfully called or no results are found.
      */
-    public void execute(String keyword) throws MovieDBDataAccessException {
+    public void execute(String keyword){
         if (keyword == null || keyword.trim().isEmpty()) {
             outputBoundary.displaySearchResults(new SearchByCriteriaOutputData(keyword));
             return;
@@ -35,23 +34,15 @@ public class SearchController {
 
         final SearchByCriteriaInputData inputData = new SearchByCriteriaInputData(
                 // Category defaults to Movie
-                "movie", 
+                "movie",
                 // Only the keyword
-                Collections.singletonList(keyword.trim()), 
+                Collections.singletonList(keyword.trim()),
                 // No genres filtering
-                Collections.emptyList(), 
+                Collections.emptyList(),
                 // No cast filtering
-                Collections.emptyList()  
+                Collections.emptyList()
         );
 
-        try {
-            final SearchByCriteriaOutputData outputData = inputBoundary.execute(inputData);
-            // Pass results to Output Boundary
-            outputBoundary.displaySearchResults(outputData);
-        }
-        catch (MovieDBDataAccessException e) {
-            // Display empty result if error occurs
-            outputBoundary.displaySearchResults(new SearchByCriteriaOutputData(keyword));
-        }
+        inputBoundary.execute(inputData);
     }
 }

@@ -129,12 +129,7 @@ public class SearchView extends JPanel implements PropertyChangeListener {
                 }
                 else {
                     clearError();
-                    try {
-                        searchController.execute(keyword);
-                    }
-                    catch (MovieDBDataAccessException ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    searchController.execute(keyword);
                 }
             }
         });
