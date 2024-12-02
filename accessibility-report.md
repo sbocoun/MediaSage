@@ -12,12 +12,12 @@ media collection list table to incorporate movie/tv posters in the main interfac
 as multiple categories of each of the movie/tv media contains information that cannot be displayed without resizing
 the program. To remedy this, in the future, we could make the information in each entry display in multi-line format,
 as well as use an infobox or a pop-out menu that contains a more well-formatted details screen for each media.
-5. **Tolerance for Error.** Our program is not very tolerable for error, since if a user accidentally deletes a media
-they did not want to delete, they would be unable to restore it. To remedy this, we could implement an undo feature for
-delete/move/rating change use cases that allows the user to revert their change.
-6. **Low Physical Effort.** This principle does not quite apply to our program or most software in general, since 
+5. **Tolerance for Error.** Our program is tolerable for error, since we have confirmations for unrecoverable actions such as 
+moving and deleting media. But they would be unable to restore media once deleted/moved. To remedy this, we could implement an 
+undo feature for delete/move/rating change use cases that allows the user to revert their changes.
+7. **Low Physical Effort.** This principle does not quite apply to our program or most software in general, since 
 little physical effort aside from reading and operating input/output devices are required to use our program.
-7. **Size and Space for Approach and Use.** This does not quite apply to our program, since it's mostly a software 
+8. **Size and Space for Approach and Use.** This does not quite apply to our program, since it's mostly a software 
 interface. We did use default window sizes for our application to make sure all views are visible without having to 
 resize the window, which should accommodate the display of most monitors.
 
