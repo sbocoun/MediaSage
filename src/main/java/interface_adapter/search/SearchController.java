@@ -1,12 +1,12 @@
 package interface_adapter.search;
 
+import java.util.Collections;
+
 import data_access.movies.MovieDBDataAccessException;
 import use_case.search.SearchByCriteriaInputData;
 import use_case.search.SearchByCriteriaOutputData;
 import use_case.search.SearchInputBoundary;
 import use_case.search.SearchOutputBoundary;
-
-import java.util.Collections;
 
 /**
  * Controller for handling the search by criteria use case.
