@@ -1,12 +1,12 @@
 package interface_adapter.search;
 
+import java.util.Collections;
+
 import data_access.movies.MovieDBDataAccessException;
 import use_case.search.SearchByCriteriaInputData;
 import use_case.search.SearchByCriteriaOutputData;
 import use_case.search.SearchInputBoundary;
 import use_case.search.SearchOutputBoundary;
-
-import java.util.Collections;
 
 /**
  * Controller for handling the search by criteria use case.
@@ -34,10 +34,14 @@ public class SearchController {
         }
 
         final SearchByCriteriaInputData inputData = new SearchByCriteriaInputData(
-                "movie", // Category defaults to Movie
-                Collections.singletonList(keyword.trim()), // Only the keyword
-                Collections.emptyList(), // No genres filtering
-                Collections.emptyList()  // No cast filtering
+                // Category defaults to Movie
+                "movie", 
+                // Only the keyword
+                Collections.singletonList(keyword.trim()), 
+                // No genres filtering
+                Collections.emptyList(), 
+                // No cast filtering
+                Collections.emptyList()  
         );
 
         try {
