@@ -33,8 +33,8 @@ import interface_adapter.list.ListState;
 import interface_adapter.list.ListTableModel;
 import interface_adapter.list.ListViewModel;
 import interface_adapter.list.move_media.MoveController;
-import interface_adapter.list_update.ListUpdateController;
 import interface_adapter.list.remove_media.RemoveController;
+import interface_adapter.list_update.ListUpdateController;
 import view.filter_panels.FilterPanelManager;
 import view.list.update.UserRatingUpdateListener;
 
@@ -175,7 +175,7 @@ public class ListView extends JPanel implements ActionListener, PropertyChangeLi
                         // then executes the filter controller with the cleared filter criteria.
                         filterPanelManager.clearFilterPanel();
                         filterController.execute(filterViewModel.getState().getFilterCriteria(),
-                                listViewModel.getState().getCurrentCollectionType(),
+                                listViewModel.getState().getCurrentMediaType(),
                                 listViewModel.getState().getCurrentCollectionName());
                     }
                 }
