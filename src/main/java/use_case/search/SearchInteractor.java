@@ -19,32 +19,39 @@ public class SearchInteractor implements SearchInputBoundary {
     @Override
     public void execute(SearchByCriteriaInputData inputData) {
         Movie matchingMovie = null;
-        String movieDetails = "";
+        String movieDetails;
 
-        try {
-            // Ensure category is set to Movie
-            if ("movie".equalsIgnoreCase(inputData.getCategory())) {
-                String searchKeyword = null;
-                if (!inputData.getKeywords().isEmpty()) {
-                    searchKeyword = inputData.getKeywords().get(0);
+        // Check if the list of keywords is empty or if the first keyword is empty or contains only whitespace
+        if (inputData.getKeywords().isEmpty() || inputData.getKeywords().get(0).trim().isEmpty()) {
+            movieDetails = "Error: Please provide a valid movie title.";
+            outputBoundary.displaySearchResults(new SearchByCriteriaOutputData(movieDetails));
+        }
+        else {
+            try {
+                // Ensure category is set to Movie
+                if ("movie".equalsIgnoreCase(inputData.getCategory())) {
+                    final String searchKeyword = inputData.getKeywords().get(0).trim();
+
+                    // Call DAO to search for the movie if a valid keyword is provided
+                    if (!searchKeyword.isEmpty()) {
+                        matchingMovie = movieDBDataAccess.getMovie(searchKeyword);
+                    }
                 }
 
-                if (searchKeyword != null && !searchKeyword.isEmpty()) {
-                    // Call DAO to search for the movie
-                    matchingMovie = movieDBDataAccess.getMovie(searchKeyword);
+                // Convert result to output data
+                if (matchingMovie != null) {
+                    movieDetails = matchingMovie.toString();
                 }
+                else {
+                    movieDetails = "No results found for the keyword: " + inputData.getKeywords().get(0);
+                }
+
+            }
+            catch (MovieDBDataAccessException exception) {
+                movieDetails = "Error: Could not retrieve movie details.";
             }
 
-            // Convert result to output data
-            if (matchingMovie != null) {
-                movieDetails = matchingMovie.toString();
-            }
-
+            outputBoundary.displaySearchResults(new SearchByCriteriaOutputData(movieDetails));
         }
-        catch (MovieDBDataAccessException ex) {
-            movieDetails = "Error: Could not retrieve movie details.";
-        }
-
-        outputBoundary.displaySearchResults(new SearchByCriteriaOutputData(movieDetails));
     }
 }
