@@ -20,7 +20,7 @@ public class SearchPresenter implements SearchOutputBoundary {
      * @param outputData the output data containing the movie details.
      */
     @Override
-    public void displaySearchResults(SearchByCriteriaOutputData outputData) {
+    public void prepareSuccessView(SearchByCriteriaOutputData outputData) {
         searchViewModel.setSearchResults(outputData.getSearchResults());
     }
 

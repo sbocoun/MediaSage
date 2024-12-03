@@ -6,6 +6,7 @@ import entity.Rating;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import use_case.generate_recommendations.MovieDBDataAccessInterface;
@@ -23,6 +24,7 @@ public class SearchInteractorTest {
     @Mock
     private SearchOutputBoundary searchOutputBoundaryMock;
 
+    @InjectMocks
     private SearchInteractor searchInteractor;
     private AutoCloseable mocks;
 
@@ -57,7 +59,7 @@ public class SearchInteractorTest {
 
         // Assert
         ArgumentCaptor<SearchByCriteriaOutputData> outputCaptor = ArgumentCaptor.forClass(SearchByCriteriaOutputData.class);
-        verify(searchOutputBoundaryMock).displaySearchResults(outputCaptor.capture());
+        verify(searchOutputBoundaryMock).prepareSuccessView(outputCaptor.capture());
         SearchByCriteriaOutputData outputData = outputCaptor.getValue();
 
         assertEquals(mockMovie.toString(), outputData.getSearchResults());
@@ -76,11 +78,9 @@ public class SearchInteractorTest {
         searchInteractor.execute(inputData);
 
         // Assert
-        ArgumentCaptor<SearchByCriteriaOutputData> outputCaptor = ArgumentCaptor.forClass(SearchByCriteriaOutputData.class);
-        verify(searchOutputBoundaryMock).displaySearchResults(outputCaptor.capture());
-        SearchByCriteriaOutputData outputData = outputCaptor.getValue();
-
-        assertEquals("Error: Please provide a valid movie title.", outputData.getSearchResults());
+        verify(searchOutputBoundaryMock).prepareFailView(argThat(argument ->
+                argument.getSearchResults().equals("Error: Please provide a valid movie title.")
+        ));
     }
 
     @Test
@@ -99,7 +99,7 @@ public class SearchInteractorTest {
 
         // Assert
         ArgumentCaptor<SearchByCriteriaOutputData> outputCaptor = ArgumentCaptor.forClass(SearchByCriteriaOutputData.class);
-        verify(searchOutputBoundaryMock).displaySearchResults(outputCaptor.capture());
+        verify(searchOutputBoundaryMock).prepareSuccessView(outputCaptor.capture());
         SearchByCriteriaOutputData outputData = outputCaptor.getValue();
 
         assertEquals("Error: Could not retrieve movie details.", outputData.getSearchResults());
@@ -118,7 +118,7 @@ public class SearchInteractorTest {
 
         // Assert
         ArgumentCaptor<SearchByCriteriaOutputData> outputCaptor = ArgumentCaptor.forClass(SearchByCriteriaOutputData.class);
-        verify(searchOutputBoundaryMock).displaySearchResults(outputCaptor.capture());
+        verify(searchOutputBoundaryMock).prepareSuccessView(outputCaptor.capture());
         SearchByCriteriaOutputData outputData = outputCaptor.getValue();
 
         assertEquals("Error: Search by TV show title is not currently supported.", outputData.getSearchResults());
@@ -137,7 +137,7 @@ public class SearchInteractorTest {
 
         // Assert
         ArgumentCaptor<SearchByCriteriaOutputData> outputCaptor = ArgumentCaptor.forClass(SearchByCriteriaOutputData.class);
-        verify(searchOutputBoundaryMock).displaySearchResults(outputCaptor.capture());
+        verify(searchOutputBoundaryMock).prepareSuccessView(outputCaptor.capture());
         SearchByCriteriaOutputData outputData = outputCaptor.getValue();
 
         assertEquals("Error: This category is not currently supported.", outputData.getSearchResults());

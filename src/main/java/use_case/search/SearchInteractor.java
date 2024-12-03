@@ -9,11 +9,11 @@ import use_case.generate_recommendations.MovieDBDataAccessInterface;
  */
 public class SearchInteractor implements SearchInputBoundary {
     private final MovieDBDataAccessInterface movieDBDataAccess;
-    private final SearchOutputBoundary outputBoundary;
+    private final SearchOutputBoundary searchPresenter;
 
-    public SearchInteractor(MovieDBDataAccessInterface movieDBDataAccess, SearchOutputBoundary outputBoundary) {
+    public SearchInteractor(MovieDBDataAccessInterface movieDBDataAccess, SearchOutputBoundary searchPresenter) {
         this.movieDBDataAccess = movieDBDataAccess;
-        this.outputBoundary = outputBoundary;
+        this.searchPresenter = searchPresenter;
     }
 
     @Override
@@ -23,7 +23,7 @@ public class SearchInteractor implements SearchInputBoundary {
         // Check if search input is empty
         if (inputData.getKeywords().isEmpty() || inputData.getKeywords().get(0).trim().isEmpty()) {
             movieDetails = "Error: Please provide a valid movie title.";
-            outputBoundary.prepareFailView(new SearchByCriteriaOutputData(movieDetails));
+            searchPresenter.prepareFailView(new SearchByCriteriaOutputData(movieDetails));
         }
         else {
             try {
@@ -43,7 +43,7 @@ public class SearchInteractor implements SearchInputBoundary {
             catch (MovieDBDataAccessException ex) {
                 movieDetails = "Error: Could not retrieve movie details.";
             }
-            outputBoundary.displaySearchResults(new SearchByCriteriaOutputData(movieDetails));
+            searchPresenter.prepareSuccessView(new SearchByCriteriaOutputData(movieDetails));
         }
     }
 
