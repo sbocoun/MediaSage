@@ -57,4 +57,12 @@ public abstract class AbstractMedia {
     public void setExternalRating(int newExternalRatingScore) {
         this.externalRating.setScore(newExternalRatingScore);
     }
+
+    @Override
+    public String toString() {
+        return "Title: " + name + '\n'
+                + "Genres: " + String.join(", ", genres) + '\n'
+                + "User Rating: " + userRating + '\n'
+                + "External Rating: " + externalRating + '\n';
+    }
 }

@@ -35,6 +35,8 @@ import interface_adapter.note.BlankViewModel;
 import interface_adapter.note.NoteController;
 import interface_adapter.note.NotePresenter;
 import interface_adapter.note.NoteViewModel;
+import interface_adapter.search.SearchController;
+import interface_adapter.search.SearchPresenter;
 import interface_adapter.search.SearchViewModel;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
@@ -46,6 +48,8 @@ import use_case.filter_list.FilterInteractor;
 import use_case.generate_recommendations.GenDataAccessInterface;
 import use_case.generate_recommendations.GenInteractor;
 import use_case.generate_recommendations.GenOutputBoundary;
+import use_case.generate_recommendations.MovieDBDataAccessInterface;
+import use_case.search.SearchInteractor;
 import use_case.list.ListInteractor;
 import use_case.list.ListOutputBoundary;
 import use_case.list.moveMedia.MoveInteractor;
@@ -95,7 +99,6 @@ public class AppBuilder {
     // observers that listen for when the view should change
     private final ViewManager userViewManager = new ViewManager(userPanel, cardLayout, userViewManagerModel);
     private final ViewManager mediaViewManager = new ViewManager(mediaPanel, cardLayout, mediaViewManagerModel);
-    private final ViewManager searchViewManager = new ViewManager(searchPanel, cardLayout, searchViewManagerModel);
     // thought question: is the hard dependency below a problem?
     private UserRepository userDataAccessObject;
     private GenDataAccessInterface genDataAccessInterface;
@@ -116,6 +119,7 @@ public class AppBuilder {
     private ListViewModel listViewModel;
     private FilterViewModel filterViewModel;
     private ListOutputBoundary listPresenter;
+    private MovieDBDataAccessInterface movieDBDataAccessInterface;
 
     /**
      * Adds the initial tabs and card layout views.
@@ -154,6 +158,17 @@ public class AppBuilder {
      */
     public AppBuilder addGenDAO(GenDataAccessInterface genDAO) {
         this.genDataAccessInterface = genDAO;
+        return this;
+    }
+
+    /**
+     * Adds the MovieDB data access object.
+     *
+     * @param movieDAO the MovieDB data access interface to use
+     * @return this builder
+     */
+    public AppBuilder addMovieDAO(MovieDBDataAccessInterface movieDAO) {
+        this.movieDBDataAccessInterface = movieDAO;
         return this;
     }
 
@@ -447,7 +462,10 @@ public class AppBuilder {
     public AppBuilder addSearchView() {
         searchViewModel = new SearchViewModel();
 
-        searchView = new SearchView(searchViewModel);
+        final SearchController searchController = new SearchController(
+                new SearchInteractor(movieDBDataAccessInterface, new SearchPresenter(searchViewModel))
+        );
+        searchView = new SearchView(searchViewModel, searchController);
         searchPanel.add(searchView, searchView.getViewName());
 
         return this;

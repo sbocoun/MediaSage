@@ -46,4 +46,12 @@ public class Movie extends AbstractMedia {
     public void setMinuteRuntime(int minuteRuntime) {
         this.minuteRuntime = minuteRuntime;
     }
+
+    @Override
+    public String toString() {
+        return super.toString()
+                + "Description: " + description + '\n'
+                + "Runtime: " + minuteRuntime + " minutes\n"
+                + "Cast: " + String.join(", ", castMembers) + '\n';
+    }
 }

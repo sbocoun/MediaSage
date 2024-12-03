@@ -1,9 +1,10 @@
 package interface_adapter.search;
 
-import interface_adapter.ViewModel;
-import interface_adapter.note.NoteState;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+
+import interface_adapter.ViewModel;
+import interface_adapter.note.NoteState;
 
 /**
  * The ViewModel for the SearchView.
@@ -15,7 +16,7 @@ public class SearchViewModel extends ViewModel<NoteState> {
     private final PropertyChangeSupport propertyChangeSupport;
 
     public SearchViewModel() {
-        super("note");
+        super("search");
         this.setState(new NoteState());
         this.propertyChangeSupport = new PropertyChangeSupport(this);
     }
@@ -41,11 +42,10 @@ public class SearchViewModel extends ViewModel<NoteState> {
     }
 
     /**
-     * Gets the search results.
-     * @return the search results
+     * Clears the error message.
      */
-    public String getSearchResults() {
-        return searchResults;
+    private void clearErrorMessage() {
+        setErrorMessage("");
     }
 
     /**
@@ -70,17 +70,8 @@ public class SearchViewModel extends ViewModel<NoteState> {
      * Adds a PropertyChangeListener to observe state changes.
      * @param listener the PropertyChangeListener to add
      */
-
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-
-    /**
-     * Removes a PropertyChangeListener.
-     * @param listener the PropertyChangeListener to remove
-     */
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(listener);
     }
 }
