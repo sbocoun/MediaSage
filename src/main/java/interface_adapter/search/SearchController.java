@@ -26,7 +26,7 @@ public class SearchController {
         final SearchByCriteriaInputData inputData = new SearchByCriteriaInputData(
                 category,
                 // Only the keyword
-                Collections.singletonList(keyword.trim()),
+                Collections.singletonList(keyword),
                 // No genres filtering
                 Collections.emptyList(),
                 // No cast filtering
