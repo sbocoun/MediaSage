@@ -49,10 +49,10 @@ public class Movie extends AbstractMedia {
 
     @Override
     public String toString() {
-        return "Title: " + getName() + "\n"
-                + "Description: " + description + "\n"
+        return "Title: " + getName() + '\n'
+                + "Description: " + description + '\n'
                 + "Runtime: " + minuteRuntime + " minutes\n"
-                + "Genres: " + String.join(", ", getGenres()) + "\n"
+                + "Genres: " + String.join(", ", getGenres()) + '\n'
                 + "Cast: " + String.join(", ", castMembers) + "\n"
                 + "User Rating: " + getUserRating() + "\n"
                 + "External Rating: " + getExternalRating();
