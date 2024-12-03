@@ -1,6 +1,7 @@
 package interface_adapter.search;
 
 import java.util.Collections;
+import java.util.List;
 
 import use_case.search.SearchByCriteriaInputData;
 import use_case.search.SearchInputBoundary;
@@ -21,8 +22,10 @@ public class SearchController {
      *
      * @param keyword the movie name to search for.
      * @param category the search category.
+     * @param genres the movie's genres
+     * @param cast the cast members of the movie
      */
-    public void execute(String category, String keyword) {
+    public void execute(String category, String keyword, List<String> genres, List<String> cast) {
         final SearchByCriteriaInputData inputData = new SearchByCriteriaInputData(
                 category,
                 // Only the keyword

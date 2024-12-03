@@ -125,7 +125,7 @@ public class SearchView extends JPanel implements PropertyChangeListener {
                 final String category = (String) categoryDropdown.getSelectedItem();
 
                 clearError();
-                searchController.execute(category, keyword);
+                searchController.execute(category, keyword, null, null);
             }
         });
 
@@ -133,6 +133,7 @@ public class SearchView extends JPanel implements PropertyChangeListener {
         mainSearchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                final String category = (String) categoryDropdown.getSelectedItem();
                 final String keyword = keywordField.getText().trim();
                 final List<String> genres = new ArrayList<>();
                 if (!genreField.getText().trim().isEmpty()) {
@@ -143,12 +144,11 @@ public class SearchView extends JPanel implements PropertyChangeListener {
                     cast.add(castField.getText().trim());
                 }
 
-                if (keyword.isEmpty() && genres.isEmpty() && cast.isEmpty()) {
-                    showError("At least one filter (Keyword, Genre, Cast) is required.");
+                try {
+                    searchController.execute(category, keyword, genres, cast);
                 }
-                else {
-                    clearError();
-                    searchViewModel.performSearch(keyword, genres, cast);
+                catch (IllegalArgumentException ex) {
+                    showError("An unexpected error occurred: " + ex.getMessage());
                 }
             }
         });

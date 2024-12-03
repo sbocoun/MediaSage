@@ -2,7 +2,6 @@ package interface_adapter.search;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.List;
 
 import interface_adapter.ViewModel;
 import interface_adapter.note.NoteState;
@@ -40,32 +39,6 @@ public class SearchViewModel extends ViewModel<NoteState> {
         final String oldMessage = this.errorMessage;
         this.errorMessage = errorMessage;
         notifyObservers("errorMessage", oldMessage, errorMessage);
-    }
-
-    /**
-     * Simulates a search operation based on input data.
-     * @param keyword the keyword to search for
-     * @param genres the genres to filter by
-     * @param cast the cast members to filter by
-     */
-    public void performSearch(String keyword, List<String> genres, List<String> cast) {
-        if ((keyword == null || keyword.isEmpty()) && genres.isEmpty() && cast.isEmpty()) {
-            setErrorMessage("At least one search criterion is required.");
-        }
-        else {
-            final StringBuilder results = new StringBuilder("Search Results:\n");
-            if (keyword != null && !keyword.isEmpty()) {
-                results.append("Keyword: ").append(keyword).append('\n');
-            }
-            if (!genres.isEmpty()) {
-                results.append("Genres: ").append(String.join(", ", genres)).append("\n");
-            }
-            if (!cast.isEmpty()) {
-                results.append("Cast: ").append(String.join(", ", cast)).append("\n");
-            }
-            setSearchResults(results.toString());
-            clearErrorMessage();
-        }
     }
 
     /**
