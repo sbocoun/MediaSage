@@ -49,16 +49,7 @@ public class SearchInteractor implements SearchInputBoundary {
 
     // Helper method for searching movies
     private String searchMovie(String searchKeyword) throws MovieDBDataAccessException {
-        final String result;
         final Movie matchingMovie = movieDBDataAccess.getMovie(searchKeyword);
-
-        if (matchingMovie != null) {
-            result = matchingMovie.toString();
-        }
-        else {
-            result = "No results found for the keyword: " + searchKeyword;
-        }
-
-        return result;
+        return matchingMovie.toString();
     }
 }
