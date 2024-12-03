@@ -67,6 +67,7 @@ public class SearchInteractorTest {
     public void testExecute_EmptyKeyword() {
         SearchByCriteriaInputData inputData = new SearchByCriteriaInputData(
                 "movie",
+                // empty keyword
                 List.of(),
                 List.of(),
                 List.of()
@@ -79,7 +80,7 @@ public class SearchInteractorTest {
         verify(searchOutputBoundaryMock).displaySearchResults(outputCaptor.capture());
         SearchByCriteriaOutputData outputData = outputCaptor.getValue();
 
-        assertEquals("", outputData.getSearchResults());
+        assertEquals("Error: Please provide a valid movie title.", outputData.getSearchResults());
     }
 
     @Test
@@ -103,4 +104,43 @@ public class SearchInteractorTest {
 
         assertEquals("Error: Could not retrieve movie details.", outputData.getSearchResults());
     }
+
+    @Test
+    public void testExecute_UnsupportedCategory() {
+        SearchByCriteriaInputData inputData = new SearchByCriteriaInputData(
+                "tv show",
+                List.of("Breaking Bad"),
+                List.of(),
+                List.of()
+        );
+
+        searchInteractor.execute(inputData);
+
+        // Assert
+        ArgumentCaptor<SearchByCriteriaOutputData> outputCaptor = ArgumentCaptor.forClass(SearchByCriteriaOutputData.class);
+        verify(searchOutputBoundaryMock).displaySearchResults(outputCaptor.capture());
+        SearchByCriteriaOutputData outputData = outputCaptor.getValue();
+
+        assertEquals("Error: Search by TV show title is not currently supported.", outputData.getSearchResults());
+    }
+
+    @Test
+    public void testExecute_InvalidCategory() {
+        SearchByCriteriaInputData inputData = new SearchByCriteriaInputData(
+                "Documentary",
+                List.of("Bad Vegan"),
+                List.of(),
+                List.of()
+        );
+
+        searchInteractor.execute(inputData);
+
+        // Assert
+        ArgumentCaptor<SearchByCriteriaOutputData> outputCaptor = ArgumentCaptor.forClass(SearchByCriteriaOutputData.class);
+        verify(searchOutputBoundaryMock).displaySearchResults(outputCaptor.capture());
+        SearchByCriteriaOutputData outputData = outputCaptor.getValue();
+
+        assertEquals("Error: This category is not currently supported.", outputData.getSearchResults());
+    }
+
 }

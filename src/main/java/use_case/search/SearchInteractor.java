@@ -25,26 +25,26 @@ public class SearchInteractor implements SearchInputBoundary {
             movieDetails = "Error: Please provide a valid movie title.";
             outputBoundary.prepareFailView(new SearchByCriteriaOutputData(movieDetails));
         }
-
-        try {
-            if ("movie".equalsIgnoreCase(inputData.getCategory())) {
-                movieDetails = searchMovie(inputData.getKeywords().get(0).trim());
+        else {
+            try {
+                if ("movie".equalsIgnoreCase(inputData.getCategory())) {
+                    movieDetails = searchMovie(inputData.getKeywords().get(0).trim());
+                }
+                else if ("tv show".equalsIgnoreCase(inputData.getCategory())) {
+                    throw new UnsupportedOperationException("Search by TV show title is not currently supported.");
+                }
+                else {
+                    throw new UnsupportedOperationException("This category is not currently supported.");
+                }
             }
-            else if ("tv show".equalsIgnoreCase(inputData.getCategory())) {
-                throw new UnsupportedOperationException("Search by TV show title is not currently supported.");
+            catch (UnsupportedOperationException ex) {
+                movieDetails = "Error: " + ex.getMessage();
             }
-            else {
-                throw new UnsupportedOperationException("This category is not currently supported.");
+            catch (MovieDBDataAccessException ex) {
+                movieDetails = "Error: Could not retrieve movie details.";
             }
+            outputBoundary.displaySearchResults(new SearchByCriteriaOutputData(movieDetails));
         }
-        catch (UnsupportedOperationException ex) {
-            movieDetails = "Error: " + ex.getMessage();
-        }
-        catch (MovieDBDataAccessException ex) {
-            movieDetails = "Error: Could not retrieve movie details.";
-        }
-
-        outputBoundary.displaySearchResults(new SearchByCriteriaOutputData(movieDetails));
     }
 
     // Helper method for searching movies
