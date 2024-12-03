@@ -16,15 +16,15 @@ public class SearchController {
     }
 
     /**
-     * Simplified "search by name" method.
+     * Simplified "search by title" method.
      * Executes the search use case based on a keyword (movie name).
      *
      * @param keyword the movie name to search for.
+     * @param category the search category.
      */
-    public void execute(String keyword) {
+    public void execute(String category, String keyword) {
         final SearchByCriteriaInputData inputData = new SearchByCriteriaInputData(
-                // Category defaults to Movie
-                "movie",
+                category,
                 // Only the keyword
                 Collections.singletonList(keyword.trim()),
                 // No genres filtering

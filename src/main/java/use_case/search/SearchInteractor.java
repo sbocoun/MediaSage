@@ -21,7 +21,7 @@ public class SearchInteractor implements SearchInputBoundary {
         String movieDetails;
 
         // Check if search input is empty
-        if (inputData.getKeywords().isEmpty()) {
+        if (inputData.getKeywords().isEmpty() || inputData.getKeywords().get(0).trim().isEmpty()) {
             movieDetails = "Error: Please provide a valid movie title.";
             outputBoundary.prepareFailView(new SearchByCriteriaOutputData(movieDetails));
         }

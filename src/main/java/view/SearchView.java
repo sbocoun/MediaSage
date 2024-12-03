@@ -122,14 +122,10 @@ public class SearchView extends JPanel implements PropertyChangeListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final String keyword = keywordField.getText().trim();
+                final String category = (String) categoryDropdown.getSelectedItem();
 
-                if (keyword.isEmpty()) {
-                    showError("Please enter a movie name to search.");
-                }
-                else {
-                    clearError();
-                    searchController.execute(keyword);
-                }
+                clearError();
+                searchController.execute(category, keyword);
             }
         });
 
